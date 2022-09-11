@@ -17,7 +17,7 @@ class Place {
 	}
 
 	initConnection() {
-		this.#loadingp.innerHTML = "connecting";
+		this.#loadingp.innerHTML = "Connexion en cours";
 
 		let host, wsProt, httpProt;
 		if (LOCAL_MODE) {
@@ -31,7 +31,7 @@ class Place {
 		}
 
 		this.#connect(wsProt + host + "/ws");
-		this.#loadingp.innerHTML = "downloading map";
+		this.#loadingp.innerHTML = "Téléchargement de la carte";
 
 		fetch(httpProt + host + "/place.png")
 		.then(async resp => {
@@ -59,7 +59,7 @@ class Place {
 			if (value) {
 				a.set(value, pos);
 				pos += value.length;
-				this.#loadingp.innerHTML = "downloading map " + Math.round(pos/len*100) + "%";
+				this.#loadingp.innerHTML = "Téléchargement de la carte (" + Math.round(pos/len*100) + "%)";
 			}
 			if(done) break;
 		}
@@ -80,7 +80,7 @@ class Place {
 
 		const socketError = (event) => {
 			console.error("Error making WebSocket connection.");
-			alert("Failed to connect.");
+			alert("Erreur de connexion");
 			this.#socket.close();
 		};
 
@@ -101,7 +101,7 @@ class Place {
 			this.#glWindow.setPixelColor(x, y, color);
 			this.#glWindow.draw();
 		} else {
-			alert("Disconnected.");
+			alert("Déconnecté, veuillez rafraichir la page");
 			console.error("Disconnected.");
 		}
 	}
