@@ -124,6 +124,7 @@ class Place {
 		let promise = new Promise((resolve, reject) => {
 			img.onload = () => {
 				this.#glWindow.setTexture(img);
+				this.#glWindow.setZoom(window.visualViewport.height * 0.75 / img.height);
 				this.#glWindow.draw();
 				resolve();
 			};

@@ -131,7 +131,7 @@ class GLWindow {
 	}
 
 	setZoom(z) {
-		if (z < 0.01) z = 0.01;
+		if (z < 0.1) z = 0.1;
 		if (z > 20) z = 20;
 		this.#zoom = z;
 		this.#gl.uniform1f(this.#u_zoom, z);

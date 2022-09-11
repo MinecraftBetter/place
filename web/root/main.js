@@ -29,12 +29,12 @@ const GUI = (cvs, glWindow, place) => {
 		case 189:
 		case 173:
 			ev.preventDefault();
-			zoomOut();
+			zoomOut(1.2);
 			break;
 		case 187:
 		case 61:
 			ev.preventDefault();
-			zoomIn();
+			zoomIn(1.2);
 			break;
 		}
 	});
@@ -42,20 +42,18 @@ const GUI = (cvs, glWindow, place) => {
 	window.addEventListener("wheel", ev => {
 		let zoom = glWindow.getZoom();
 		if (ev.deltaY > 0) {
-				zoom /= 1.05;
+				zoomOut(1.05);
 			} else {
-				zoom *= 1.05;
+				zoomIn(1.05);
 			}
-		glWindow.setZoom(zoom);
-		glWindow.draw();
 	});
 
 	document.querySelector("#zoom-in").addEventListener("click", () => {
-		zoomIn();
+		zoomIn(1.2);
 	});
 
 	document.querySelector("#zoom-out").addEventListener("click", () => {
-		zoomOut();
+		zoomOut(1.2);
 	});
 
 	window.addEventListener("resize", ev => {
@@ -215,15 +213,16 @@ const GUI = (cvs, glWindow, place) => {
 		}
 	}
 	
-	const zoomIn = () => {
+	const zoomIn = (v) => {
 		let zoom = glWindow.getZoom();
-		glWindow.setZoom(zoom * 1.2);
+		glWindow.setZoom(zoom * v);
 		glWindow.draw();
 	}
 	
-	const zoomOut = () => {
+	const zoomOut = (v) => {
 		let zoom = glWindow.getZoom();
-		glWindow.setZoom(zoom / 1.2);
+		if(zoom < 1) return;
+		glWindow.setZoom(zoom / v);
 		glWindow.draw();
 	}
 	
