@@ -1,4 +1,5 @@
 #serve
+        home holdup.html
         ace desktop.html
 #place ws
 #place place.png
