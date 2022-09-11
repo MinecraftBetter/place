@@ -17,6 +17,7 @@ const GUI = (cvs, glWindow, place) => {
 	let touchstartTime;
 
 	const colorField = document.querySelector("#color-field");
+	const colorPreset = document.querySelector("#color-preset");
 	const colorSwatch = document.querySelector("#color-swatch");
 
 	// ***************************************************
@@ -63,19 +64,21 @@ const GUI = (cvs, glWindow, place) => {
 	});
 
 	cvs.addEventListener("mousedown", (ev) => {
+		var pos = {x:ev.clientX, y:ev.clientY};
 		switch (ev.button) {
 		case 0:
 			dragdown = true;
-			lastMovePos = {x:ev.clientX, y:ev.clientY};
+			lastMovePos = pos;
 			break;
 		case 1:
-			pickColor({x:ev.clientX,y:ev.clientY});
+			pickColor(pos);
 			break;
 		case 2:
+			dragdown = true;
 			if (ev.ctrlKey) {
-				pickColor({x:ev.clientX,y:ev.clientY});
+				pickColor(pos);
 			} else {
-				drawPixel({x:ev.clientX,y:ev.clientY}, color);
+				drawPixel(pos, color);
 			}
 		}
 	});
@@ -88,9 +91,18 @@ const GUI = (cvs, glWindow, place) => {
 	document.addEventListener("mousemove", (ev) => {
 		const movePos = {x:ev.clientX, y:ev.clientY};
 		if (dragdown) {
-			glWindow.move(movePos.x - lastMovePos.x, movePos.y - lastMovePos.y);
-			glWindow.draw();
-			document.body.style.cursor = "grab";
+			if(ev.buttons == 2){
+				if (ev.ctrlKey) {
+					pickColor(movePos);
+				} else {
+					drawPixel(movePos, color);
+				}
+			}
+			else{
+				glWindow.move(movePos.x - lastMovePos.x, movePos.y - lastMovePos.y);
+				glWindow.draw();
+				document.body.style.cursor = "grab";
+			}
 		}
 		lastMovePos = movePos;
 	});
@@ -116,8 +128,56 @@ const GUI = (cvs, glWindow, place) => {
 
 	cvs.addEventListener("contextmenu", () => {return false;});
 
-	colorField.addEventListener("change", ev => {
-		let hex = colorField.value.replace(/[^A-Fa-f0-9]/g, "").toUpperCase();
+	colorField.addEventListener("change", ev => setColor(colorField.value));
+	
+	var presets = {
+        "#000000": "noir",
+        "#333434": "gris", 
+        "#d4d7d9": "gris clair", 
+        "#ffffff": "blanc",
+        "#6d302f": "maron", 
+        "#6d001a": "rouge maronatre",
+        "#9c451a": "maron clair", 
+        "#be0027": "rouge",
+        "#ff2651": "rouge clair", 
+        "#ff2d00": "rouge", 
+        "#ffa800": "orange foncé", 
+        "#ffd623": "jaune", 
+        "#fff8b8": "beige", 
+        "#7eed38": "vert clair", 
+        "#00cc4e": "vert", 
+        "#00a344": "vert foncé", 
+        "#598d5a": "vert foncé foncé", 
+        "#004b6f": "bleu sous marin", 
+        "#009eaa": "bleu marin", 
+        "#00ccc0": "bleu sale de bain", 
+        "#33E9F4": "cian",
+        "#5eb3ff": "bleu evian",
+        "#245aea": "bleu ciel",
+        "#313ac1": "bleu ciel violet",
+        "#1832a4": "ciel violet foncé",
+        "#511e9f": "violet",
+        "#6a5cff": "violet clair",
+        "#b44ac0": "violet clair rose",
+        "#ff63aa": "rose",
+        "#e4abff": "rose clair",
+    };
+	console.log(presets);
+	Object.entries(presets).forEach(([key, value]) => {
+		var element = document.createElement("button");
+		colorPreset.appendChild(element);
+		element.setAttribute('data-color', key);
+		element.setAttribute("title", value);
+		element.style.backgroundColor = key;
+		element.addEventListener("click", ev => setColor(ev.target.getAttribute('data-color')));
+	});
+
+	// ***************************************************
+	// ***************************************************
+	// Helper Functions
+	//
+	const setColor = (c) => {
+		let hex = c.replace(/[^A-Fa-f0-9]/g, "").toUpperCase();
 		hex = hex.substring(0,6);
 		while (hex.length < 6) {
 			hex += "0";
@@ -128,12 +188,8 @@ const GUI = (cvs, glWindow, place) => {
 		hex = "#" + hex;
 		colorField.value = hex;
 		colorSwatch.style.backgroundColor = hex;
-	});
-
-	// ***************************************************
-	// ***************************************************
-	// Helper Functions
-	//
+	}
+	
 	const pickColor = (pos) => {
 		color = glWindow.getColor(glWindow.click(pos));
 		let hex = "#";
@@ -170,4 +226,7 @@ const GUI = (cvs, glWindow, place) => {
 		glWindow.setZoom(zoom / 1.2);
 		glWindow.draw();
 	}
+	
+	
+	setColor("#000000");
 }

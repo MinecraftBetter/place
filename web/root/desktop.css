@@ -8,6 +8,16 @@ body {
 	overflow: hidden;
 	position: fixed;
 	-webkit-overflow-scrolling: touch;
+	
+	width: 100vw;
+	height: 100vh;
+	
+	background-color: #1c1c1c;
+	background-image: url(logo.png);
+	background-repeat: no-repeat;
+	background-position-x: center;
+	background-position-y: 3.85vh;
+	background-size: 350px;
 }
 
 #viewport-canvas {
@@ -17,7 +27,6 @@ body {
 	image-rendering: pixelated;
 	width: 100vw;
 	height: 100vh;
-	background-color: #e0e0e0;
 }
 
 #ui-wrapper {
@@ -26,14 +35,13 @@ body {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background-color: #ffffff;
+	background-color: black;
 	transition: background 1s;
 }
 
 #ui-wrapper > #color-wrapper, #zoom-wrapper {
 	visibility: hidden;
 }
-
 
 #ui-wrapper[hide=true] {
 	pointer-events: none;
@@ -50,20 +58,27 @@ body {
 	left: 16px;
 	display: flex;
 	flex-direction: row;
+	border: 1px solid #575757;
+	background-color: #2f2f2f;
+	border-radius: 1em;
 }
 
 #color-swatch {
 	width: 20px;
-	height: 22px;
+	border-radius: 50%;
+	margin: 0.15em 0.25em;
 	background-color: #000000;
 }
 
 #color-field {
 	height: 20px;
-	padding: 1px;
+	padding: 2px 10px;
 	border: none;
 	outline: none;
 	pointer-events: all;
+	width: 75px;
+	background: none;
+	color: white;
 }
 
 #loading-p {
@@ -72,6 +87,36 @@ body {
 	left: 50%;
 	font-size: 1.4em;
 	transform: translate(-50%,-50%);
+	color: white;
+}
+
+#color-preset {
+	position: absolute;
+	top: 16px;
+	left: 16px;
+	max-width: calc(30px * 2 + 0.5em);
+	
+	display: flex;
+	flex-direction: row;
+	gap: 0.5em;
+	flex-wrap: wrap;
+}
+#color-preset > button{
+	border: 1px solid #575757;
+	pointer-events: all;
+	border-radius: 50%;
+	width: 30px;
+	height: 30px;
+}
+
+#avec-amour {
+	position: absolute;
+	z-index: -1;
+	bottom: 5px;
+	left: 50%;
+	transform: translate(-50%,0);
+	font-size: 1.4em;
+	color: grey;
 }
 
 #zoom-wrapper {
@@ -84,11 +129,13 @@ body {
 	width: 30px;
 	height: 30px;
 	border: none;
+	border-radius: 50%;
 	background: none;
 	outline: none;
 	background-color: red;
 	font-size: 22px;
-	background-color: #ffffff;
+	background-color: #2f2f2f;
+	color: white;
 	border: 1px solid black;
 	cursor: pointer;
 	pointer-events: all;
