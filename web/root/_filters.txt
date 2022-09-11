@@ -1,6 +1,7 @@
 #serve
         home holdup.html
         ace desktop.html
+        timelapse timelapse.html
 #place ws
 #place place.png
 #place stat
