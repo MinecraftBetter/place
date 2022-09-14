@@ -110,12 +110,13 @@ const GUI = (cvs, glWindow, place) => {
 		lastMovePos = {x:ev.touches[0].clientX, y:ev.touches[0].clientY};
 	});
 
-	document.addEventListener("touchend", (ev) => {
-		let elapsed = (new Date()).getTime() - touchstartTime;
-		if (elapsed < 100) {
-			drawPixel(lastMovePos, color);
-		}
-	});
+	if(!place.mobile)
+		document.addEventListener("touchend", (ev) => {
+			let elapsed = (new Date()).getTime() - touchstartTime;
+			if (elapsed < 100) {
+				drawPixel(lastMovePos, color);
+			}
+		});
 
 	document.addEventListener("touchmove", (ev) => {
 		let movePos = {x:ev.touches[0].clientX, y:ev.touches[0].clientY};

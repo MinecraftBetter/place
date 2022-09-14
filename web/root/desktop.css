@@ -20,6 +20,14 @@ body {
 	background-size: 350px;
 }
 
+body.read-only{
+	touch-action: none;
+}
+
+body.read-only #ui-wrapper #color-wrapper, body.read-only #ui-wrapper #color-preset{
+	display: none;
+}
+
 .center-content {
 	display: flex;
 	justify-content: center;

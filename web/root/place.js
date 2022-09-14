@@ -7,6 +7,7 @@ class Place {
 	#loadingp;
 	#uiwrapper;
 	#glWindow;
+	mobile;
 
 	constructor(glWindow) {
 		this.#loaded = false;
@@ -14,10 +15,12 @@ class Place {
 		this.#loadingp = document.querySelector("#loading-p");
 		this.#uiwrapper = document.querySelector("#ui-wrapper");
 		this.#glWindow = glWindow;
+		this.mobile = 'ontouchstart' in document.documentElement;
 	}
 
 	initConnection() {
 		this.#loadingp.innerHTML = "Connexion en cours";
+		if(this.mobile) document.body.classList.add("read-only");
 
 		let host, wsProt, httpProt;
 		if (LOCAL_MODE) {
