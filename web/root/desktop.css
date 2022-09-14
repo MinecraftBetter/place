@@ -46,7 +46,7 @@ body.read-only #ui-wrapper #color-wrapper, body.read-only #ui-wrapper #color-pre
 
 #ui-wrapper {
 	position: fixed;
-	bottom: top;
+	bottom: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
@@ -54,7 +54,7 @@ body.read-only #ui-wrapper #color-wrapper, body.read-only #ui-wrapper #color-pre
 	transition: background 1s;
 }
 
-#ui-wrapper > #color-wrapper, #zoom-wrapper {
+#ui-wrapper > #color-wrapper, #ui-wrapper > #color-preset, #zoom-wrapper {
 	visibility: hidden;
 }
 
@@ -63,7 +63,7 @@ body.read-only #ui-wrapper #color-wrapper, body.read-only #ui-wrapper #color-pre
 	background: none;
 }
 
-#ui-wrapper[hide=true] > #color-wrapper, #zoom-wrapper {
+#ui-wrapper[hide=true] > #color-wrapper, #ui-wrapper[hide=true] > #color-preset, #zoom-wrapper {
 	visibility: visible;
 }
 
@@ -143,13 +143,10 @@ body.read-only #ui-wrapper #color-wrapper, body.read-only #ui-wrapper #color-pre
 .zoom-button {
 	width: 30px;
 	height: 30px;
-	border: none;
 	border-radius: 50%;
-	background: none;
 	outline: none;
-	background-color: red;
 	font-size: 22px;
-	background-color: #2f2f2f;
+	background: #2f2f2f none;
 	color: white;
 	border: 1px solid black;
 	cursor: pointer;
