@@ -7,19 +7,18 @@
 	<link rel="icon" href="/favicon.png">
 	<style>
 		#content-wrapper {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
+			text-align: center;
 			color: white;
+			max-height: 100vh;
+			overflow: auto;
 		}
 	</style>
 </head>
-<body style="font-family:sans-serif;">
-	<div id="content-wrapper" align="center">
+<body style="font-family:sans-serif;" class="center-content">
+	<div id="content-wrapper">
 		<h1>Timelapse</h1>
 		<br />
-		<p>1s = 5min</p>
+		<p>1s = 10min</p>
 		<br />
 		<video controls style="max-height: 50vh; max-width: 85vw; width: 85vw;">
 			<source src="timelapse.mp4" type="video/mp4">

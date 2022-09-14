@@ -20,6 +20,13 @@ body {
 	background-size: 350px;
 }
 
+.center-content {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+}
+
 #viewport-canvas {
 	position: absolute;
 	top: 0;
