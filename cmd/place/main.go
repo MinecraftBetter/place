@@ -88,5 +88,10 @@ func loadImage(loadPath string) draw.Image {
 	if err != nil {
 		panic(err)
 	}
-	return pngimg.(draw.Image)
+
+	// We copy the PNG image into a Bitmap image, which allows us to remove the palette that causes colour problems
+	b := pngimg.Bounds()
+	m := image.NewNRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
+	draw.Draw(m, m.Bounds(), pngimg, b.Min, draw.Src)
+	return m
 }
