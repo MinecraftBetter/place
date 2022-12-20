@@ -6,14 +6,13 @@ import (
 	"image"
 	"image/draw"
 	"image/png"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
+	"github.com/minecraftbetter/place"
 	"github.com/rbxb/httpfilter"
-	"github.com/rbxb/place"
 )
 
 var port string

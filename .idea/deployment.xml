@@ -5,7 +5,7 @@
       <paths name="Tiago">
         <serverdata>
           <mappings>
-            <mapping deploy="/portainer/Files/AppData/Config/rPlace" local="$PROJECT_DIR$" web="https://place.minecraftbetter.com/" />
+            <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

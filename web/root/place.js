@@ -4,22 +4,22 @@ const LOCAL_IP_ADDRESS = "localhost:8080";
 class Place {
 	#loaded;
 	#socket;
-	#loadingp;
-	#uiwrapper;
+	#loadingText;
+	#uiWrapper;
 	#glWindow;
 	mobile;
 
 	constructor(glWindow) {
 		this.#loaded = false;
 		this.#socket = null;
-		this.#loadingp = document.querySelector("#loading-p");
-		this.#uiwrapper = document.querySelector("#ui-wrapper");
+		this.#loadingText = document.querySelector("#loading-p");
+		this.#uiWrapper = document.querySelector("#ui-wrapper");
 		this.#glWindow = glWindow;
 		this.mobile = 'ontouchstart' in document.documentElement;
 	}
 
 	initConnection() {
-		this.#loadingp.innerHTML = "Connexion en cours";
+		this.#loadingText.innerHTML = "Connexion en cours";
 		if(this.mobile) document.body.classList.add("read-only");
 
 		let host, wsProt, httpProt;
@@ -34,7 +34,7 @@ class Place {
 		}
 
 		this.#connect(wsProt + host + "/ws");
-		this.#loadingp.innerHTML = "Téléchargement de la carte";
+		this.#loadingText.innerHTML = "Téléchargement de la carte";
 
 		fetch(httpProt + host + "/place.png")
 		.then(async resp => {
@@ -47,13 +47,13 @@ class Place {
 			await this.#setImage(buf);
 
 			this.#loaded = true;
-			this.#loadingp.innerHTML = "";
-			this.#uiwrapper.setAttribute("hide", true);
+			this.#loadingText.innerHTML = "";
+			this.#uiWrapper.setAttribute("hide", true);
 		});
 	}
 
 	async #downloadProgress(resp) {
-		let len = resp.headers.get("Content-Length");
+		let len = parseInt(resp.headers.get("Content-Length"));
 		let a = new Uint8Array(len);
 		let pos = 0;
 		let reader = resp.body.getReader();
@@ -62,7 +62,7 @@ class Place {
 			if (value) {
 				a.set(value, pos);
 				pos += value.length;
-				this.#loadingp.innerHTML = "Téléchargement de la carte (" + Math.round(pos/len*100) + "%)";
+				this.#loadingText.innerHTML = "Téléchargement de la carte (" + Math.round(pos/len*100) + "%)";
 			}
 			if(done) break;
 		}
@@ -73,18 +73,18 @@ class Place {
 		this.#socket = new WebSocket(path);
 
 		const socketMessage = async (event) => {
-			let b = await event.data.arrayBuffer();
-    		this.#handleSocketSetPixel(b);
+    		this.#handleSocketSetPixel(event.data);
 		};
 
-		const socketClose = (event) => {
+		const socketClose = () => {
 			this.#socket = null;
 		};
 
-		const socketError = (event) => {
-			console.error("Error making WebSocket connection.");
+		const socketError = (error) => {
+			console.error("Error making WebSocket connection.", error);
 			alert("Erreur de connexion");
 			this.#socket.close();
+			this.#socket = null;
 		};
 
 		this.#socket.addEventListener("message", socketMessage);
@@ -92,15 +92,24 @@ class Place {
 		this.#socket.addEventListener("error", socketError);
 	}
 
+	/**
+	 * @param {int} x X coordinate
+	 * @param {int} y Y coordinate
+	 * @param {Uint8Array} color Pixel color
+	 */
 	setPixel(x, y, color) {
-		if (this.#socket != null && this.#socket.readyState == 1) {
-			let b = new Uint8Array(11);
-			this.#putUint32(b.buffer, 0, x);
-			this.#putUint32(b.buffer, 4, y);
-			for (let i = 0; i < 3; i++) {
-				b[8+i] = color[i];
-			}
-			this.#socket.send(b);
+		if (this.#socket != null && this.#socket.readyState === 1) {
+			const data = {
+				"x": x,
+				"y": y,
+				"color": {
+					"R" : color[0],
+					"G" : color[1],
+					"B" : color[2],
+					"A" : 255
+				}
+			};
+			this.#socket.send(JSON.stringify(data));
 			this.#glWindow.setPixelColor(x, y, color);
 			this.#glWindow.draw();
 		} else {
@@ -111,9 +120,15 @@ class Place {
 
 	#handleSocketSetPixel(b) {
 		if (this.#loaded) {
-			let x = this.#getUint32(b, 0);
-			let y = this.#getUint32(b, 4);
-			let color = new Uint8Array(b.slice(8));
+			const data = JSON.parse(b);
+			let x = data["x"];
+			let y = data["y"];
+			let color = new Uint8Array(4);
+			color[0] = data["color"]["R"];
+			color[1] = data["color"]["G"];
+			color[2] = data["color"]["B"];
+			color[3] = data["color"]["A"];
+			console.log(data, x, y, color);
 			this.#glWindow.setPixelColor(x, y, color);
 			this.#glWindow.draw();
 		}
@@ -122,8 +137,7 @@ class Place {
 	async #setImage(data) {
 		let img = new Image()
 		let blob = new Blob([data], {type : "image/png"});
-		let blobUrl = URL.createObjectURL(blob);
-		img.src = blobUrl;
+		img.src = URL.createObjectURL(blob);
 		let promise = new Promise((resolve, reject) => {
 			img.onload = () => {
 				this.#glWindow.setTexture(img);

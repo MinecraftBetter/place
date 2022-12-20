@@ -2,7 +2,6 @@ package place
 
 import (
 	"bytes"
-	"encoding/binary"
 	"errors"
 	"fmt"
 	"image/color"
@@ -30,11 +29,17 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+type PixelColor struct {
+	X     int         `json:"x"`
+	Y     int         `json:"y"`
+	Color color.NRGBA `json:"color"`
+}
+
 type Server struct {
 	sync.RWMutex
-	msgs    chan []byte
+	msgs    chan PixelColor
 	close   chan int
-	clients []chan []byte
+	clients []chan PixelColor
 	img     draw.Image
 	imgBuf  []byte
 }
@@ -42,9 +47,9 @@ type Server struct {
 func NewServer(img draw.Image, count int) *Server {
 	sv := &Server{
 		RWMutex: sync.RWMutex{},
-		msgs:    make(chan []byte),
+		msgs:    make(chan PixelColor),
 		close:   make(chan int),
-		clients: make([]chan []byte, count),
+		clients: make([]chan PixelColor, count),
 		img:     img,
 	}
 	go sv.broadcastLoop()
@@ -96,7 +101,7 @@ func (sv *Server) HandleSocket(w http.ResponseWriter, req *http.Request) {
 		log.Println(err)
 		return
 	}
-	ch := make(chan []byte, 8)
+	ch := make(chan PixelColor)
 	sv.clients[i] = ch
 	go sv.readLoop(conn, i)
 	go sv.writeLoop(conn, ch)
@@ -112,7 +117,7 @@ func (sv *Server) getConnIndex() int {
 }
 
 func rateLimiter() func() bool {
-	const rate = 80   // per second average
+	const rate = 80  // per second average
 	const min = 0.01 // kick threshold
 
 	// Minimum time difference between messages
@@ -139,7 +144,8 @@ func rateLimiter() func() bool {
 func (sv *Server) readLoop(conn *websocket.Conn, i int) {
 	limiter := rateLimiter()
 	for {
-		_, p, err := conn.ReadMessage()
+		var p PixelColor
+		err := conn.ReadJSON(&p)
 		if err != nil {
 			break
 		}
@@ -155,10 +161,10 @@ func (sv *Server) readLoop(conn *websocket.Conn, i int) {
 	sv.close <- i
 }
 
-func (sv *Server) writeLoop(conn *websocket.Conn, ch chan []byte) {
+func (sv *Server) writeLoop(conn *websocket.Conn, ch chan PixelColor) {
 	for {
 		if p, ok := <-ch; ok {
-			conn.WriteMessage(websocket.BinaryMessage, p)
+			conn.WriteJSON(p)
 		} else {
 			break
 		}
@@ -166,11 +172,11 @@ func (sv *Server) writeLoop(conn *websocket.Conn, ch chan []byte) {
 	conn.Close()
 }
 
-func (sv *Server) handleMessage(p []byte) error {
-	if !sv.setPixel(parseEvent(p)) {
+func (sv *Server) handleMessage(response PixelColor) error {
+	if !sv.setPixel(response.X, response.Y, response.Color) {
 		return errors.New("invalid placement")
 	}
-	sv.msgs <- p
+	sv.msgs <- response
 	return nil
 }
 
@@ -218,13 +224,4 @@ func (sv *Server) setPixel(x, y int, c color.Color) bool {
 	sv.img.Set(x, y, c)
 	sv.imgBuf = nil
 	return true
-}
-
-func parseEvent(b []byte) (int, int, color.Color) {
-	if len(b) != 11 {
-		return -1, -1, nil
-	}
-	x := int(binary.BigEndian.Uint32(b))
-	y := int(binary.BigEndian.Uint32(b[4:]))
-	return x, y, color.NRGBA{b[8], b[9], b[10], 0xFF}
 }
