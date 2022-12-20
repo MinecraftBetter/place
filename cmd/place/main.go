@@ -58,10 +58,10 @@ func main() {
 		img = loadImage(loadPath)
 	}
 	placeSv := place.NewServer(img, count)
-	defer ioutil.WriteFile(savePath, placeSv.GetImageBytes(), 0644)
+	defer os.WriteFile(savePath, placeSv.GetImageBytes(), 0644)
 	go func() {
 		for {
-			ioutil.WriteFile(savePath, placeSv.GetImageBytes(), 0644)
+			os.WriteFile(savePath, placeSv.GetImageBytes(), 0644)
 			time.Sleep(time.Second * time.Duration(saveInterval))
 		}
 	}()
