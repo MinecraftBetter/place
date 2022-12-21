@@ -68,19 +68,19 @@ func (sv *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (sv *Server) HandleGetImage(w http.ResponseWriter, _ *http.Request) {
+func (sv *Server) HandleGetImage(w http.ResponseWriter, r *http.Request) {
 	b := sv.GetImageBytes() //not thread safe but it won't do anything bad
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Length", strconv.Itoa(len(b)))
 	w.Header().Set("Cache-Control", "no-cache, no-store")
 	_, err := w.Write(b)
 	if err != nil {
-		log.WithField("endpoint", "Image").Error(err)
+		log.WithField("endpoint", "Image").WithField("ip", r.RemoteAddr).Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-func (sv *Server) HandleGetStat(w http.ResponseWriter, _ *http.Request) {
+func (sv *Server) HandleGetStat(w http.ResponseWriter, r *http.Request) {
 	count := 0
 	for _, ch := range sv.clients {
 		if ch != nil {
@@ -93,12 +93,12 @@ func (sv *Server) HandleGetStat(w http.ResponseWriter, _ *http.Request) {
 		"connections": count,
 	})
 	if err != nil {
-		log.WithField("endpoint", "Stat").Error(err)
+		log.WithField("endpoint", "Stat").WithField("ip", r.RemoteAddr).Error(err)
 		http.Error(w, err.Error(), 500)
 	}
 }
 
-func (sv *Server) HandleSocket(w http.ResponseWriter, req *http.Request) {
+func (sv *Server) HandleSocket(w http.ResponseWriter, r *http.Request) {
 	sv.Lock()
 	defer sv.Unlock()
 	i := sv.getConnIndex()
@@ -107,16 +107,16 @@ func (sv *Server) HandleSocket(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Server full", 509)
 		return
 	}
-	conn, err := upgrader.Upgrade(w, req, nil)
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.WithField("endpoint", "Socket").Error(err)
 		return
 	}
-	log.WithField("endpoint", "Socket").WithField("ip", conn.RemoteAddr().String()).Info("Connected")
+	log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Info("Connected")
 	ch := make(chan PixelColor)
 	sv.clients[i] = ch
-	go sv.readLoop(conn, i)
-	go sv.writeLoop(conn, ch)
+	go sv.readLoop(conn, r, i)
+	go sv.writeLoop(conn, r, ch)
 }
 
 func (sv *Server) getConnIndex() int {
@@ -128,7 +128,7 @@ func (sv *Server) getConnIndex() int {
 	return -1
 }
 
-func (sv *Server) readLoop(conn *websocket.Conn, i int) {
+func (sv *Server) readLoop(conn *websocket.Conn, r *http.Request, i int) {
 	for {
 		var p PixelColor
 		err := conn.ReadJSON(&p)
@@ -136,31 +136,31 @@ func (sv *Server) readLoop(conn *websocket.Conn, i int) {
 		if err != nil {
 			var closeError *websocket.CloseError
 			if errors.As(err, &closeError) {
-				log.WithField("endpoint", "Socket").WithField("ip", conn.RemoteAddr().String()).Info(closeError)
+				log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Info(closeError)
 				break
 			} else {
-				log.WithField("endpoint", "Socket").WithField("ip", conn.RemoteAddr().String()).Error("Error decoding message, ", err)
+				log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Error("Error decoding message, ", err)
 				break
 			}
 		}
 
 		err = sv.handleMessage(p)
 		if err == nil {
-			log.WithField("endpoint", "Socket").WithField("ip", conn.RemoteAddr().String()).Debug("Pixel (" + strconv.Itoa(p.X) + ", " + strconv.Itoa(p.Y) + ") changed to " + toHex(p.Color))
+			log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Debug("Pixel (" + strconv.Itoa(p.X) + ", " + strconv.Itoa(p.Y) + ") changed to " + toHex(p.Color))
 		} else {
-			log.WithField("endpoint", "Socket").WithField("ip", conn.RemoteAddr().String()).Error("Client kicked for bad message", err)
+			log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Error("Client kicked for bad message", err)
 			break
 		}
 	}
 	sv.close <- i
-	log.WithField("endpoint", "Socket").WithField("ip", conn.RemoteAddr().String()).Info("Disconnected")
+	log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Info("Disconnected")
 }
 
 func toHex(c color.NRGBA) string {
 	return fmt.Sprintf("#%02x%02x%02x%02x", c.R, c.G, c.B, c.A)
 }
 
-func (sv *Server) writeLoop(conn *websocket.Conn, ch chan PixelColor) {
+func (sv *Server) writeLoop(conn *websocket.Conn, r *http.Request, ch chan PixelColor) {
 	for {
 		if p, ok := <-ch; ok {
 			err := conn.WriteJSON(p)
@@ -173,7 +173,7 @@ func (sv *Server) writeLoop(conn *websocket.Conn, ch chan PixelColor) {
 	}
 	err := conn.Close()
 	if err != nil {
-		log.WithField("endpoint", "Socket").Error(err)
+		log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Error(err)
 	}
 }
 

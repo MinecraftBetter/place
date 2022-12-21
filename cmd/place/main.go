@@ -6,6 +6,7 @@ import (
 	"flag"
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/mattn/go-colorable"
+	"github.com/sebest/xff"
 	log "github.com/sirupsen/logrus"
 	"image"
 	"image/draw"
@@ -75,10 +76,11 @@ func main() {
 			placeSv.ServeHTTP(w, req)
 		},
 	})
+	xffmw, _ := xff.Default()
 	server := http.Server{
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)), //disable HTTP/2
 		Addr:         port,
-		Handler:      fs,
+		Handler:      xffmw.Handler(fs),
 	}
 	log.Fatal(server.ListenAndServe())
 }
