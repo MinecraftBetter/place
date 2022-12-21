@@ -116,41 +116,11 @@ func (sv *Server) getConnIndex() int {
 	return -1
 }
 
-func rateLimiter() func() bool {
-	const rate = 80  // per second average
-	const min = 0.01 // kick threshold
-
-	// Minimum time difference between messages
-	// Network sometimes delivers two messages in quick succession
-	const minDif = int64(time.Millisecond * 50)
-
-	last := time.Now().UnixNano()
-	var v float32 = 1.0
-	return func() bool {
-		now := time.Now().UnixNano()
-		dif := now - last
-		if dif < minDif {
-			dif = minDif
-		}
-		v *= float32(rate*dif) / float32(time.Second)
-		if v > 1.0 {
-			v = 1.0
-		}
-		last = now
-		return v > min
-	}
-}
-
 func (sv *Server) readLoop(conn *websocket.Conn, i int) {
-	limiter := rateLimiter()
 	for {
 		var p PixelColor
 		err := conn.ReadJSON(&p)
 		if err != nil {
-			break
-		}
-		if !limiter() {
-			log.Println("Client kicked for high rate.")
 			break
 		}
 		if sv.handleMessage(p) != nil {
