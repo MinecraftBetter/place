@@ -1,6 +1,3 @@
-const LOCAL_MODE = false;
-const LOCAL_IP_ADDRESS = "localhost:8080";
-
 class Place {
 	#loaded;
 	#socket;
@@ -22,13 +19,12 @@ class Place {
 		this.#loadingText.innerHTML = "Connexion en cours";
 		if(this.mobile) document.body.classList.add("read-only");
 
-		let host, wsProt, httpProt;
-		if (LOCAL_MODE) {
-			host = LOCAL_IP_ADDRESS;
+		let host = window.location.host;
+		let wsProt, httpProt;
+		if (window.location.protocol === "http:") {
 			wsProt = "ws://";
 			httpProt = "http://";
 		} else {
-			host = window.location.hostname;
 			wsProt = "wss://";
 			httpProt = "https://";
 		}
@@ -148,15 +144,5 @@ class Place {
 			img.onerror = reject;
 		});
 		await promise;
-	}
-
-	#putUint32(b, offset, n) {
-    	let view = new DataView(b);
-    	view.setUint32(offset, n, false);
-	}
-
-	#getUint32(b, offset) {
-		let view = new DataView(b);
-		return view.getUint32(offset, false);
 	}
 }
