@@ -87,7 +87,15 @@ func (sv *Server) HandleGetStat(w http.ResponseWriter, _ *http.Request) {
 			count++
 		}
 	}
-	fmt.Fprint(w, count)
+
+	w.Header().Set("Content-Type", "application/json")
+	err := json.NewEncoder(w).Encode(map[string]interface{}{
+		"connections": count,
+	})
+	if err != nil {
+		log.WithField("endpoint", "Stat").Error(err)
+		http.Error(w, err.Error(), 500)
+	}
 }
 
 func (sv *Server) HandleSocket(w http.ResponseWriter, req *http.Request) {
