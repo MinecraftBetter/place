@@ -2,11 +2,14 @@ package main
 
 import (
 	"crypto/tls"
+	"errors"
 	"flag"
+	nested "github.com/antonfisher/nested-logrus-formatter"
+	"github.com/mattn/go-colorable"
+	log "github.com/sirupsen/logrus"
 	"image"
 	"image/draw"
 	"image/png"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -19,7 +22,6 @@ var port string
 var root string
 var loadPath string
 var savePath string
-var logPath string
 var width int
 var height int
 var count int
@@ -30,33 +32,36 @@ func init() {
 	flag.StringVar(&root, "root", "./web/root", "The directory serving files.")
 	flag.StringVar(&loadPath, "load", "", "The png to load as the canvas.")
 	flag.StringVar(&savePath, "save", "./place.png", "The path to save the canvas.")
-	flag.StringVar(&logPath, "log", "place.log", "The log file to write to.")
 	flag.IntVar(&width, "width", 1024, "The width to create the canvas.")
 	flag.IntVar(&height, "height", 1024, "The height to create the canvas.")
 	flag.IntVar(&count, "count", 64, "The maximum number of connections.")
-	flag.IntVar(&saveInterval, "sinterval", 180, "Save interval in seconds.")
+	flag.IntVar(&saveInterval, "saveInterval", 180, "Save interval in seconds.")
 }
 
 func main() {
 	flag.Parse()
-	if logPath != "" {
-		f, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer f.Close()
-		log.SetOutput(f)
+
+	// Logging
+	log.SetFormatter(&nested.Formatter{
+		HideKeys: true,
+	})
+	log.SetLevel(log.DebugLevel)
+	log.SetOutput(colorable.NewColorableStdout())
+
+	// Load image
+	var img draw.Image = nil
+	if loadPath != "" {
+		img = loadImage(loadPath)
 	}
-	var img draw.Image
-	if loadPath == "" {
+	if img == nil {
 		nrgba := image.NewNRGBA(image.Rect(0, 0, width, height))
 		for i := range nrgba.Pix {
 			nrgba.Pix[i] = 255
 		}
 		img = nrgba
-	} else {
-		img = loadImage(loadPath)
 	}
+
+	// Start the place server
 	placeSv := place.NewServer(img, count)
 	defer os.WriteFile(savePath, placeSv.GetImageBytes(), 0644)
 	go func() {
@@ -78,20 +83,27 @@ func main() {
 	log.Fatal(server.ListenAndServe())
 }
 
+// Loads an image
 func loadImage(loadPath string) draw.Image {
 	f, err := os.Open(loadPath)
 	defer f.Close()
 	if err != nil {
-		panic(err)
+		if errors.Is(err, os.ErrNotExist) {
+			log.Warning(err)
+			return nil
+		} else {
+			panic(err)
+		}
 	}
-	pngimg, err := png.Decode(f)
+
+	pngImg, err := png.Decode(f)
 	if err != nil {
 		panic(err)
 	}
 
 	// We copy the PNG image into a Bitmap image, which allows us to remove the palette that causes colour problems
-	b := pngimg.Bounds()
+	b := pngImg.Bounds()
 	m := image.NewNRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
-	draw.Draw(m, m.Bounds(), pngimg, b.Min, draw.Src)
+	draw.Draw(m, m.Bounds(), pngImg, b.Min, draw.Src)
 	return m
 }

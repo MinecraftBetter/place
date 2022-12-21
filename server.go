@@ -2,19 +2,18 @@ package place
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gorilla/websocket"
+	log "github.com/sirupsen/logrus"
 	"image/color"
 	"image/draw"
 	"image/png"
-	"log"
 	"net/http"
 	"path"
 	"strconv"
 	"sync"
-	"time"
-
-	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{
@@ -24,7 +23,7 @@ var upgrader = websocket.Upgrader{
 		return true
 	},
 	Error: func(w http.ResponseWriter, req *http.Request, status int, err error) {
-		log.Println(err)
+		log.Error(err)
 		http.Error(w, "Error while trying to make websocket connection.", status)
 	},
 }
@@ -65,19 +64,23 @@ func (sv *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	case "ws":
 		sv.HandleSocket(w, req)
 	default:
-		http.Error(w, "Not found.", 404)
+		http.NotFound(w, req)
 	}
 }
 
-func (sv *Server) HandleGetImage(w http.ResponseWriter, req *http.Request) {
+func (sv *Server) HandleGetImage(w http.ResponseWriter, _ *http.Request) {
 	b := sv.GetImageBytes() //not thread safe but it won't do anything bad
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Length", strconv.Itoa(len(b)))
 	w.Header().Set("Cache-Control", "no-cache, no-store")
-	w.Write(b)
+	_, err := w.Write(b)
+	if err != nil {
+		log.WithField("endpoint", "Image").Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
-func (sv *Server) HandleGetStat(w http.ResponseWriter, req *http.Request) {
+func (sv *Server) HandleGetStat(w http.ResponseWriter, _ *http.Request) {
 	count := 0
 	for _, ch := range sv.clients {
 		if ch != nil {
@@ -92,15 +95,16 @@ func (sv *Server) HandleSocket(w http.ResponseWriter, req *http.Request) {
 	defer sv.Unlock()
 	i := sv.getConnIndex()
 	if i == -1 {
-		log.Println("Server full.")
-		http.Error(w, "Server full.", 503)
+		log.WithField("endpoint", "Socket").Warning("Server full")
+		http.Error(w, "Server full", 509)
 		return
 	}
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
-		log.Println(err)
+		log.WithField("endpoint", "Socket").Error(err)
 		return
 	}
+	log.WithField("endpoint", "Socket").WithField("ip", conn.RemoteAddr().String()).Info("Connected")
 	ch := make(chan PixelColor)
 	sv.clients[i] = ch
 	go sv.readLoop(conn, i)
@@ -120,26 +124,49 @@ func (sv *Server) readLoop(conn *websocket.Conn, i int) {
 	for {
 		var p PixelColor
 		err := conn.ReadJSON(&p)
+
 		if err != nil {
-			break
+			var closeError *websocket.CloseError
+			if errors.As(err, &closeError) {
+				log.WithField("endpoint", "Socket").WithField("ip", conn.RemoteAddr().String()).Info(closeError)
+				break
+			} else {
+				log.WithField("endpoint", "Socket").WithField("ip", conn.RemoteAddr().String()).Error("Error decoding message, ", err)
+				break
+			}
 		}
-		if sv.handleMessage(p) != nil {
-			log.Println("Client kicked for bad message.")
+
+		err = sv.handleMessage(p)
+		if err == nil {
+			log.WithField("endpoint", "Socket").WithField("ip", conn.RemoteAddr().String()).Debug("Pixel (" + strconv.Itoa(p.X) + ", " + strconv.Itoa(p.Y) + ") changed to " + toHex(p.Color))
+		} else {
+			log.WithField("endpoint", "Socket").WithField("ip", conn.RemoteAddr().String()).Error("Client kicked for bad message", err)
 			break
 		}
 	}
 	sv.close <- i
+	log.WithField("endpoint", "Socket").WithField("ip", conn.RemoteAddr().String()).Info("Disconnected")
+}
+
+func toHex(c color.NRGBA) string {
+	return fmt.Sprintf("#%02x%02x%02x%02x", c.R, c.G, c.B, c.A)
 }
 
 func (sv *Server) writeLoop(conn *websocket.Conn, ch chan PixelColor) {
 	for {
 		if p, ok := <-ch; ok {
-			conn.WriteJSON(p)
+			err := conn.WriteJSON(p)
+			if err != nil {
+				break
+			}
 		} else {
 			break
 		}
 	}
-	conn.Close()
+	err := conn.Close()
+	if err != nil {
+		log.WithField("endpoint", "Socket").Error(err)
+	}
 }
 
 func (sv *Server) handleMessage(response PixelColor) error {
@@ -177,7 +204,7 @@ func (sv *Server) GetImageBytes() []byte {
 	if sv.imgBuf == nil {
 		buf := bytes.NewBuffer(nil)
 		if err := png.Encode(buf, sv.img); err != nil {
-			log.Println(err)
+			log.Error(err)
 		}
 		sv.imgBuf = buf.Bytes()
 	}
