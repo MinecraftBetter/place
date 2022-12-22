@@ -22,8 +22,8 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
-	Error: func(w http.ResponseWriter, req *http.Request, status int, err error) {
-		log.Error(err)
+	Error: func(w http.ResponseWriter, r *http.Request, status int, err error) {
+		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Get").Error(err)
 		http.Error(w, "Error while trying to make websocket connection.", status)
 	},
 }
@@ -69,20 +69,20 @@ func (sv *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (sv *Server) HandleGetImage(w http.ResponseWriter, r *http.Request) {
-	log.WithField("endpoint", "Image").WithField("ip", r.RemoteAddr).Trace("Image requested")
+	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Image").Trace("Image requested")
 	b := sv.GetImageBytes() //not thread safe but it won't do anything bad
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Length", strconv.Itoa(len(b)))
 	w.Header().Set("Cache-Control", "no-cache, no-store")
 	_, err := w.Write(b)
 	if err != nil {
-		log.WithField("endpoint", "Image").WithField("ip", r.RemoteAddr).Error(err)
+		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Image").Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
 func (sv *Server) HandleGetStat(w http.ResponseWriter, r *http.Request) {
-	log.WithField("endpoint", "Stat").WithField("ip", r.RemoteAddr).Trace("Stats requested")
+	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Stat").Trace("Stats requested")
 	count := 0
 	for _, ch := range sv.clients {
 		if ch != nil {
@@ -95,27 +95,27 @@ func (sv *Server) HandleGetStat(w http.ResponseWriter, r *http.Request) {
 		"connections": count,
 	})
 	if err != nil {
-		log.WithField("endpoint", "Stat").WithField("ip", r.RemoteAddr).Error(err)
+		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Stat").Error(err)
 		http.Error(w, err.Error(), 500)
 	}
 }
 
 func (sv *Server) HandleSocket(w http.ResponseWriter, r *http.Request) {
-	log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Trace("WebSocket requested")
+	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Get").Trace("WebSocket requested")
 	sv.Lock()
 	defer sv.Unlock()
 	i := sv.getConnIndex()
 	if i == -1 {
-		log.WithField("endpoint", "Socket").Warning("Server full")
+		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Get").Warning("Server full")
 		http.Error(w, "Server full", 509)
 		return
 	}
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.WithField("endpoint", "Socket").Error(err)
+		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Get").Error(err)
 		return
 	}
-	log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Info("Connected")
+	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Get").Info("Connected")
 	ch := make(chan PixelColor)
 	sv.clients[i] = ch
 	go sv.readLoop(conn, r, i)
@@ -140,26 +140,26 @@ func (sv *Server) readLoop(conn *websocket.Conn, r *http.Request, i int) {
 			var closeError *websocket.CloseError
 			if _, ok := err.(*websocket.CloseError); ok {
 				if websocket.IsUnexpectedCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-					log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Error("Unexpected close error, ", closeError)
+					log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Error("Unexpected close error, ", closeError)
 				} else {
-					log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Info(closeError)
+					log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Info("Close request received, ", closeError)
 				}
 			} else {
-				log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Error("Error decoding message, ", err)
+				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Error("Error decoding message, ", err)
 			}
 			break
 		}
 
 		err = sv.handleMessage(p)
 		if err == nil {
-			log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Debug("Pixel (" + strconv.Itoa(p.X) + ", " + strconv.Itoa(p.Y) + ") changed to " + toHex(p.Color))
+			log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Debug("Pixel (" + strconv.Itoa(p.X) + ", " + strconv.Itoa(p.Y) + ") changed to " + toHex(p.Color))
 		} else {
-			log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Error("Client kicked for bad message", err)
+			log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Error("Client kicked for bad message", err)
 			break
 		}
 	}
 	sv.close <- i
-	log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Info("Disconnected")
+	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Info("Disconnected")
 }
 
 func toHex(c color.NRGBA) string {
@@ -171,7 +171,7 @@ func (sv *Server) writeLoop(conn *websocket.Conn, r *http.Request, ch chan Pixel
 		if p, ok := <-ch; ok {
 			err := conn.WriteJSON(p)
 			if err != nil {
-				log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Error(err)
+				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Error(err)
 				break
 			}
 		} else {
@@ -180,7 +180,7 @@ func (sv *Server) writeLoop(conn *websocket.Conn, r *http.Request, ch chan Pixel
 	}
 	err := conn.Close()
 	if err != nil {
-		log.WithField("endpoint", "Socket").WithField("ip", r.RemoteAddr).Error(err)
+		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Error(err)
 	}
 }
 

@@ -81,7 +81,7 @@ class Place {
 		};
 
 		const socketError = (error) => {
-			console.error("Error making WebSocket connection.", error);
+			console.error("Error making WebSocket connection", error);
 			this.#socket.close();
 			this.#socket = null;
 			if(i < 3) this.#connect(path, i+1);
