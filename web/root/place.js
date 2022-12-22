@@ -16,7 +16,9 @@ class Place {
 	}
 
 	initConnection() {
+		if(this.#loaded) return;
 		this.#loadingText.innerHTML = "Connexion en cours";
+		this.#uiWrapper.setAttribute("hide", false);
 		if(this.mobile) document.body.classList.add("read-only");
 
 		let host = window.location.host;
@@ -29,7 +31,7 @@ class Place {
 			httpProt = "https://";
 		}
 
-		this.#connect(wsProt + host + "/ws");
+		this.#connect(wsProt + host + "/ws", 0);
 		this.#loadingText.innerHTML = "Téléchargement de la carte";
 
 		fetch(httpProt + host + "/place.png")
@@ -65,22 +67,28 @@ class Place {
 		return a;
 	}
 
-	#connect(path) {
+	#connect(path, i) {
+		if(this.#socket != null) return;
 		this.#socket = new WebSocket(path);
 
 		const socketMessage = async (event) => {
     		this.#handleSocketSetPixel(event.data);
 		};
 
-		const socketClose = () => {
+		const socketClose = (event) => {
+			console.error("The WebSocket has been closed", event);
 			this.#socket = null;
 		};
 
 		const socketError = (error) => {
 			console.error("Error making WebSocket connection.", error);
-			alert("Erreur de connexion");
 			this.#socket.close();
 			this.#socket = null;
+			if(i < 3) this.#connect(path, i+1);
+			else {
+				console.error("Too many failed attempts");
+				alert("La reconnection a échoué un grand nombre de fois, veuillez recharger la page");
+			}
 		};
 
 		this.#socket.addEventListener("message", socketMessage);
@@ -108,9 +116,10 @@ class Place {
 			this.#socket.send(JSON.stringify(data));
 			this.#glWindow.setPixelColor(x, y, color);
 			this.#glWindow.draw();
-		} else {
-			alert("Déconnecté, veuillez rafraichir la page");
-			console.error("Disconnected.");
+		} else if(this.#loaded) {
+			console.warn("Disconnected, trying a new connection");
+			this.#loaded = false;
+			this.initConnection();
 		}
 	}
 
@@ -124,7 +133,6 @@ class Place {
 			color[1] = data["color"]["G"];
 			color[2] = data["color"]["B"];
 			color[3] = data["color"]["A"];
-			console.log(data, x, y, color);
 			this.#glWindow.setPixelColor(x, y, color);
 			this.#glWindow.draw();
 		}
