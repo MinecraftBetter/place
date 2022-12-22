@@ -24,16 +24,20 @@ const GUI = (cvs, glWindow, place) => {
     // Event Listeners
     //
     document.addEventListener("keydown", ev => {
-        switch (ev.keyCode) {
-            case 189:
-            case 173:
+        switch (ev.code) {
+            case "PageDown":
+            case "NumpadSubtract":
                 ev.preventDefault();
                 zoomOut(1.2);
                 break;
-            case 187:
-            case 61:
+            case "PageUp":
+            case "NumpadAdd":
                 ev.preventDefault();
                 zoomIn(1.2);
+                break;
+            case "KeyP":
+                const pos = glWindow.click(lastMovePos);
+                console.log("Current mouse position:", parseInt(pos.x), parseInt(pos.y));
                 break;
         }
     });
