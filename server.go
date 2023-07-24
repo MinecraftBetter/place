@@ -143,7 +143,7 @@ func (sv *Server) readLoop(conn *websocket.Conn, r *http.Request, i int) {
 			err = conn.WriteMessage(websocket.TextMessage, []byte("pong"))
 			continue
 		}
-		if err != nil {
+		if err == nil {
 			err = json.Unmarshal(msg, &p)
 		}
 
