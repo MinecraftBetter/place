@@ -84,15 +84,18 @@ func (sv *Server) HandleGetImage(w http.ResponseWriter, r *http.Request) {
 func (sv *Server) HandleGetStat(w http.ResponseWriter, r *http.Request) {
 	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Stat").Trace("Stats requested")
 	count := 0
+	total := 0
 	for _, ch := range sv.clients {
 		if ch != nil {
 			count++
 		}
+		total++
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(map[string]interface{}{
 		"connections": count,
+		"slots":       total,
 	})
 	if err != nil {
 		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Stat").Error(err)
