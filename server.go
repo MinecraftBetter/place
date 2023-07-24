@@ -170,18 +170,18 @@ func (sv *Server) writeLoop(conn *websocket.Conn, r *http.Request, ch chan Pixel
 	for {
 		if p, ok := <-ch; ok {
 			err := conn.WriteJSON(p)
-			if err != nil {
+			if err == nil {
+				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Debug("Propagated pixel change at " + strconv.Itoa(p.X) + ", " + strconv.Itoa(p.Y))
+			} else {
 				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Error(err)
 				break
 			}
-		} else {
+		} else if ch == nil {
+			log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Warning("Write connection aborted")
 			break
 		}
 	}
-	err := conn.Close()
-	if err != nil {
-		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Error(err)
-	}
+	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Warning("Excited")
 }
 
 func (sv *Server) handleMessage(response PixelColor) error {
@@ -201,14 +201,9 @@ func (sv *Server) broadcastLoop() {
 				sv.clients[i] = nil
 			}
 		case p := <-sv.msgs:
-			for i, ch := range sv.clients {
+			for _, ch := range sv.clients {
 				if ch != nil {
-					select {
-					case ch <- p:
-					default:
-						close(ch)
-						sv.clients[i] = nil
-					}
+					ch <- p
 				}
 			}
 		}
