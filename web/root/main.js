@@ -43,12 +43,13 @@ const GUI = (cvs, glWindow, place) => {
     });
 
     window.addEventListener("wheel", ev => {
+        ev.preventDefault();
         if (ev.deltaY > 0) {
             zoomOut(1.05);
         } else {
             zoomIn(1.05);
         }
-    });
+    }, { passive: false });
 
     document.querySelector("#zoom-in").addEventListener("click", () => {
         zoomIn(1.2);
@@ -164,9 +165,9 @@ const GUI = (cvs, glWindow, place) => {
         "#ff63aa": "rose",
         "#e4abff": "rose clair",
     };
-    console.log(presets);
+    console.debug("color presets", presets);
     Object.entries(presets).forEach(([key, value]) => {
-        var element = document.createElement("button");
+        let element = document.createElement("button");
         colorPreset.appendChild(element);
         element.setAttribute('data-color', key);
         element.setAttribute("title", value);
