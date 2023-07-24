@@ -137,7 +137,15 @@ func (sv *Server) getConnIndex() int {
 func (sv *Server) readLoop(conn *websocket.Conn, r *http.Request, i int) {
 	for {
 		var p PixelColor
-		err := conn.ReadJSON(&p)
+		_, msg, err := conn.ReadMessage()
+		if bytes.Equal(msg, []byte("ping")) {
+			log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Debug("Received ping message")
+			err = conn.WriteMessage(websocket.TextMessage, []byte("pong"))
+			continue
+		}
+		if err != nil {
+			err = json.Unmarshal(msg, &p)
+		}
 
 		if err != nil {
 			var closeError *websocket.CloseError
@@ -148,7 +156,7 @@ func (sv *Server) readLoop(conn *websocket.Conn, r *http.Request, i int) {
 					log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Info("Close request received, ", closeError)
 				}
 			} else {
-				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Error("Error decoding message, ", err)
+				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Error("Error decoding message (", msg, "), ", err)
 			}
 			break
 		}
