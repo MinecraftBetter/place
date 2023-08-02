@@ -8,6 +8,9 @@
           <mappings>
             <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
           </mappings>
+          <excludedPaths>
+            <excludedPath path="/bak" />
+          </excludedPaths>
         </serverdata>
       </paths>
     </serverData>
