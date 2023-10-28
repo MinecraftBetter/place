@@ -1,37 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>BetterPlace</title>
-	<link rel="stylesheet" href="desktop.css" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<link rel="icon" href="/favicon.png">
-	<style>
-		#content-wrapper {
-			text-align: center;
-			color: white;
-			max-height: 100vh;
-			overflow: auto;
-		}
-	</style>
+    <title>BetterPlace</title>
+    <link rel="stylesheet" href="desktop.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link rel="icon" href="/favicon.png">
+    <style>
+        #content-wrapper {
+            text-align: center;
+            color: white;
+            max-height: 100vh;
+            overflow: auto;
+        }
+
+        a {
+            color: wheat;
+        }
+    </style>
 </head>
 <body style="font-family:sans-serif;" class="center-content">
-	<div id="content-wrapper">
-		<h1>Timelapse</h1>
-		<br />
-		<p>1s = 10min</p>
-		<br />
-		<video controls style="max-height: 50vh; max-width: 85vw; width: 85vw;">
-			<source src="timelapse.mp4" type="video/mp4">
-			<p>Votre navigateur ne prend pas en charge les vidéos HTML5.</p>
-		</video>
-		<br />
-		<br />
-		<p style="font-size: 1.1em;">
-			Télécharger
-			<a href="timelapse.mp4" download style="color: wheat;">la vidéo</a>
-			/
-			<a href="archive.zip" download style="color: wheat;">l'archive</a>
-		</p>
-	</div>
+<div id="content-wrapper">
+    <h1>Timelapse</h1>
+    <br/>
+    <video controls style="max-height: 50vh; max-width: 85vw; width: 85vw;">
+        <source src="/timelapse.mp4" type="video/mp4">
+        <p>Votre navigateur ne prend pas en charge les vidéos HTML5.</p>
+    </video>
+    <br/>
+    <br/>
+    <p style="font-size: 1.1em;">
+        Télécharger
+    <ul>
+        <li><a href="/timelapse.mp4" download>La vidéo</a></li>
+        <li>Les archives
+            <ul>
+                <li>
+                    2022 :
+                    <a href="/archives/archive-2022-09.zip" download>Septembre</a>
+                    <a href="/archives/archive-2022-10.zip" download>Octobre</a>
+                    <a href="/archives/archive-2022-11.zip" download>Novembre</a>
+                    <a href="/archives/archive-2022-12.zip" download>Décembre</a>
+                </li>
+                <li>
+                    2023 :
+                    <a href="/archives/archive-2023-01.zip" download>Janvier</a>
+                    <a href="/archives/archive-2023-02.zip" download>Février</a>
+                    <a href="/archives/archive-2023-03.zip" download>Mars</a>
+                    <a href="/archives/archive-2023-04.zip" download>Avril</a>
+                    <a href="/archives/archive-2023-05.zip" download>Mai</a>
+                    <a href="/archives/archive-2023-06.zip" download>Juin</a>
+                    <a href="/archives/archive-2023-07.zip" download>Juillet</a>
+                    <a href="/archives/archive-2023-08.zip" download>Août</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    </p>
+</div>
 </body>
 </html>
