@@ -1,4 +1,5 @@
 #!/bin/bash
+cd /portainer/Files/AppData/Config/rPlace/ || exit
 
 echo "================ Backup ==============="
 mkdir -p "bak/$(date '+%Y-%m')"
@@ -9,7 +10,3 @@ if [[ $(md5sum bak/temp.png | cut -d " " -f 1) != "$lastMd" ]]; then
 	mv bak/temp.png "bak/$(date '+%Y-%m')/$(date '+%Y-%m-%d_%H-%M-%S').png"
 	echo "Backup created"
 fi
-
-echo "============== Timelapse =============="
-./timelapse.sh
-echo "Timelapse generated"
