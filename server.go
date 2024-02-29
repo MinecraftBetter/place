@@ -199,7 +199,7 @@ func (sv *Server) writeLoop(conn *websocket.Conn, r *http.Request, i int) {
 		}
 	}
 
-	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Warning("Excited")
+	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Warning("Exited")
 	err := conn.Close()
 	if err != nil {
 		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Error("Error closing write connection ", err)
