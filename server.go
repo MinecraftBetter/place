@@ -138,27 +138,30 @@ func (sv *Server) readLoop(conn *websocket.Conn, r *http.Request, i int) {
 	for {
 		var p PixelColor
 		_, msg, err := conn.ReadMessage()
-		if bytes.Equal(msg, []byte("ping")) {
-			log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Debug("Received ping message")
-			err = conn.WriteMessage(websocket.TextMessage, []byte("pong"))
-			continue
-		}
 		if err == nil {
-			err = json.Unmarshal(msg, &p)
+			if bytes.Equal(msg, []byte("ping")) {
+				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Debug("Received ping message")
+				err = conn.WriteMessage(websocket.TextMessage, []byte("pong"))
+			} else {
+				err = json.Unmarshal(msg, &p)
+			}
 		}
 
 		if err != nil {
-			var closeError *websocket.CloseError
-			if _, ok := err.(*websocket.CloseError); ok {
+			if _, nok := err.(*websocket.CloseError); nok {
 				if websocket.IsUnexpectedCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-					log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Error("Unexpected close error, ", closeError)
+					log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Error("Unexpected close error, ", err)
 				} else {
-					log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Info("Close request received, ", closeError)
+					log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Info("Close request received, ", err)
 				}
 			} else {
 				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Error("Error decoding message (", msg, "), ", err)
 			}
 			break
+		}
+
+		if p == (PixelColor{}) { // p is "nil"
+			continue
 		}
 
 		err = sv.handleMessage(p)
@@ -192,7 +195,13 @@ func (sv *Server) writeLoop(conn *websocket.Conn, r *http.Request, ch chan Pixel
 			break
 		}
 	}
+
 	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Warning("Excited")
+	err := conn.Close()
+	if err != nil {
+		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Error(err)
+		return
+	}
 }
 
 func (sv *Server) handleMessage(response PixelColor) error {
