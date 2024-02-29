@@ -122,7 +122,7 @@ func (sv *Server) HandleSocket(w http.ResponseWriter, r *http.Request) {
 	ch := make(chan PixelColor)
 	sv.clients[i] = ch
 	go sv.readLoop(conn, r, i)
-	go sv.writeLoop(conn, r, ch)
+	go sv.writeLoop(conn, r, i)
 }
 
 func (sv *Server) getConnIndex() int {
@@ -136,6 +136,7 @@ func (sv *Server) getConnIndex() int {
 
 func (sv *Server) readLoop(conn *websocket.Conn, r *http.Request, i int) {
 	for {
+		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Trace("Waiting for message from ", i)
 		var p PixelColor
 		_, msg, err := conn.ReadMessage()
 		if err == nil {
@@ -180,26 +181,28 @@ func toHex(c color.NRGBA) string {
 	return fmt.Sprintf("#%02x%02x%02x%02x", c.R, c.G, c.B, c.A)
 }
 
-func (sv *Server) writeLoop(conn *websocket.Conn, r *http.Request, ch chan PixelColor) {
+func (sv *Server) writeLoop(conn *websocket.Conn, r *http.Request, i int) {
 	for {
-		if p, ok := <-ch; ok {
+		if sv.clients[i] == nil {
+			log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Warning("Write connection aborted")
+			break
+		}
+		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Trace("Waiting for message to send to ", i)
+		if p, ok := <-sv.clients[i]; ok {
 			err := conn.WriteJSON(p)
 			if err == nil {
 				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Debug("Propagated pixel change at " + strconv.Itoa(p.X) + ", " + strconv.Itoa(p.Y))
 			} else {
-				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Error(err)
+				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Error("Write error ", err)
 				break
 			}
-		} else if ch == nil {
-			log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Warning("Write connection aborted")
-			break
 		}
 	}
 
 	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Warning("Excited")
 	err := conn.Close()
 	if err != nil {
-		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Error(err)
+		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Error("Error closing write connection ", err)
 		return
 	}
 }
