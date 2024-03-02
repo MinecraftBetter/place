@@ -3,7 +3,11 @@ echo "============== Timelapse =============="
 echo "========== Archives =========="
 for month in bak/*/; do
   echo "====== $(basename "$month") ======"
-  zip -jr "web/root/archives/archive-$(basename "$month").zip" "$month" -i "*.png"
+  if [ "$(ls -A "$month")" ]; then
+    zip -jr "web/root/archives/archive-$(basename "$month").zip" "$month" -i "*.png"
+  else
+    echo "Skipping"
+  fi
 done
 echo "========== Video =========="
 echo "====== 1st pass ======"
