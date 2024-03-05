@@ -153,3 +153,9 @@ body.read-only #ui-wrapper #color-wrapper, body.read-only #ui-wrapper #color-pre
 	pointer-events: all;
 	user-select: none;
 }
+
+#grid-wrapper {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+}

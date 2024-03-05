@@ -59,6 +59,11 @@ const GUI = (cvs, glWindow, place) => {
         zoomOut(1.2);
     });
 
+    document.querySelector("#grid-enable").addEventListener("click", () => {
+        glWindow.setGrid(!glWindow.getGrid());
+        glWindow.draw();
+    });
+
     window.addEventListener("resize", ev => {
         glWindow.updateViewScale();
         glWindow.draw();

@@ -26,12 +26,23 @@ const viewportVertexShaderSource = `
 // Paints the texture onto the quad
 //
 const viewportFragmentShaderSource = `
-	precision mediump float;
-	uniform sampler2D tex;
-	varying vec2 uv;
-	void main() {
-		gl_FragColor = texture2D(tex, uv);
-	}
+precision mediump float;
+uniform sampler2D tex;
+uniform vec2 tex_scale;
+uniform vec2 view_scale;
+varying vec2 uv;
+uniform float zoom;
+uniform bool grid;
+
+vec4 color = vec4(.85, .85, .85, 1.);
+
+void main() {
+    if (grid && (mod(uv.x, 1. / tex_scale.x) < .05 / tex_scale.x || mod(uv.y, 1. / tex_scale.y) < .05 / tex_scale.y)) {
+        gl_FragColor = color;
+    } else {
+        gl_FragColor = texture2D(tex, uv);
+    }
+}
 `;
 
 class GLWindow {
@@ -43,9 +54,11 @@ class GLWindow {
 	#texScale;
 	#camPos;
 	#zoom;
+	#grid;
 
 	#u_cam;
 	#u_zoom;
+	#u_grid;
 	#u_tex;
 	#u_view;
 	#a_vert;
@@ -61,6 +74,7 @@ class GLWindow {
 		this.#texScale = {x: 0, y: 0};
 		this.#camPos = {x: 0, y: 0};
 		this.#zoom = 1;
+		this.#grid = false;
 
 		const vertexShader = this.#compileShader(this.#gl.VERTEX_SHADER, viewportVertexShaderSource);
 		const fragmentShader = this.#compileShader(this.#gl.FRAGMENT_SHADER, viewportFragmentShaderSource);
@@ -101,6 +115,7 @@ class GLWindow {
 			this.#zoom = this.#cvs.height / this.#texScale.y;
 		}
 		this.setZoom(this.#zoom);
+		this.setGrid(this.#grid);
 	}
 
 	setPixelColor(x, y, color) {
@@ -139,6 +154,14 @@ class GLWindow {
 
 	getZoom() {
 		return this.#zoom;
+	}
+
+	setGrid(enable) {
+		this.#grid = enable;
+		this.#gl.uniform1f(this.#u_grid, enable);
+	}
+	getGrid() {
+		return this.#grid;
 	}
 
 	updateViewScale() {
@@ -228,5 +251,6 @@ class GLWindow {
 		this.#u_tex = this.#gl.getUniformLocation(this.#program, 'tex_scale');
 		this.#u_view = this.#gl.getUniformLocation(this.#program, 'view_scale');
 		this.#u_zoom = this.#gl.getUniformLocation(this.#program, 'zoom');
+		this.#u_grid = this.#gl.getUniformLocation(this.#program, 'grid');
 	}
 }
