@@ -37,7 +37,16 @@ uniform bool grid;
 vec4 color = vec4(.85, .85, .85, 1.);
 
 void main() {
-    if (grid && (mod(uv.x, 1. / tex_scale.x) < .05 / tex_scale.x || mod(uv.y, 1. / tex_scale.y) < .05 / tex_scale.y)) {
+    vec2 pos = uv * view_scale;
+    vec2 px_size = view_scale / tex_scale;
+    float nbPx = 1.;
+    if(zoom < 20.) nbPx = 2.;
+    if(zoom < 5.) nbPx = 5.;
+    if(zoom < 2.5) nbPx = 15.;
+
+    if (grid
+    && (mod(pos.x, px_size.x * nbPx) < 2. / zoom
+    || mod(pos.y, px_size.y * nbPx) < 2. / zoom)) {
         gl_FragColor = color;
     } else {
         gl_FragColor = texture2D(tex, uv);
