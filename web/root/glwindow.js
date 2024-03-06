@@ -34,15 +34,16 @@ varying vec2 uv;
 uniform float zoom;
 uniform bool grid;
 
-vec4 color = vec4(.85, .85, .85, 1.);
+vec4 color = vec4(.95, .95, .95, 1.);
 
 void main() {
     vec2 pos = uv * view_scale;
     vec2 px_size = view_scale / tex_scale;
     float nbPx = 1.;
-    if(zoom < 20.) nbPx = 2.;
+    if(zoom < 10.) nbPx = 2.;
     if(zoom < 5.) nbPx = 5.;
     if(zoom < 2.5) nbPx = 15.;
+    if(zoom < 1.5) nbPx = 50.;
 
     if (grid
     && (mod(pos.x, px_size.x * nbPx) < 2. / zoom
