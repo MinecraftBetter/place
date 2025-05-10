@@ -1,0 +1,4 @@
+*.mp4
+.git/
+bak/
+*.zip

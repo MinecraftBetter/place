@@ -1,5 +1,10 @@
 #!/bin/bash
+cd /portainer/Files/AppData/Config/rPlace/ || exit
+
 echo "============== Timelapse =============="
+echo "=== Remove corrupted files ==="
+find bak/$(date '+%Y-%m') -name $(date '+%Y-%m-%d')* -type f | xargs -I % sh -c 'identify -verbose % > /dev/null 2>&1; if [ $? -eq 1 ]; then mv % bak/corrupted/; fi'
+find bak/$(date -d "yesterday 13:00" '+%Y-%m') -name $(date -d "yesterday 13:00" '+%Y-%m-%d')* -type f | xargs -I % sh -c 'identify -verbose % > /dev/null 2>&1; if [ $? -eq 1 ]; then mv % bak/corrupted/; fi'
 echo "========== Archives =========="
 for month in bak/*/; do
   echo "====== $(basename "$month") ======"
