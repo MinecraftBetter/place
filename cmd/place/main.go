@@ -13,6 +13,9 @@ import (
 	"image/png"
 	"net/http"
 	"os"
+	"os/signal"
+	"path/filepath"
+	"syscall"
 	"time"
 
 	"github.com/minecraftbetter/place"
@@ -23,20 +26,28 @@ var port string
 var root string
 var loadPath string
 var savePath string
+var ownersPath string
+var dbPath string
 var width int
 var height int
 var count int
 var saveInterval int
+var cooldown time.Duration
+var devAuth bool
 
 func init() {
 	flag.StringVar(&port, "port", ":8080", "The address and port the fileserver listens at.")
 	flag.StringVar(&root, "root", "./web/root", "The directory serving files.")
 	flag.StringVar(&loadPath, "load", "", "The png to load as the canvas.")
 	flag.StringVar(&savePath, "save", "./place.png", "The path to save the canvas.")
+	flag.StringVar(&ownersPath, "owners", "", "The path to save who placed each pixel. (default: owners.bin next to -save)")
+	flag.StringVar(&dbPath, "db", "./betterplace.db", "The SQLite database (accounts, sessions, pixel journal).")
 	flag.IntVar(&width, "width", 1024, "The width to create the canvas.")
 	flag.IntVar(&height, "height", 1024, "The height to create the canvas.")
 	flag.IntVar(&count, "count", 64, "The maximum number of connections.")
 	flag.IntVar(&saveInterval, "saveInterval", 180, "Save interval in seconds.")
+	flag.DurationVar(&cooldown, "cooldown", 5*time.Second, "Delay between two pixels of the same player.")
+	flag.BoolVar(&devAuth, "devAuth", false, "Enable the \"dev\" login provider (fake accounts, no password). Never in production.")
 }
 
 func main() {
@@ -49,46 +60,90 @@ func main() {
 	log.SetLevel(log.DebugLevel)
 	log.SetOutput(colorable.NewColorableStdout())
 
-	// Load image
-	var img draw.Image = nil
-	if loadPath != "" {
-		img = loadImage(loadPath)
-	}
-	if img == nil {
-		nrgba := image.NewNRGBA(image.Rect(0, 0, width, height))
-		for i := range nrgba.Pix {
-			nrgba.Pix[i] = 255
-		}
-		img = nrgba
+	if ownersPath == "" {
+		ownersPath = filepath.Join(filepath.Dir(savePath), "owners.bin")
 	}
 
-	// Start the place server
-	placeSv := place.NewServer(img, count)
-	defer os.WriteFile(savePath, placeSv.GetImageBytes(), 0644)
+	store, err := place.OpenStore(dbPath)
+	if err != nil {
+		log.Fatal("Opening the database: ", err)
+	}
+	if err := store.DeleteExpiredSessions(); err != nil {
+		log.Warning("Cleaning sessions: ", err)
+	}
+
+	// Load image
+	var canvas *place.Canvas
+	if loadPath != "" {
+		if img := loadImage(loadPath); img != nil {
+			canvas = place.NewCanvas(img)
+		}
+	}
+	if canvas == nil {
+		canvas = place.NewBlankCanvas(width, height)
+	}
+	replayed, err := place.RestoreOwners(canvas, store, ownersPath)
+	if err != nil {
+		log.Fatal("Restoring pixel owners: ", err)
+	}
+	if replayed > 0 {
+		log.Info("Replayed ", replayed, " pixels placed after the last save")
+	}
+
+	var providers []place.Provider
+	if devAuth {
+		log.Warning("The \"dev\" login provider is enabled: anyone can log in as anyone.")
+		providers = append(providers, place.DevProvider{})
+	}
+	auth := place.NewAuth(store, providers...)
+	hub := place.NewHub(canvas, store, auth, count, cooldown)
+	placeSv := place.NewServer(canvas, hub)
+
+	// Save periodically and on shutdown
+	save := func() {
+		if err := canvas.SaveFiles(savePath, ownersPath); err != nil {
+			log.Error("Saving the canvas: ", err)
+		}
+	}
 	go func() {
 		for {
-			os.WriteFile(savePath, placeSv.GetImageBytes(), 0644)
+			save()
 			time.Sleep(time.Second * time.Duration(saveInterval))
 		}
 	}()
+	go func() {
+		sig := make(chan os.Signal, 1)
+		signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
+		<-sig
+		log.Info("Shutting down, saving the canvas")
+		save()
+		store.Close()
+		os.Exit(0)
+	}()
+
 	fs := httpfilter.NewServer(root, "", map[string]httpfilter.OpFunc{
 		"place": func(w http.ResponseWriter, req *http.Request, args ...string) {
 			placeSv.ServeHTTP(w, req)
 		},
 	})
+	mux := http.NewServeMux()
+	mux.Handle("/api/", place.NewAPI(canvas, store, auth, hub))
+	mux.Handle("/auth/", auth)
+	mux.Handle("/", fs)
+
 	xffmw, _ := xff.Default()
 	server := http.Server{
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)), //disable HTTP/2
 		Addr:         port,
-		Handler:      xffmw.Handler(fs),
+		Handler:      xffmw.Handler(mux),
 	}
+	log.Info("Listening on ", port)
 	log.Fatal(server.ListenAndServe())
 }
 
 // Loads an image
-func loadImage(loadPath string) draw.Image {
+func loadImage(loadPath string) *image.NRGBA {
 	f, err := os.Open(loadPath)
-	defer f.Close()
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			log.Warning(err)
@@ -97,6 +152,7 @@ func loadImage(loadPath string) draw.Image {
 			panic(err)
 		}
 	}
+	defer f.Close()
 
 	pngImg, err := png.Decode(f)
 	if err != nil {

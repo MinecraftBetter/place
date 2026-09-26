@@ -255,6 +255,9 @@ func writeFileAtomic(path string, data []byte) error {
 	tmp, err := os.CreateTemp(filepath.Dir(path), "."+filepath.Base(path)+".tmp*")
 	if err == nil {
 		_, err = tmp.Write(data)
+		if err == nil {
+			err = tmp.Chmod(0644)
+		}
 		if cerr := tmp.Close(); err == nil {
 			err = cerr
 		}

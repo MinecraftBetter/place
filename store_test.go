@@ -63,14 +63,14 @@ func TestLoginUserCreatesOnceWithUniqueSlug(t *testing.T) {
 
 func TestSlugify(t *testing.T) {
 	cases := map[string]string{
-		"Brindille":         "brindille",
-		"Mamie Pixel":       "mamie-pixel",
-		"  Élodie_Œuvre  ":  "elodie-ouvre",
-		"Zozo42":            "zozo42",
-		"🤠🤠":                "joueur",
-		"a---b":             "a-b",
-		"Lucie_px":          "lucie-px",
-		"x" + string(make([]byte, 0)) + "0123456789012345678901234567890123456789": "x0123456789012345678901234567890",
+		"Brindille":        "brindille",
+		"Mamie Pixel":      "mamie-pixel",
+		"  Élodie_Œuvre  ": "elodie-ouvre",
+		"Zozo42":           "zozo42",
+		"🤠🤠":               "joueur",
+		"a---b":            "a-b",
+		"Lucie_px":         "lucie-px",
+		"x0123456789012345678901234567890123456789": "x0123456789012345678901234567890",
 	}
 	for in, want := range cases {
 		if got := Slugify(in); got != want {

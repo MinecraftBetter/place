@@ -2,6 +2,7 @@
         home holdup.html
         ace desktop.html
         timelapse timelapse.html
+        login login.html
 #place ws
 #place place.png
 #place stat
