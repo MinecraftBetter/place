@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Admin · modération</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 1440px; height: 900px; display: flex">
+<aside style="width: 248px; flex-shrink: 0; border-right: 1px solid var(--line); background: var(--bg-2); display: flex; flex-direction: column; padding: 18px 14px; gap: 18px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 6px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 26px; height: 26px">
+<span class="pixel b" style="font-size: 18px">BetterPlace</span>
+<span class="pill st-neutre">Admin</span>
+</div>
+<nav class="sidenav" style="display: flex; flex-direction: column; gap: 2px" aria-label="Administration">
+<a href="a-dashboard.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>Tableau de bord</a>
+<a href="a-claims.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M5 21V4h11l-2 4 2 4H5"></path></svg>Revendications<span class="count" style="margin-left: auto; background: var(--gold); color: #241604">3</span></a>
+<a href="a-utilisateurs.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="6" y="3" width="7" height="7"></rect><path d="M2 21v-3a4 4 0 0 1 4-4h7a4 4 0 0 1 4 4v3M17 3a4 4 0 0 1 0 8M22 21v-3a4 4 0 0 0-3-3.8"></path></svg>Utilisateurs</a>
+<a href="a-zone.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 3"></rect><path d="M4 12h4M16 12h4"></path></svg>Outil zone</a>
+<a href="a-moderation.dc.html" class="on"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Modération<span class="count" style="margin-left: auto; background: var(--gold); color: #241604">4</span></a>
+<a href="a-journal.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="5" y="3" width="14" height="18"></rect><path d="M9 8h6M9 12h6M9 16h4"></path></svg>Journal</a>
+<a href="a-reglages.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><rect x="14" y="5" width="4" height="4"></rect><rect x="8" y="15" width="4" height="4"></rect></svg>Réglages</a>
+</nav>
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px">
+<div class="card-2" style="padding: 10px 12px; display: flex; flex-direction: column; gap: 4px">
+<span class="fs-cap t2" style="display: flex; align-items: center; gap: 6px"><span class="live"></span>Serveur en ligne</span>
+<span class="fs-cap t3 mono">27 / 64 connexions · sauvegarde il y a 12 s</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 6px">
+<img class="av av-32" src="/_blob/7e0fc904fd2815638f5d4d965a1ab50a" alt="">
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Tiago</span><span class="fs-cap t3">admin</span></span>
+<a class="btn btn-sm btn-icon btn-ghost" href="d-canvas.dc.html" aria-label="Retour au site"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 4H4v16h6M14 8l4 4-4 4M8 12h10"></path></svg></a>
+</div>
+</div>
+</aside>
+<main style="flex-grow: 1; min-width: 0; padding: 26px 32px; display: flex; flex-direction: column; gap: 16px">
+<header style="display: flex; align-items: center; gap: 14px">
+<h1 class="fs-h1" style="flex-grow: 1">Modération</h1>
+<div class="seg" role="group" aria-label="Type"><sc-for list="{{tabs}}" as="t" hint-placeholder-count="4"><button class="{{t.on}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for></div>
+</header>
+<p class="fs-small t2">Contenus signalés par les joueurs ou repérés par le filtre automatique. Les dessins sur le canvas ne passent pas par ici : entre amis, on peut dessiner par-dessus.</p>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="4">
+<article class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px; opacity: {{it.op}}">
+<div style="display: flex; align-items: center; gap: 10px">
+<img class="av av-32" src="{{it.av}}" alt="">
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">{{it.who}}</span><span class="fs-cap t3">{{it.kind}} · {{it.age}}</span></div>
+<span class="pill {{it.srcCls}}">{{it.src}}</span>
+</div>
+<sc-if value="{{it.isImg}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; align-items: center; gap: 14px"><img class="av av-96" src="{{it.img}}" alt="Avatar signalé, flouté" style="filter: blur(6px)"><span class="fs-cap t3 pretty">Image floutée par défaut. Clique pour la voir en entier.</span></div>
+</sc-if>
+<sc-if value="{{it.isText}}" hint-placeholder-val="{{true}}">
+<div class="card-2" style="padding: 10px 12px"><span class="fs-small">« {{it.text}} »</span></div>
+</sc-if>
+<sc-if value="{{it.isSound}}" hint-placeholder-val="{{false}}">
+<div class="card-2" style="padding: 8px 10px; display: flex; align-items: center; gap: 10px"><button class="btn btn-icon btn-round btn-sm" aria-label="Écouter le son"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"></path></svg></button><span class="onde" style="color: var(--text-3)"><span style="height: 6px"></span><span style="height: 14px"></span><span style="height: 9px"></span><span style="height: 18px"></span><span style="height: 12px"></span><span style="height: 7px"></span><span style="height: 15px"></span><span style="height: 10px"></span><span style="height: 5px"></span><span style="height: 13px"></span></span><span class="fs-cap t3 mono">0:24 · 480 Ko</span></div>
+</sc-if>
+<span class="fs-cap t2">{{it.reason}}</span>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<sc-if value="{{it.pending}}" hint-placeholder-val="{{true}}">
+<button class="btn btn-sm" onClick="{{it.keep}}">Garder</button>
+<button class="btn btn-sm" onClick="{{it.hide}}">{{it.hideLabel}}</button>
+<button class="btn btn-sm btn-ghost">Écrire au joueur</button>
+</sc-if>
+<sc-if value="{{it.decided}}" hint-placeholder-val="{{false}}"><span class="pill st-neutre">{{it.decision}}</span><button class="btn btn-sm btn-ghost" onClick="{{it.undo}}">Annuler</button></sc-if>
+</div>
+</article>
+</sc-for>
+</div>
+</main>
+<aside style="width: 320px; flex-shrink: 0; border-left: 1px solid var(--line); padding: 26px 22px; display: flex; flex-direction: column; gap: 14px">
+<span class="fs-h3">Filtre automatique</span>
+<div class="card" style="padding: 2px 12px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line)"><span class="fs-small" style="flex-grow: 1">Mots interdits (pseudos, bios, titres)</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Mots interdits"></button></div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line)"><span class="fs-small" style="flex-grow: 1">Pas de liens dans les bios</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Pas de liens dans les bios"></button></div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line)"><span class="fs-small" style="flex-grow: 1">Avatars : vérification avant publication</span><button class="toggle" aria-pressed="false" aria-label="Vérifier les avatars avant publication"></button></div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 0"><span class="fs-small" style="flex-grow: 1">Sons des musées : validation obligatoire</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Validation des sons"></button></div>
+</div>
+<span class="fs-cap t3 pretty">« Masquer » remplace le contenu par la valeur par défaut (identicon, bio vide, titre « Sans titre ») et prévient le joueur.</span>
+</aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { tab: 0, d: {} }; }
+  renderVals() {
+    const AV = {"Brindille": "/_blob/f341ef9fb793c7257cb54f723280da10", "Kaelen": "/_blob/5d9a3101799969b7e8ff499c137dc669", "Zozo42": "/_blob/e869fcd7638341e8f44d1dfa79b9fc20", "Evan": "/_blob/c266e1d407907a93a6dc2fbd5560c5ab", "Tiago": "/_blob/7e0fc904fd2815638f5d4d965a1ab50a", "Lucie_px": "/_blob/0877ddccb171e78f5bfa6672ce2eb035", "Mamie Pixel": "/_blob/ae4dfc14c12f74add0a65a59f762ca51", "Nyx": "/_blob/bc30bd15326365cf8bb885bc739e1c59", "Poulpe": "/_blob/87121a75678f7bfaed28ff98e79fc01f", "bot_404": "/_blob/56f14b0ba0b26cbc8df201433bc426d6", "Le Grand Sam": "/_blob/ca85503a28c18a13d0d9228ef1330261"};
+    const I = [
+      { k: 1, who: 'bot_404', kind: 'Avatar', age: 'il y a 2 h', src: 'Signalé 3×', srcCls: 'st-conflit', img: AV['bot_404'], reason: 'Signalé par Brindille, Evan et Poulpe : « image choquante ».' },
+      { k: 2, who: 'bot_404', kind: 'Bio', age: 'il y a 2 h', src: 'Filtre auto', srcCls: 'st-info', text: 'achetez des pixels pas chers sur [lien retiré]', reason: 'Lien dans une bio.' },
+      { k: 3, who: 'Zozo42', kind: 'Nom d’œuvre', age: 'hier', src: 'Signalé 1×', srcCls: 'st-attente', text: 'Le musée des blagues (vraiment nulles)', reason: 'Signalé par Kaelen : « pas sympa pour les autres ». Probablement de l’humour.' },
+      { k: 4, who: 'Poulpe', kind: 'Son de musée', age: 'hier', src: 'À valider', srcCls: 'st-attente', sound: true, reason: 'Nouveau son importé pour « Nuit étoilée » : berceuse, 24 s.' }
+    ];
+    const T = ['Tout · 4', 'Avatars · 1', 'Textes · 2', 'Sons · 1'];
+    const st = this.state, D = st.d;
+    const set = (i, v) => () => this.setState({ d: { ...D, [i]: v } });
+    const tabMatch = (it) => st.tab === 0 || (st.tab === 1 && it.k === 1) || (st.tab === 2 && (it.k === 2 || it.k === 3)) || (st.tab === 3 && it.k === 4);
+    return {
+      theme: this.props.theme ?? 'sombre',
+      tabs: T.map((label, i) => ({ label, on: i === st.tab ? 'on' : '', pick: () => this.setState({ tab: i }) })),
+      items: I.map((it, i) => ({ ...it, i })).filter(tabMatch).map(it => ({ ...it, av: AV[it.who], isImg: !!it.img, img: it.img || '', isText: !!it.text, text: it.text || '', isSound: !!it.sound,
+        pending: !D[it.i], decided: !!D[it.i], decision: D[it.i] || '', op: D[it.i] ? '.6' : '1',
+        hideLabel: it.sound ? 'Refuser' : 'Masquer', keep: set(it.i, it.sound ? 'Son validé' : 'Gardé'), hide: set(it.i, it.sound ? 'Son refusé' : 'Masqué · joueur prévenu'), undo: set(it.i, null) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

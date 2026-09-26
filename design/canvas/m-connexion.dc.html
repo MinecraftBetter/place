@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Connexion</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 375px; height: 812px; display: flex; flex-direction: column">
+
+<div class="clip" style="position: relative; height: 250px; flex-shrink: 0">
+<img class="px" src="/_blob/cc413a0d8f0d50bdb65c0368abda34b1" alt="" style="position: absolute; left: -196px; top: 0; width: 768px; height: 256px">
+<a class="btn btn-icon glass" href="m-canvas-invite.dc.html" aria-label="Fermer" style="position: absolute; top: 12px; left: 12px; border-radius: 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+<img src="/_blob/bf33b3cfb8a0e1c819700e44225e8e67" alt="" class="px anim-bob" style="position: absolute; left: 50%; bottom: -34px; margin-left: -40px; width: 80px; height: 138px">
+</div>
+
+<div style="padding: 52px 20px 0; display: flex; flex-direction: column; gap: 22px; flex-grow: 1">
+<div style="display: flex; flex-direction: column; gap: 8px; text-align: center; align-items: center">
+<h1 class="fs-h1">Mets ton chapeau</h1>
+<p class="fs-body t2 pretty">Connecte-toi pour dessiner. Tes pixels porteront ton pseudo.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 12px"><div class="card-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="color: var(--accent-text)"><rect x="7" y="7" width="10" height="10"></rect></svg></div><span class="fs-small">Chaque pixel posé est signé à ton nom</span></div>
+<div style="display: flex; align-items: center; gap: 12px"><div class="card-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="color: var(--accent-text)"><rect x="8" y="3" width="8" height="8"></rect><path d="M4 21v-3a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v3"></path></svg></div><span class="fs-small">Un profil public, tes badges, ton classement</span></div>
+<div style="display: flex; align-items: center; gap: 12px"><div class="card-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><img src="/_blob/23e3f1976500fb6db719239b82a9b6d3" alt="" class="px" style="width: 24px; height: 24px"></div><span class="fs-small">Revendique tes dessins d'avant les comptes</span></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: auto; padding-bottom: 28px">
+<a class="btn btn-primary btn-lg btn-px btn-block" href="m-canvas.dc.html">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 22px; height: 22px">
+Se connecter avec JustBetter</a>
+<a class="btn btn-ghost btn-block" href="m-canvas-invite.dc.html">Continuer en invité</a>
+<p class="fs-cap t3 pretty" style="text-align: center">Ton pseudo et tes pixels sont publics. Tu peux modifier ton profil à tout moment.</p>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":812}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'sombre' }; }
+}
+</script>
+</body>
+</html>

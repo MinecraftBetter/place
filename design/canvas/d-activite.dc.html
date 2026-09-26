@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Activité & revendications</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 1440px; height: 900px; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 12px; padding: 20px 48px">
+<a href="d-accueil.dc.html" style="display: flex; align-items: center; gap: 10px; color: var(--text)"><img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 28px; height: 28px"><span class="pixel" style="font-size: 20px; font-weight: 600">BetterPlace</span></a>
+<nav style="display: flex; gap: 4px; margin-left: 20px" aria-label="Sections">
+<a class="btn btn-sm btn-ghost" href="d-canvas.dc.html">Canvas</a>
+<a class="btn btn-sm btn-ghost" href="d-musee.dc.html">Musée</a>
+<a class="btn btn-sm btn-ghost" href="d-activite.dc.html" style="color: var(--text); background: var(--surface-2)">Activité</a>
+<a class="btn btn-sm btn-ghost" href="d-classement.dc.html">Classement</a>
+<a class="btn btn-sm btn-ghost" href="d-timelapse.dc.html">Timelapse</a>
+</nav>
+<div style="flex-grow: 1"></div>
+<a class="btn btn-sm btn-gold btn-px" href="d-claim.dc.html">Revendiquer une œuvre</a>
+<img class="av av-40" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="Mon profil" style="box-shadow: 0 0 0 2px #ff63aa">
+</header>
+
+<div style="display: grid; grid-template-columns: 400px 560px minmax(0, 1fr); gap: 32px; padding: 4px 48px 0; min-height: 0">
+
+<section style="display: flex; flex-direction: column; gap: 12px; min-height: 0">
+<div style="display: flex; align-items: center; gap: 10px"><h1 class="fs-h2" style="flex-grow: 1">En direct</h1><span class="fs-cap t2" style="display: flex; align-items: center; gap: 6px"><span class="live"></span>27 connectés</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="5"><button class="chip {{f.on}}" onClick="{{f.pick}}" style="cursor: pointer; height: 30px">{{f.label}}</button></sc-for>
+</div>
+<div class="card" style="padding: 6px; display: flex; flex-direction: column">
+<sc-for list="{{items}}" as="e" hint-placeholder-count="9">
+<a href="{{e.href}}" style="display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; color: var(--text); background: {{e.bg}}">
+<img class="{{e.imgCls}}" src="{{e.img}}" alt="" style="width: 32px; height: 32px">
+<span class="fs-small" style="flex-grow: 1; min-width: 0"><b>{{e.who}}</b> <span class="t2">{{e.what}}</span> <b>{{e.target}}</b></span>
+<sc-if value="{{e.hasCoord}}" hint-placeholder-val="{{false}}"><span class="coord">{{e.coord}}</span></sc-if>
+<span class="fs-cap t3 mono" style="white-space: nowrap">{{e.age}}</span>
+</a>
+</sc-for>
+</div>
+<p class="fs-cap t3 pretty">Un clic recentre le canvas à l'endroit concerné. Les petits pixels isolés sont regroupés pour ne pas noyer le fil.</p>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 12px; min-height: 0">
+<div style="display: flex; align-items: center; gap: 10px"><h2 class="fs-h2" style="flex-grow: 1">Revendications</h2>
+<div class="seg" role="group" aria-label="Statut"><sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button class="{{t.on}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for></div>
+</div>
+<sc-for list="{{claims}}" as="c" hint-placeholder-count="3">
+<article class="card" style="padding: 14px; display: flex; gap: 14px; border-color: {{c.border}}">
+<div class="clip" style="position: relative; width: 96px; height: 96px; border-radius: 8px; background: #fff; flex-shrink: 0"><img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: {{c.c.w}}px; height: {{c.c.h}}px; left: {{c.c.l}}px; top: {{c.c.t}}px"></div>
+<div style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1; min-width: 0">
+<div style="display: flex; align-items: center; gap: 8px"><span class="fs-body b" style="flex-grow: 1">{{c.title}}</span><span class="pill {{c.pillCls}}">{{c.pill}}</span></div>
+<div style="display: flex; align-items: center; gap: 8px"><img class="av av-20" src="{{c.av}}" alt=""><span class="fs-cap t2">{{c.by}} · {{c.age}}</span></div>
+<p class="fs-small pretty">« {{c.msg}} »</p>
+<p class="fs-cap t3 pretty">{{c.save}}</p>
+<sc-if value="{{c.open}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; gap: 8px; align-items: center">
+<button class="btn btn-sm {{c.plusCls}}" aria-pressed="{{c.plusAria}}" onClick="{{c.plus}}">Je l'ai vue la faire · {{c.n}}</button>
+<button class="btn btn-sm btn-ghost">Émettre un doute · {{c.d}}</button>
+<a class="btn btn-sm btn-ghost" href="d-canvas.dc.html" style="margin-left: auto">Voir</a>
+</div>
+</sc-if>
+</div>
+</article>
+</sc-for>
+</section>
+
+<aside style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 class="fs-h3">Où ça dessine</h2>
+<div class="clip" style="position: relative; width: 336px; height: 252px; border-radius: 12px; border: 1px solid var(--line)">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Le canvas avec l'activité en cours" style="width: 336px; height: 252px; filter: brightness(.45) saturate(.6)">
+<sc-for list="{{pins}}" as="p" hint-placeholder-count="4">
+<a href="d-canvas.dc.html" aria-label="{{p.label}}" style="position: absolute; left: {{p.x}}px; top: {{p.y}}px; width: 12px; height: 12px; margin: -6px 0 0 -6px">
+<span class="anim-ring-loop" style="position: absolute; inset: 0; border: 2px solid {{p.c}}"></span>
+<span style="position: absolute; inset: 3px; background: {{p.c}}"></span>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 class="fs-h3">Tes alertes</h2>
+<a class="card-2" href="m-alerte.dc.html" style="display: flex; gap: 10px; padding: 10px 12px; color: var(--text); background: var(--info-soft)">
+<img class="av av-32" src="/_blob/e869fcd7638341e8f44d1dfa79b9fc20" alt="">
+<span style="display: flex; flex-direction: column"><span class="fs-small b">Zozo42 a retouché « Bord de mer »</span><span class="fs-cap t3">136 pixels · une pizza dans ton ciel · 4 min</span></span>
+</a>
+<div class="card" style="padding: 2px 12px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line)"><span class="fs-small" style="flex-grow: 1">Quand une de mes œuvres est retouchée</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Alerte de retouche"></button></div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 0"><span class="fs-small" style="flex-grow: 1">Quand un ami ouvre son musée</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Alerte musée d'un ami"></button></div>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { f: 0, tab: 0, plus: {} }; }
+  renderVals() {
+    const A = { brin: '/_blob/f341ef9fb793c7257cb54f723280da10', zozo: '/_blob/e869fcd7638341e8f44d1dfa79b9fc20', lucie: '/_blob/0877ddccb171e78f5bfa6672ce2eb035', mamie: '/_blob/ae4dfc14c12f74add0a65a59f762ca51', kaelen: '/_blob/5d9a3101799969b7e8ff499c137dc669', evan: '/_blob/c266e1d407907a93a6dc2fbd5560c5ab', poulpe: '/_blob/87121a75678f7bfaed28ff98e79fc01f', tiago: '/_blob/7e0fc904fd2815638f5d4d965a1ab50a', pion: '/_blob/23e3f1976500fb6db719239b82a9b6d3', resto: '/_blob/e6c31c8e89df74d7866cbe9e41ad94cb' };
+    const I = [
+      { k: 1, img: A.evan, who: 'Evan', what: 'dessine près de', target: '', coord: '310 · 342', age: '4 s', href: 'd-canvas.dc.html' },
+      { k: 1, img: A.brin, who: 'Brindille', what: 'a posé 12 pixels près de', target: '', coord: '470 · 352', age: '1 min', href: 'd-canvas.dc.html' },
+      { k: 2, img: A.zozo, who: 'Zozo42', what: 'a ajouté une pizza à', target: 'Bord de mer', coord: '330 · 290', age: '4 min', href: 'm-alerte.dc.html', hl: 'info' },
+      { k: 3, img: A.pion, badge: true, who: 'Lucie_px', what: 'devient Pionnière avec', target: 'Dunes au couchant', age: '12 min', href: 'd-oeuvre.dc.html', hl: 'gold' },
+      { k: 2, img: A.mamie, who: 'Mamie Pixel', what: 'expose au musée :', target: 'Sapin de Noël', age: '20 min', href: 'd-musee.dc.html' },
+      { k: 1, img: A.kaelen, who: 'Kaelen', what: 'a posé 48 pixels près de', target: '', coord: '640 · 736', age: '41 min', href: 'd-canvas.dc.html' },
+      { k: 3, img: A.kaelen, who: 'Kaelen', what: 'revendique', target: 'Creeper', age: '2 h', href: 'd-activite.dc.html' },
+      { k: 2, img: A.resto, badge: true, who: 'Brindille', what: 'gagne le badge', target: 'Restaurateur', age: '3 h', href: 'd-profil.dc.html' },
+      { k: 4, img: A.tiago, who: 'Tiago', what: 'a signé le livre d’or du', target: 'musée de Brindille', age: 'hier', href: 'd-musee-perso.dc.html' },
+      { k: 4, img: A.poulpe, who: 'Poulpe', what: 'a ouvert son musée', target: '« Nuit étoilée »', age: 'hier', href: 'd-musee-perso.dc.html' }
+    ];
+    const FL = ['Tout', 'Pixels', 'Œuvres', 'Revendications', 'Musées'];
+    const crop = (z, W, H, pad) => { const s = Math.min(W * pad / z[2], H * pad / z[3]); return { w: Math.round(1024 * s), h: Math.round(768 * s), l: Math.round(-z[0] * s + (W - z[2] * s) / 2), t: Math.round(-z[1] * s + (H - z[3] * s) / 2) }; };
+    const C = [
+      { id: 'laby', tab: 0, title: 'Labyrinthe doré', by: 'Brindille (toi) et Nyx', av: A.brin, z: [257, 505, 64, 88], pill: 'En attente', pillCls: 'st-attente', age: 'il y a 1 min', msg: 'On l’a dessiné avec Nyx pendant la grosse soirée du 2 mars 2024.', save: 'Sauvegardes : premiers pixels le 20 juil. 2023, terminé le 2 mars 2024. Personne d’autre ne le revendique.', n: 0, d: 0 },
+      { id: 'creeper', tab: 0, title: 'Creeper', by: 'Kaelen', av: A.kaelen, z: [178, 238, 22, 22], pill: '2 revendications', pillCls: 'st-conflit', age: 'il y a 2 h', msg: 'Mon tout premier dessin, le soir de l’ouverture.', save: 'Sauvegardes : présent dès le 10 sept. 2022. Zozo42 revendique aussi cette zone.', n: 12, d: 3, warn: true },
+      { id: 'sapin', tab: 0, title: 'Sapin de Noël', by: 'Mamie Pixel', av: A.mamie, z: [980, 415, 44, 90], pill: 'En attente', pillCls: 'st-attente', age: 'hier', msg: 'Je le décore à chaque hiver, avec une nouvelle guirlande.', save: 'Sauvegardes : apparu le 15 déc. 2022, retouché jusqu’en mars 2024.', n: 21, d: 0 },
+      { id: 'drapeau', tab: 1, title: 'Drapeau & baguette', by: 'Tiago et Evan', av: A.tiago, z: [0, 170, 58, 86], pill: 'Validée', pillCls: 'st-valide', age: '15 oct.', msg: 'Le tout premier soir, sur le canvas de 256 pixels.', save: 'Badges : Pionnier, Vétéran 2022, Bâtisseur, Indémodable.', n: 14, d: 0 },
+      { id: 'dunes', tab: 1, title: 'Dunes au couchant', by: 'Lucie_px', av: A.lucie, z: [0, 513, 127, 204], pill: 'Validée', pillCls: 'st-valide', age: '12 oct.', msg: 'Posées le jour où le canvas s’est agrandi, à Noël 2022.', save: 'Badges : Pionnier, Vétéran 2022, Bâtisseur, Indémodable.', n: 9, d: 0 },
+      { id: 'torche', tab: 2, title: 'La grande torche', by: 'bot_404', av: '/_blob/56f14b0ba0b26cbc8df201433bc426d6', z: [928, 512, 28, 46], pill: 'Refusée', pillCls: 'st-refuse', age: '10 oct.', msg: 'C’est moi.', save: 'Attribuée à Poulpe par l’équipe après vérification.', n: 0, d: 7 }
+    ];
+    const f = this.state.f, tab = this.state.tab, P = this.state.plus;
+    const counts = [0, 1, 2].map(k => C.filter(c => c.tab === k).length);
+    const k0 = 336 / 1024;
+    return {
+      theme: this.props.theme ?? 'sombre',
+      filters: FL.map((label, i) => ({ label, on: i === f ? 'chip-on' : '', pick: () => this.setState({ f: i }) })),
+      items: I.filter(e => f === 0 || e.k === f).map(e => ({ ...e, imgCls: e.badge ? 'px' : 'av', hasCoord: !!e.coord, coord: e.coord || '', bg: e.hl === 'gold' ? 'var(--gold-soft)' : (e.hl === 'info' ? 'var(--info-soft)' : 'transparent') })),
+      tabs: ['En cours', 'Validées', 'Refusées'].map((label, i) => ({ label: label + ' · ' + counts[i], on: i === tab ? 'on' : '', pick: () => this.setState({ tab: i }) })),
+      claims: C.filter(c => c.tab === tab).map(c => ({ ...c, open: c.tab === 0, c: crop(c.z, 96, 96, 0.9), n: c.n + (P[c.id] ? 1 : 0), plusCls: P[c.id] ? 'btn-primary' : '', plusAria: P[c.id] ? 'true' : 'false', border: c.warn ? 'color-mix(in srgb, var(--warn) 45%, transparent)' : 'var(--line)', plus: () => this.setState({ plus: { ...P, [c.id]: !P[c.id] } }) })),
+      pins: [[310, 342, '#7eed38', 'Evan dessine ici'], [470, 352, '#ff63aa', 'Brindille dessine ici'], [330, 290, '#5eb3ff', 'Zozo42 a retouché Bord de mer'], [640, 736, '#ffd623', 'Kaelen dessine ici']].map(([x, y, c, label]) => ({ x: Math.round(x * k0), y: Math.round(y * k0), c, label }))
+    };
+  }
+}
+</script>
+</body>
+</html>

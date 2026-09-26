@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Chargement du canvas</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp void" data-theme="{{theme}}" style="width: 375px; height: 812px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; padding: 0 32px">
+
+<div style="position: relative; width: 132px; height: 132px; display: flex; align-items: flex-end; justify-content: center">
+<div style="position: absolute; bottom: 0; width: 132px; height: 10px; background: repeating-linear-gradient(90deg, var(--line-2) 0 6px, transparent 6px 12px)"></div>
+<img src="/_blob/bf33b3cfb8a0e1c819700e44225e8e67" alt="" class="px anim-bob" style="width: 72px; height: 124px; margin-bottom: 8px">
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+<h1 class="fs-h2">{{title}}</h1>
+<p class="fs-small t2">{{sub}}</p>
+</div>
+
+<div style="width: 100%; display: flex; flex-direction: column; gap: 10px">
+<div class="pbar"><div class="pfill" style="width: {{pct}}%"></div></div>
+<div style="display: flex; justify-content: space-between" class="mono fs-small">
+<span class="t3">{{ko}} Ko / 418 Ko</span><span>{{pct}} %</span>
+</div>
+</div>
+
+<div class="card" style="width: 100%; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 10px" class="fs-small">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true" style="color: var(--accent-text)"><path d="M4 12l5 5L20 6"></path></svg>
+<span>Connexion au serveur</span><span class="t3 mono" style="margin-left: auto">42 ms</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px" class="fs-small">
+<sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true" style="color: var(--accent-text)"><path d="M4 12l5 5L20 6"></path></svg>
+</sc-if>
+<sc-if value="{{loading}}" hint-placeholder-val="{{true}}">
+<span class="live" style="background: var(--gold)"></span>
+</sc-if>
+<span>Téléchargement du canvas</span><span class="t3 mono" style="margin-left: auto">1024 × 768</span>
+</div>
+</div>
+
+<sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+<a class="btn btn-primary btn-px btn-block anim-feed" href="m-canvas-invite.dc.html">Entrer</a>
+</sc-if>
+<sc-if value="{{loading}}" hint-placeholder-val="{{true}}">
+<p class="fs-cap t3 pretty" style="text-align: center">Astuce : touche un pixel pour savoir qui l'a posé.</p>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":812}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { pct: 68 }; }
+  componentDidMount() {
+    this.t = setInterval(() => {
+      const p = this.state.pct;
+      if (p >= 100) { clearInterval(this.t); return; }
+      this.setState({ pct: Math.min(100, p + 4) });
+    }, 180);
+  }
+  componentWillUnmount() { clearInterval(this.t); }
+  renderVals() {
+    const pct = this.state.pct, done = pct >= 100;
+    return {
+      theme: this.props.theme ?? 'sombre', pct, done, loading: !done,
+      ko: Math.round(418 * pct / 100),
+      title: done ? 'Canvas prêt' : 'Téléchargement du canvas',
+      sub: done ? 'Tout est chargé. En selle !' : 'Le cowboy récupère les 786 432 pixels…'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Maintenance · desktop</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp void" data-theme="{{theme}}" style="width: 1440px; height: 900px">
+<div style="position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 50% 100%, rgba(240,183,90,.12), transparent 70%)"></div>
+<div style="position: relative; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 0 48px; text-align: center">
+<div style="display: flex; align-items: center; gap: 10px"><img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 28px; height: 28px"><span class="pixel b" style="font-size: 20px">BetterPlace</span></div>
+<div style="position: relative; display: flex; align-items: flex-end; gap: 14px">
+<img class="px anim-bob" src="/_blob/bf33b3cfb8a0e1c819700e44225e8e67" alt="La mascotte cowboy" style="width: 108px; height: 186px">
+<div class="bulle" style="margin-bottom: 156px; font-size: 15px">On bichonne le serveur !</div>
+</div>
+<h1 class="fs-h1" style="font-size: 44px">Maintenance en cours</h1>
+<p class="fs-body t2 pretty" style="max-width: 520px">Le canvas revient vers <b style="color: var(--text)">18:00</b>. Rien n'est perdu : tout a été sauvegardé juste avant.</p>
+<div style="display: flex; flex-direction: column; gap: 8px; width: 420px">
+<div class="pbar"><div class="pfill" style="width: {{pct}}%"></div></div>
+<span class="mono fs-cap t3">nouvel essai automatique dans {{sec}} s</span>
+</div>
+<div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center">
+<a class="btn" href="d-timelapse.dc.html">Revoir la timelapse</a>
+<a class="btn btn-ghost" href="d-musee.dc.html">Visiter le musée</a>
+</div>
+<p class="fs-cap t3" style="position: absolute; bottom: 20px">Fait avec <span style="color: #aa5757">&#10084;&#65038;</span> par Evan et Tiago</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { s: 30 }; }
+  componentDidMount() { this.t = setInterval(() => this.setState({ s: this.state.s > 0 ? this.state.s - 1 : 30 }), 1000); }
+  componentWillUnmount() { clearInterval(this.t); }
+  renderVals() { return { theme: this.props.theme ?? 'sombre', sec: this.state.s, pct: Math.round((30 - this.state.s) / 30 * 100) }; }
+}
+</script>
+</body>
+</html>

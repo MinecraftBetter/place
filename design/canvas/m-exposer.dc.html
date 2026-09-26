@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Exposer mon œuvre</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 375px; height: 1300px; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 8px; padding: 12px 12px 0">
+<a class="btn btn-icon btn-ghost" href="m-musee.dc.html" aria-label="Retour au musée"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<h1 class="fs-h2" style="flex-grow: 1">Exposer une œuvre</h1>
+</header>
+
+<div style="padding: 16px 16px 0; display: flex; flex-direction: column; gap: 24px">
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<span class="fs-over">1 · L'œuvre</span>
+<div style="display: flex; gap: 10px">
+<button class="card-2" style="flex-grow: 1; display: flex; align-items: center; gap: 10px; padding: 10px; border: 2px solid var(--accent); color: var(--text); font: inherit; text-align: left; cursor: pointer">
+<div class="clip" style="position: relative; width: 48px; height: 48px; border-radius: 6px; background: #fff; flex-shrink: 0"><img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: 363px; height: 272px; left: -137px; top: -86px"></div>
+<span class="fs-small b">Bord de mer</span>
+</button>
+<button class="card-2 btn-disabled" disabled style="width: 120px; display: flex; flex-direction: column; justify-content: center; padding: 10px; color: var(--text); font: inherit; text-align: left">
+<span class="fs-small b">Labyrinthe doré</span><span class="fs-cap t3">après validation</span>
+</button>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; justify-content: space-between"><span class="fs-over">2 · Le cadrage</span><span class="mono fs-cap t3">×{{zoomLabel}}</span></div>
+<div class="{{frameCls}}" style="align-self: center">
+<div class="passe"><div class="clip" style="position: relative; width: 297px; height: 190px; background: #fff">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Aperçu du cadrage" style="position: absolute; width: {{c.w}}px; height: {{c.h}}px; left: {{c.l}}px; top: {{c.t}}px">
+</div></div>
+</div>
+<label class="label" for="zoomr">Marge autour de l'œuvre</label>
+<input id="zoomr" type="range" min="50" max="100" value="{{pad}}" onChange="{{setPad}}" style="width: 100%; accent-color: var(--accent)">
+<div class="seg" role="group" aria-label="Cadre" style="align-self: flex-start">
+<sc-for list="{{frames}}" as="f" hint-placeholder-count="3">
+<button class="{{f.on}}" onClick="{{f.pick}}">{{f.label}}</button>
+</sc-for>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<span class="fs-over">3 · La salle</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span class="chip">Pionnières</span><span class="chip chip-on">Paysages</span><span class="chip">Clins d'œil</span><span class="chip">Drapeaux & logos</span><span class="chip">Motifs</span><span class="chip">Monuments</span>
+</div>
+</section>
+
+<section class="field">
+<label class="fs-over" for="mot" style="color: var(--text-3)">4 · Le mot de l'artiste</label>
+<textarea id="mot" class="textarea" style="min-height: 84px">Dessinée en une journée, le 13 septembre 2022. La pizza de Zozo42 est restée, elle fait partie du décor.</textarea>
+<span class="hint">Affiché sur le cartel et pendant la visite guidée · 104 / 160</span>
+</section>
+
+<section class="card" style="padding: 4px 14px">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line)">
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Rejouer la construction</span><span class="fs-cap t3">timelapse de l'œuvre, tiré des sauvegardes</span></div>
+<button class="toggle toggle-on" aria-pressed="true" aria-label="Rejouer la construction"></button>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 0">
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Dans la visite guidée</span><span class="fs-cap t3">la caméra passera par ton œuvre</span></div>
+<button class="toggle toggle-on" aria-pressed="true" aria-label="Inclure dans la visite guidée"></button>
+</div>
+</section>
+
+<sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+<div class="toast anim-feed"><img src="/_blob/6803d1100c44fc8a9af2da77d6e517b2" alt="" class="px anim-pop" style="width: 28px; height: 28px"><div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Exposée dans la salle Paysages</span><span class="fs-cap t3">Visible dans le musée et la visite guidée</span></div><a class="btn btn-sm" href="m-musee.dc.html">Voir</a></div>
+</sc-if>
+<button class="btn btn-primary btn-lg btn-px btn-block" onClick="{{expose}}">Exposer au musée</button>
+<div style="height: 12px"></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":1300}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { pad: 85, frame: 0, done: false }; }
+  renderVals() {
+    const z = [397, 250, 115, 122], W = 297, H = 190, pad = this.state.pad / 100;
+    const s = Math.min(W * pad / z[2], H * pad / z[3]);
+    const c = { w: Math.round(1024 * s), h: Math.round(768 * s), l: Math.round(-z[0] * s + (W - z[2] * s) / 2), t: Math.round(-z[1] * s + (H - z[3] * s) / 2) };
+    const F = [['Bois', 'cadre'], ['Or', 'cadre-or'], ['Sans cadre', '']];
+    return {
+      theme: this.props.theme ?? 'sombre', c, pad: this.state.pad, zoomLabel: s.toFixed(1),
+      setPad: (e) => this.setState({ pad: Number(e.target.value) }),
+      frameCls: F[this.state.frame][1],
+      frames: F.map((f, i) => ({ label: f[0], on: i === this.state.frame ? 'on' : '', pick: () => this.setState({ frame: i }) })),
+      done: this.state.done, expose: () => this.setState({ done: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

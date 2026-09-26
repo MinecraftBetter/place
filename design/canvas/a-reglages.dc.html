@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Admin · réglages</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 1440px; height: 900px; display: flex">
+<aside style="width: 248px; flex-shrink: 0; border-right: 1px solid var(--line); background: var(--bg-2); display: flex; flex-direction: column; padding: 18px 14px; gap: 18px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 6px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 26px; height: 26px">
+<span class="pixel b" style="font-size: 18px">BetterPlace</span>
+<span class="pill st-neutre">Admin</span>
+</div>
+<nav class="sidenav" style="display: flex; flex-direction: column; gap: 2px" aria-label="Administration">
+<a href="a-dashboard.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>Tableau de bord</a>
+<a href="a-claims.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M5 21V4h11l-2 4 2 4H5"></path></svg>Revendications<span class="count" style="margin-left: auto; background: var(--gold); color: #241604">3</span></a>
+<a href="a-utilisateurs.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="6" y="3" width="7" height="7"></rect><path d="M2 21v-3a4 4 0 0 1 4-4h7a4 4 0 0 1 4 4v3M17 3a4 4 0 0 1 0 8M22 21v-3a4 4 0 0 0-3-3.8"></path></svg>Utilisateurs</a>
+<a href="a-zone.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 3"></rect><path d="M4 12h4M16 12h4"></path></svg>Outil zone</a>
+<a href="a-moderation.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Modération<span class="count" style="margin-left: auto; background: var(--gold); color: #241604">4</span></a>
+<a href="a-journal.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="5" y="3" width="14" height="18"></rect><path d="M9 8h6M9 12h6M9 16h4"></path></svg>Journal</a>
+<a href="a-reglages.dc.html" class="on"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><rect x="14" y="5" width="4" height="4"></rect><rect x="8" y="15" width="4" height="4"></rect></svg>Réglages</a>
+</nav>
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px">
+<div class="card-2" style="padding: 10px 12px; display: flex; flex-direction: column; gap: 4px">
+<span class="fs-cap t2" style="display: flex; align-items: center; gap: 6px"><span class="live"></span>Serveur en ligne</span>
+<span class="fs-cap t3 mono">27 / 64 connexions · sauvegarde il y a 12 s</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 6px">
+<img class="av av-32" src="/_blob/7e0fc904fd2815638f5d4d965a1ab50a" alt="">
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Tiago</span><span class="fs-cap t3">admin</span></span>
+<a class="btn btn-sm btn-icon btn-ghost" href="d-canvas.dc.html" aria-label="Retour au site"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 4H4v16h6M14 8l4 4-4 4M8 12h10"></path></svg></a>
+</div>
+</div>
+</aside>
+<main style="flex-grow: 1; min-width: 0; padding: 26px 32px 0; display: flex; flex-direction: column; gap: 18px; position: relative">
+<header style="display: flex; align-items: center; gap: 14px"><h1 class="fs-h1" style="flex-grow: 1">Réglages</h1></header>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+
+<section class="card" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
+<span class="fs-h3">Pose de pixels</span>
+<div class="field">
+<div style="display: flex; justify-content: space-between"><label class="label" for="delai">Délai entre deux pixels</label><span class="mono b">{{delai}} s</span></div>
+<input id="delai" type="range" min="0" max="60" value="{{delai}}" onChange="{{setDelai}}" style="width: 100%; accent-color: var(--accent)">
+<span class="hint">0 s = pas de limite (comme aujourd'hui). Les invités ne peuvent pas dessiner.</span>
+</div>
+<div class="field">
+<div style="display: flex; justify-content: space-between"><label class="label" for="delai2">Nouveaux comptes (première heure)</label><span class="mono b">{{delai2}} s</span></div>
+<input id="delai2" type="range" min="0" max="60" value="{{delai2}}" onChange="{{setDelai2}}" style="width: 100%; accent-color: var(--accent)">
+<span class="hint">Freine les scripts sans gêner les vrais joueurs.</span>
+</div>
+</section>
+
+<section class="card" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
+<span class="fs-h3">Mode du canvas</span>
+<div class="seg" role="group" aria-label="Mode" style="align-self: flex-start"><sc-for list="{{modes}}" as="m" hint-placeholder-count="3"><button class="{{m.on}}" onClick="{{m.pick}}">{{m.label}}</button></sc-for></div>
+<span class="fs-small t2 pretty">{{modeHint}}</span>
+<sc-if value="{{modeMsg}}" hint-placeholder-val="{{false}}">
+<div class="field"><label class="label" for="mmsg">Message affiché</label><input id="mmsg" class="input" value="{{modeText}}"></div>
+<div class="field"><label class="label" for="mfin">Fin prévue</label><input id="mfin" class="input input-mono" value="Aujourd'hui · 18:00"></div>
+</sc-if>
+</section>
+
+<section class="card" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 10px"><span class="fs-h3" style="flex-grow: 1">Bannière d'annonce</span><button class="toggle {{banCls}}" aria-pressed="{{banAria}}" aria-label="Afficher la bannière" onClick="{{toggleBan}}"></button></div>
+<div class="field"><label class="label" for="btxt">Texte</label><input id="btxt" class="input" value="Soirée pixel samedi 21 h : délai réduit à 2 s !"></div>
+<div style="display: flex; gap: 12px">
+<div class="seg" role="group" aria-label="Style"><sc-for list="{{banStyles}}" as="b" hint-placeholder-count="3"><button class="{{b.on}}" onClick="{{b.pick}}">{{b.label}}</button></sc-for></div>
+<input class="input input-mono" aria-label="Période d'affichage" value="17/10 → 19/10" style="width: 170px">
+</div>
+<span class="fs-cap t3">Aperçu</span>
+<div class="card-2" style="overflow: hidden; opacity: {{banOp}}"><div class="banner {{banCls2}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 10v4h4l8 5V5L7 10zM18 9a4 4 0 0 1 0 6"></path></svg><span>Soirée pixel samedi 21 h : délai réduit à 2 s !</span></div></div>
+</section>
+
+<section class="card" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 10px">
+<span class="fs-h3">Serveur et sauvegardes</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div class="field"><label class="label" for="cmax">Connexions max</label><input id="cmax" class="input input-mono" value="64"><span class="hint">option -count</span></div>
+<div class="field"><label class="label" for="sint">Écriture de place.png</label><input id="sint" class="input input-mono" value="30 s"><span class="hint">option -saveInterval</span></div>
+</div>
+<div class="card-2" style="padding: 10px 12px; display: flex; flex-direction: column; gap: 4px">
+<span class="fs-small" style="display: flex; align-items: center; gap: 8px"><span class="live"></span>Sauvegarde minute par minute (backup.sh) · dernière il y a 12 s</span>
+<span class="fs-small t2">Timelapse et archives mensuelles (timelapse.sh) · cette nuit 04:00</span>
+</div>
+</section>
+
+<section class="card" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; grid-column: 1 / 3">
+<div style="display: flex; align-items: center; gap: 10px"><span class="fs-h3">Musées perso</span><span class="bonus">bonus</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+<div style="display: flex; align-items: center; gap: 10px"><span class="fs-small" style="flex-grow: 1">Sons importés validés par l'équipe</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Validation des sons importés"></button></div>
+<div style="display: flex; align-items: center; gap: 10px"><span class="fs-small" style="flex-grow: 1">Commentaire vocal : 30 s max</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Limite du commentaire vocal"></button></div>
+<div style="display: flex; align-items: center; gap: 10px"><span class="fs-small" style="flex-grow: 1">Livre d'or : filtre de mots</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Filtre du livre d'or"></button></div>
+</div>
+</section>
+</div>
+<div class="glass" style="position: sticky; bottom: 0; margin: auto -32px 0; padding: 12px 32px; display: flex; align-items: center; gap: 12px; border-radius: 0; border-width: 1px 0 0">
+<span class="fs-small t2" style="flex-grow: 1">{{dirtyLabel}}</span>
+<button class="btn btn-ghost" onClick="{{reset}}">Annuler</button>
+<button class="btn btn-primary" onClick="{{reset}}">Enregistrer</button>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { delai: 3, delai2: 10, mode: 0, ban: true, bs: 1, dirty: 0 }; }
+  renderVals() {
+    const st = this.state, bump = (o) => this.setState({ ...o, dirty: st.dirty + 1 });
+    const M = [['Normal', 'Tout le monde connecté peut dessiner.'], ['Lecture seule', 'Le canvas reste visible, personne ne peut dessiner. Une bannière explique pourquoi.'], ['Maintenance', 'Le site affiche la page de maintenance avec le cowboy. Les admins gardent l’accès.']];
+    const B = [['Info', 'banner-info'], ['Événement', 'banner-gold'], ['Alerte', 'banner-danger']];
+    return {
+      theme: this.props.theme ?? 'sombre',
+      delai: st.delai, delai2: st.delai2,
+      setDelai: (e) => bump({ delai: Number(e.target.value) }), setDelai2: (e) => bump({ delai2: Number(e.target.value) }),
+      modes: M.map((m, i) => ({ label: m[0], on: i === st.mode ? 'on' : '', pick: () => bump({ mode: i }) })),
+      modeHint: M[st.mode][1], modeMsg: st.mode > 0, modeText: st.mode === 1 ? 'Canvas figé pour le vernissage du musée, retour à 18 h.' : 'On bichonne le serveur, retour vers 18 h !',
+      banCls: st.ban ? 'toggle-on' : '', banAria: st.ban ? 'true' : 'false', banOp: st.ban ? '1' : '.4', toggleBan: () => bump({ ban: !st.ban }),
+      banStyles: B.map((b, i) => ({ label: b[0], on: i === st.bs ? 'on' : '', pick: () => bump({ bs: i }) })), banCls2: B[st.bs][1],
+      dirtyLabel: st.dirty ? st.dirty + ' modification' + (st.dirty > 1 ? 's' : '') + ' non enregistrée' + (st.dirty > 1 ? 's' : '') : 'Tout est enregistré.',
+      reset: () => this.setState({ dirty: 0 })
+    };
+  }
+}
+</script>
+</body>
+</html>

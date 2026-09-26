@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Partager une position</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp void" data-theme="{{theme}}" style="width: 375px; height: 812px">
+
+<div class="clip" style="position: absolute; inset: 0">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: 6144px; height: 4608px; left: -2632px; top: -1500px">
+</div>
+<div class="scrim"></div>
+
+<div class="sheet" style="padding: 0 16px 24px; display: flex; flex-direction: column; gap: 16px">
+<div class="grab"></div>
+<div style="display: flex; align-items: center; justify-content: space-between">
+<h2 class="fs-h2">Partager cette vue</h2>
+<a class="btn btn-icon btn-ghost" href="m-canvas.dc.html" aria-label="Fermer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+</div>
+
+<div class="card-2" style="overflow: hidden; display: flex; flex-direction: column">
+<div class="clip" style="position: relative; height: 150px; background: #fff">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Aperçu de la vue partagée" style="position: absolute; width: 2048px; height: 1536px; left: -739px; top: -547px">
+<div class="reticle" style="left: 197px; top: 49px; width: 10px; height: 10px"></div>
+</div>
+<div style="padding: 12px 14px; display: flex; align-items: center; gap: 10px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 20px; height: 20px">
+<span class="fs-small b" style="flex-grow: 1">BetterPlace · Bord de mer</span>
+<span class="coord">×6</span>
+</div>
+</div>
+
+<div class="field">
+<label class="label" for="lien">Lien</label>
+<div style="display: flex; gap: 8px">
+<input id="lien" class="input input-mono" value="place.justbetter.fr/ace?x=470&amp;y=300&amp;z=6" style="font-size: 13px">
+<button class="btn btn-primary btn-icon" onClick="{{copy}}" aria-label="Copier le lien">
+<sc-if value="{{copied}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></sc-if>
+<sc-if value="{{notCopied}}" hint-placeholder-val="{{true}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="8" y="8" width="12" height="12"></rect><path d="M16 8V4H4v12h4"></path></svg></sc-if>
+</button>
+</div>
+<span class="hint">{{hint}}</span>
+</div>
+
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column"><label class="fs-body" for="zoomt">Inclure le zoom</label><span class="fs-cap t3">sinon le lien ouvre à la vue par défaut</span></div>
+<button id="zoomt" class="toggle toggle-on" aria-pressed="true" aria-label="Inclure le zoom"></button>
+</div>
+
+<button class="btn btn-block">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 13v8h14v-8"></path></svg>
+Partager via…</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":812}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { copied: false }; }
+  renderVals() {
+    const c = this.state.copied;
+    return {
+      theme: this.props.theme ?? 'sombre', copied: c, notCopied: !c,
+      hint: c ? 'Lien copié !' : 'Les URL existantes restent valables : /ace sans paramètre ouvre la vue d’ensemble.',
+      copy: () => this.setState({ copied: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Mon musée · éditeur desktop</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 1440px; height: 900px; display: grid; grid-template-columns: 320px minmax(0, 1fr) 300px; grid-template-rows: 64px minmax(0, 1fr)">
+
+<header style="grid-column: 1 / 4; display: flex; align-items: center; gap: 12px; padding: 0 20px; border-bottom: 1px solid var(--line); background: var(--bg-2)">
+<a class="btn btn-icon btn-ghost" href="d-profil.dc.html" aria-label="Retour au profil"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<img class="av av-32" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">
+<div style="display: flex; flex-direction: column">
+<span class="pixel b" style="font-size: 19px">Le musée de Brindille</span>
+<span class="fs-cap t3">Brouillon enregistré il y a 12 s · 2 salles · 5 œuvres</span>
+</div>
+<div style="flex-grow: 1"></div>
+<button class="btn btn-sm btn-icon btn-ghost" aria-label="Annuler"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3"></path></svg></button>
+<button class="btn btn-sm btn-icon btn-ghost" aria-label="Rétablir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M15 14l5-5-5-5M20 9H9a5 5 0 0 0 0 10h3"></path></svg></button>
+<a class="btn btn-sm" href="d-musee-perso.dc.html">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path><rect x="10" y="10" width="4" height="4"></rect></svg>
+Voir comme un visiteur</a>
+<button class="btn btn-sm btn-primary btn-px" onClick="{{publier}}">{{pubLabel}}</button>
+</header>
+
+<aside style="border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0">
+<div style="padding: 14px 16px 0">
+<div class="seg" role="tablist" aria-label="Réglages du musée" style="width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4"><button role="tab" aria-selected="{{t.aria}}" class="{{t.on}}" onClick="{{t.pick}}" style="padding: 0 6px; justify-content: center">{{t.label}}</button></sc-for>
+</div>
+</div>
+<div style="padding: 18px 16px; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
+
+<sc-if value="{{tAmb}}" hint-placeholder-val="{{true}}">
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Thème</span>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{themes}}" as="x" hint-placeholder-count="5">
+<button onClick="{{x.pick}}" aria-pressed="{{x.aria}}" aria-label="{{x.label}}" style="appearance: none; padding: 0; border: 0; cursor: pointer; display: flex; flex-direction: column; gap: 4px; align-items: center; background: none; color: var(--text); font: inherit">
+<span style="width: 50px; height: 50px; border-radius: 10px; background: {{x.wall}}; box-shadow: inset 0 -12px 0 {{x.floorSolid}}; outline: {{x.ring}}; outline-offset: 2px"></span>
+<span class="fs-cap">{{x.label}}</span>
+</button>
+</sc-for>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span class="label">Couleur des murs</span><button class="btn-ghost fs-cap" onClick="{{wcTheme}}" style="appearance: none; border: 0; background: none; color: var(--accent-text); cursor: pointer; font: inherit; font-size: 12px">Couleur du thème</button></div>
+<div style="display: grid; grid-template-columns: repeat(8, 30px); gap: 6px; justify-content: space-between">
+<sc-for list="{{wallCols}}" as="c" hint-placeholder-count="16"><button class="swatch {{c.sel}}" style="width: 30px; height: 30px; border-radius: 7px; background: {{c.hex}}" aria-label="{{c.name}}" title="{{c.name}}" onClick="{{c.pick}}"></button></sc-for>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Éclairage</span>
+<div class="seg" role="group" aria-label="Éclairage" style="align-self: flex-start"><sc-for list="{{lights}}" as="x" hint-placeholder-count="3"><button class="{{x.on}}" onClick="{{x.pick}}">{{x.label}}</button></sc-for></div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Particules</span>
+<div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{partOpts}}" as="x" hint-placeholder-count="6"><button class="chip {{x.on}}" onClick="{{x.pick}}" style="cursor: pointer; height: 30px">{{x.label}}</button></sc-for></div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Cadres</span>
+<div class="seg" role="group" aria-label="Cadres" style="align-self: flex-start"><sc-for list="{{frames}}" as="x" hint-placeholder-count="4"><button class="{{x.on}}" onClick="{{x.pick}}">{{x.label}}</button></sc-for></div>
+</section>
+</sc-if>
+
+<sc-if value="{{tSon}}" hint-placeholder-val="{{false}}">
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Musique d'ambiance</span>
+<div class="card" style="padding: 4px">
+<sc-for list="{{musics}}" as="x" hint-placeholder-count="4">
+<button onClick="{{x.pick}}" aria-pressed="{{x.aria}}" style="appearance: none; border: 0; width: 100%; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; font: inherit; color: var(--text); cursor: pointer; text-align: left; background: {{x.bg}}">
+<span style="width: 32px; height: 32px; border-radius: 8px; background: var(--surface-3); display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+<sc-if value="{{x.sel}}" hint-placeholder-val="{{false}}"><span class="eq" style="color: var(--accent-text); height: 12px"><span></span><span></span><span></span></span></sc-if>
+<sc-if value="{{x.notSel}}" hint-placeholder-val="{{true}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"></path></svg></sc-if>
+</span>
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">{{x.label}}</span><span class="fs-cap t3">{{x.sub}}</span></span>
+</button>
+</sc-for>
+</div>
+<button class="btn btn-sm btn-ghost" style="align-self: flex-start">+ Importer un son (vérifié par l'équipe)</button>
+</section>
+<section class="field"><label class="label" for="vol">Volume de la musique</label><input id="vol" type="range" min="0" max="100" value="60" style="width: 100%; accent-color: var(--accent)"></section>
+<section class="card" style="padding: 2px 12px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line)"><span class="fs-small" style="flex-grow: 1">Voix des artistes en lecture auto</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Voix des artistes en lecture automatique"></button></div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line)"><span class="fs-small" style="flex-grow: 1">Sons au passage des œuvres</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Sons au passage des œuvres"></button></div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 0"><span class="fs-small" style="flex-grow: 1">Bruit de pas sur le parquet</span><button class="toggle" aria-pressed="false" aria-label="Bruit de pas"></button></div>
+</section>
+</sc-if>
+
+<sc-if value="{{tPar}}" hint-placeholder-val="{{false}}">
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Animation d'entrée</span>
+<div class="seg" role="group" aria-label="Animation d'entrée" style="align-self: flex-start"><sc-for list="{{anims}}" as="x" hint-placeholder-count="3"><button class="{{x.on}}" onClick="{{x.pick}}">{{x.label}}</button></sc-for></div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Parcours</span>
+<div class="seg" role="group" aria-label="Parcours" style="align-self: flex-start"><sc-for list="{{parcours}}" as="x" hint-placeholder-count="2"><button class="{{x.on}}" onClick="{{x.pick}}">{{x.label}}</button></sc-for></div>
+<span class="hint">{{parcoursHint}}</span>
+</section>
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Le guide</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{guides}}" as="g" hint-placeholder-count="3">
+<button onClick="{{g.pick}}" aria-pressed="{{g.aria}}" class="card-2" style="font: inherit; color: var(--text); padding: 8px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; outline: {{g.ring}}; outline-offset: -2px">
+<span style="height: 46px; display: flex; align-items: flex-end"><sc-if value="{{g.hasImg}}" hint-placeholder-val="{{true}}"><img class="px" src="{{g.src}}" alt="" style="width: {{g.w}}px; height: {{g.h}}px"></sc-if></span>
+<span class="fs-cap b">{{g.label}}</span>
+</button>
+</sc-for>
+</div>
+</section>
+<section class="field"><label class="label" for="dphrase">Ce que dit le guide à l'entrée</label><input id="dphrase" class="input" value="Howdy ! Suis-moi, les vagues c'est par là."></section>
+</sc-if>
+
+<sc-if value="{{tAcc}}" hint-placeholder-val="{{false}}">
+<section class="field"><label class="label" for="dnom">Nom du musée</label><input id="dnom" class="input" value="Le musée de Brindille"></section>
+<section class="field"><label class="label" for="dmot">Mot d'accueil</label><textarea id="dmot" class="textarea" style="min-height: 80px">Des vagues, un labyrinthe, et mes coups de cœur. Mettez le son !</textarea></section>
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Qui peut visiter</span>
+<div class="seg" role="group" aria-label="Visibilité" style="align-self: flex-start"><button class="on">Tout le monde</button><button>Amis</button><button>Moi</button></div>
+</section>
+<section class="card" style="padding: 2px 12px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 0"><span class="fs-small" style="flex-grow: 1">Livre d'or ouvert</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Livre d'or ouvert"></button></div>
+</section>
+<section class="field"><span class="label">Lien du musée</span><span class="coord" style="padding: 10px 12px; font-size: 13px">place.justbetter.fr/u/brindille/musee</span></section>
+</sc-if>
+</div>
+</aside>
+
+<main style="display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--bg-2)">
+<div style="padding: 14px 20px 0; display: flex; align-items: center; gap: 8px">
+<sc-for list="{{salles}}" as="s" hint-placeholder-count="2"><button class="chip {{s.on}}" onClick="{{s.pick}}" style="cursor: pointer">{{s.label}}</button></sc-for>
+<button class="chip" style="cursor: pointer; border-style: dashed">+ Salle</button>
+<div style="flex-grow: 1"></div>
+<span class="fs-cap t3" style="display: flex; align-items: center; gap: 6px"><span class="live"></span>aperçu en direct</span>
+</div>
+
+<div style="padding: 12px 20px 0">
+<div class="clip" style="position: relative; height: 560px; border-radius: 16px; background: {{wall}}; border: 1px solid var(--line)">
+<div style="position: absolute; left: 0; right: 0; bottom: 0; height: 96px; background: {{t.floor}}"></div>
+<sc-for list="{{parts}}" as="p" hint-placeholder-count="16"><span class="part {{p.cls}}" style="left: {{p.x}}px; top: {{p.y}}px; width: 4px; height: 4px; background: {{p.c}}; animation-delay: {{p.d}}s"></span></sc-for>
+<div style="position: absolute; left: 0; right: 0; top: 60px; display: flex; justify-content: space-evenly; align-items: flex-start">
+<sc-for list="{{works}}" as="w" hint-placeholder-count="3">
+<button onClick="{{w.pick}}" aria-pressed="{{w.aria}}" aria-label="Sélectionner {{w.title}}" style="appearance: none; border: 0; background: none; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 12px; position: relative; font: inherit">
+<span style="position: absolute; top: -60px; left: 50%; width: 280px; height: 380px; margin-left: -140px; background: {{light}}; pointer-events: none"></span>
+<span class="{{f.cls}}" style="display: block; outline: {{w.ring}}; outline-offset: 6px"><span class="{{f.passe}}" style="display: block"><span class="clip" style="display: block; position: relative; width: {{w.W}}px; height: {{w.H}}px; background: #fff">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: {{w.c.w}}px; height: {{w.c.h}}px; left: {{w.c.l}}px; top: {{w.c.t}}px">
+</span></span></span>
+<span class="cartel" style="background: #f6f0e4; border-color: #d9ccb0; color: #1c1a16; text-align: center; min-width: 150px"><span class="pixel b" style="font-size: 14px">{{w.title}}</span><span class="fs-cap" style="color: #544c40">{{w.perso}}</span></span>
+</button>
+</sc-for>
+</div>
+<sc-if value="{{guideOn}}" hint-placeholder-val="{{true}}">
+<div style="position: absolute; left: 36px; bottom: 58px; display: flex; align-items: flex-end; gap: 10px">
+<img class="px anim-bob" src="{{guideSrc}}" alt="Le guide" style="width: {{guideW}}px; height: {{guideH}}px">
+<div class="bulle" style="margin-bottom: 44px">Howdy ! Suis-moi, les vagues c'est par là.</div>
+</div>
+</sc-if>
+<div class="glass" style="position: absolute; right: 16px; bottom: 16px; border-radius: 999px; padding: 6px 12px; display: flex; align-items: center; gap: 8px; color: #f3efe6">
+<div class="eq" style="color: {{t.accent}}; height: 14px"><span></span><span></span><span></span><span></span></div><span class="fs-cap b">{{musicLabel}}</span>
+</div>
+<span class="pill" style="position: absolute; left: 16px; top: 16px; background: rgba(10,9,8,.72); color: #f3efe6">Entrée : {{animLabel}} · {{parcoursLabel}}</span>
+</div>
+</div>
+
+<div style="padding: 14px 20px; display: flex; align-items: center; gap: 10px">
+<span class="fs-over" style="margin-right: 4px">Ordre</span>
+<sc-for list="{{works}}" as="w" hint-placeholder-count="3">
+<button onClick="{{w.pick}}" class="card-2" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; font: inherit; color: var(--text); cursor: grab; outline: {{w.ring}}; outline-offset: -2px">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="color: var(--text-3)"><path d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"></path></svg>
+<span class="clip" style="position: relative; width: 36px; height: 36px; border-radius: 6px; background: #fff"><img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: {{w.t.w}}px; height: {{w.t.h}}px; left: {{w.t.l}}px; top: {{w.t.t}}px"></span>
+<span class="fs-small b">{{w.title}}</span>
+</button>
+</sc-for>
+<a class="btn btn-sm" href="d-oeuvre.dc.html" style="border-style: dashed">+ Œuvre</a>
+</div>
+</main>
+
+<aside style="border-left: 1px solid var(--line); padding: 18px 16px; display: flex; flex-direction: column; gap: 18px; min-height: 0; overflow: hidden">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span class="fs-over">Œuvre sélectionnée</span>
+<span class="fs-h3">{{sel.title}}</span>
+<span class="fs-cap t3">{{sel.by}}</span>
+</div>
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Animation</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{wanims}}" as="a" hint-placeholder-count="4"><button class="card-2" onClick="{{a.pick}}" aria-pressed="{{a.aria}}" style="font: inherit; color: var(--text); padding: 8px 10px; cursor: pointer; text-align: left; outline: {{a.ring}}; outline-offset: -2px"><span class="fs-cap b">{{a.label}}</span></button></sc-for>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Commentaire vocal</span>
+<div class="card-2" style="padding: 8px 10px; display: flex; align-items: center; gap: 10px">
+<button class="btn btn-icon btn-round" aria-label="Enregistrer un commentaire vocal" style="width: 34px; height: 34px; background: #e0474c; color: #fff; border: 0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="9" y="3" width="6" height="11"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></button>
+<div class="onde" style="color: var(--accent-text); flex-grow: 1"><sc-for list="{{onde}}" as="o" hint-placeholder-count="20"><span style="height: {{o}}px"></span></sc-for></div>
+<span class="mono fs-cap t3">{{sel.voix}}</span>
+</div>
+</section>
+<section class="field"><label class="label" for="dcartel">Texte du cartel</label><textarea id="dcartel" class="textarea" style="min-height: 70px" value="{{sel.mot}}"></textarea></section>
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Son au passage</span>
+<div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{sons}}" as="s" hint-placeholder-count="5"><button class="chip {{s.on}}" onClick="{{s.pick}}" style="cursor: pointer; height: 30px">{{s.label}}</button></sc-for></div>
+</section>
+<section style="display: flex; align-items: center; gap: 10px">
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Œuvre vedette</span><span class="fs-cap t3">seule sous un spot</span></div>
+<button class="toggle {{vedCls}}" aria-pressed="{{vedAria}}" aria-label="Œuvre vedette" onClick="{{ved}}"></button>
+</section>
+</aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { tab: 0, t: 0, wc: -1, l: 0, pt: 1, f: 0, m: 0, a: 0, pc: 1, g: 0, salle: 0, sel: 0, pub: false, wa: {}, son: {}, ved: { 0: true } }; }
+  renderVals() {
+    const st = this.state;
+    const pick = (k, i) => () => this.setState({ [k]: i });
+    const crop = (z, W, H, pad) => { const s = Math.min(W * pad / z[2], H * pad / z[3]); return { w: Math.round(1024 * s), h: Math.round(768 * s), l: Math.round(-z[0] * s + (W - z[2] * s) / 2), t: Math.round(-z[1] * s + (H - z[3] * s) / 2) }; };
+    const T = [
+      { label: 'Marée', wall: 'linear-gradient(180deg, #0a2340, #1c4f7c)', floor: 'repeating-linear-gradient(0deg, #2a1a0f 0 12px, #3a2616 12px 14px)', floorSolid: '#3a2616', accent: '#5eb3ff' },
+      { label: 'Saloon', wall: 'repeating-linear-gradient(90deg, #5a3218 0 18px, #6d3d1e 18px 20px)', floor: 'repeating-linear-gradient(0deg, #2b1a0e 0 12px, #3f2716 12px 14px)', floorSolid: '#2b1a0e', accent: '#f0b75a' },
+      { label: 'Galerie', wall: 'linear-gradient(180deg, #f4f1ea, #e6e0d3)', floor: 'repeating-linear-gradient(0deg, #c9bda5 0 12px, #b8ab91 12px 14px)', floorSolid: '#c9bda5', accent: '#13793a' },
+      { label: 'Étoiles', wall: 'linear-gradient(180deg, #120b2a, #26164f)', floor: 'repeating-linear-gradient(0deg, #0d0a18 0 12px, #1a1430 12px 14px)', floorSolid: '#1a1430', accent: '#e4abff' },
+      { label: 'Désert', wall: 'linear-gradient(180deg, #ff9d5c, #ffd623 70%)', floor: 'repeating-linear-gradient(0deg, #9c451a 0 12px, #6d302f 12px 14px)', floorSolid: '#9c451a', accent: '#6d302f' }
+    ];
+    const WC = [['#000000','noir'],['#333434','gris'],['#d4d7d9','gris clair'],['#6d302f','maron'],['#6d001a','rouge marronâtre'],['#be0027','rouge'],['#ffa800','orange foncé'],['#fff8b8','beige'],['#598d5a','vert foncé foncé'],['#00a344','vert foncé'],['#004b6f','bleu sous marin'],['#009eaa','bleu marin'],['#245aea','bleu ciel'],['#1832a4','ciel violet foncé'],['#511e9f','violet'],['#ff63aa','rose']];
+    const L = [['Spots', 'radial-gradient(ellipse 50% 60% at 50% 0%, rgba(255,236,190,.3), transparent 72%)'], ['Tamisé', 'radial-gradient(ellipse 50% 60% at 50% 0%, rgba(255,236,190,.12), transparent 72%)'], ['Plein jour', 'transparent']];
+    const PT = [['Aucune', null, null], ['Bulles', 'part-monte', '#cfe8ff'], ['Étoiles', 'part-scint', '#fff8b8'], ['Sable', 'part-tombe', '#ffd623'], ['Neige', 'part-tombe', '#ffffff'], ['Confettis', 'part-tombe', 'multi']];
+    const CONF = ['#ff63aa', '#ffd623', '#5eb3ff', '#7eed38', '#ffa800'];
+    const F = [['Or', 'cadre-or', 'passe'], ['Bois', 'cadre', 'passe'], ['Pixel', 'px-corners-s', ''], ['Aucun', '', '']];
+    const M = [['Vagues 8-bit', 'chiptune calme · 1:42'], ['Saloon au piano', 'ragtime · 2:10'], ['Désert de nuit', 'guitare et vent · 2:35'], ['Silence', 'juste les pas des visiteurs']];
+    const A = ['Rideau', 'Vol de caméra', 'Fondu pixel'];
+    const PC = [['Libre', 'Les visiteurs avancent à leur rythme (flèches, glisser).'], ['Visite guidée', 'Le guide avance seul : 8 s par œuvre, 16 s pour une vedette.']];
+    const G = [{ label: 'Le cowboy', src: '/_blob/bf33b3cfb8a0e1c819700e44225e8e67', w: 44, h: 76, sw: 26, sh: 45 }, { label: 'Mon avatar', src: '/_blob/f341ef9fb793c7257cb54f723280da10', w: 56, h: 56, sw: 36, sh: 36 }, { label: 'Aucun', src: '', w: 0, h: 0, sw: 0, sh: 0 }];
+    const WA = ['Aucune', 'Construction', 'Zoom lent', 'Scintille'];
+    const SO = ['Aucun', 'Vague', 'Clochette', 'Pièce 8-bit', 'Mouette'];
+    const SAL = [
+      { label: 'Salle 1 · Mes œuvres', works: [
+        { title: 'Bord de mer', by: 'Brindille · 13 sept. 2022', z: [397, 250, 115, 122], H: 230, voix: '0:18', mot: 'Ma toute première œuvre. La pizza est arrivée plus tard, je l’adore.', wa: 1, son: 1 },
+        { title: 'Labyrinthe doré', by: 'Brindille & Nyx · 2 mars 2024', z: [257, 505, 64, 88], H: 230, voix: '—', mot: 'Une soirée entière à deux sur le même PC.', wa: 3, son: 2 } ] },
+      { label: 'Salle 2 · Coups de cœur', works: [
+        { title: 'Pas vraiment', by: 'Zozo42 · 2023', z: [846, 512, 88, 76], H: 170, voix: '0:09', mot: 'Mon coup de cœur : ça me fait rire à chaque fois.', wa: 0, son: 3 },
+        { title: 'Sapin de Noël', by: 'Mamie Pixel · 2022', z: [980, 415, 44, 90], H: 230, voix: '—', mot: 'Le sapin qui revient chaque hiver.', wa: 3, son: 2 },
+        { title: 'Dunes au couchant', by: 'Lucie_px · 2022', z: [0, 513, 127, 204], H: 230, voix: '—', mot: 'Les couleurs du soir, exactement.', wa: 2, son: 0 } ] }
+    ];
+    const works = SAL[st.salle].works;
+    const selI = Math.min(st.sel, works.length - 1), key = st.salle + '-' + selI;
+    const waOf = (i) => { const k = st.salle + '-' + i; return st.wa[k] ?? works[i].wa; };
+    const soOf = (i) => { const k = st.salle + '-' + i; return st.son[k] ?? works[i].son; };
+    const pt = PT[st.pt], g = G[st.g], sel = works[selI];
+    const vedOn = !!st.ved[st.salle * 10 + selI];
+    return {
+      theme: this.props.theme ?? 'sombre',
+      tabs: ['Ambiance', 'Son', 'Parcours', 'Accueil'].map((label, i) => ({ label, on: i === st.tab ? 'on' : '', aria: i === st.tab ? 'true' : 'false', pick: pick('tab', i) })),
+      tAmb: st.tab === 0, tSon: st.tab === 1, tPar: st.tab === 2, tAcc: st.tab === 3,
+      t: T[st.t], wall: st.wc < 0 ? T[st.t].wall : 'linear-gradient(180deg, ' + WC[st.wc][0] + ', ' + WC[st.wc][0] + 'd0)',
+      themes: T.map((x, i) => ({ ...x, aria: i === st.t ? 'true' : 'false', ring: i === st.t ? '3px solid var(--accent)' : 'none', pick: () => this.setState({ t: i, wc: -1 }) })),
+      wcTheme: pick('wc', -1),
+      wallCols: WC.map((c, i) => ({ hex: c[0], name: c[1], sel: i === st.wc ? 'swatch-sel' : '', pick: pick('wc', i) })),
+      light: L[st.l][1], lights: L.map((x, i) => ({ label: x[0], on: i === st.l ? 'on' : '', pick: pick('l', i) })),
+      parts: pt[1] ? Array.from({ length: 16 }, (_, i) => ({ x: 20 + (i * 67) % 760, y: 20 + (i * 41) % 380, cls: pt[1], c: pt[2] === 'multi' ? CONF[i % 5] : pt[2], d: -(i * 0.45).toFixed(1) })) : [],
+      partOpts: PT.map((x, i) => ({ label: x[0], on: i === st.pt ? 'chip-on' : '', pick: pick('pt', i) })),
+      f: { cls: F[st.f][1], passe: F[st.f][2] }, frames: F.map((x, i) => ({ label: x[0], on: i === st.f ? 'on' : '', pick: pick('f', i) })),
+      musics: M.map((x, i) => ({ label: x[0], sub: x[1], sel: i === st.m, notSel: i !== st.m, aria: i === st.m ? 'true' : 'false', bg: i === st.m ? 'var(--accent-soft)' : 'transparent', pick: pick('m', i) })),
+      musicLabel: M[st.m][0],
+      anims: A.map((x, i) => ({ label: x, on: i === st.a ? 'on' : '', pick: pick('a', i) })), animLabel: A[st.a],
+      parcours: PC.map((x, i) => ({ label: x[0], on: i === st.pc ? 'on' : '', pick: pick('pc', i) })), parcoursHint: PC[st.pc][1], parcoursLabel: PC[st.pc][0].toLowerCase(),
+      guides: G.map((x, i) => ({ ...x, w: x.sw, h: x.sh, hasImg: !!x.src, aria: i === st.g ? 'true' : 'false', ring: i === st.g ? '2px solid var(--accent)' : 'none', pick: pick('g', i) })),
+      guideOn: st.g !== 2, guideSrc: g.src, guideW: g.w, guideH: g.h,
+      salles: SAL.map((s, i) => ({ label: s.label, on: i === st.salle ? 'chip-on' : '', pick: () => this.setState({ salle: i, sel: 0 }) })),
+      works: works.map((w, i) => {
+        const W = Math.round(w.H * w.z[2] / w.z[3]);
+        return { ...w, W, c: crop(w.z, W, w.H, 1), t: crop(w.z, 36, 36, 0.95), perso: [WA[waOf(i)].toLowerCase(), SO[soOf(i)].toLowerCase(), w.voix !== '—' ? 'voix ' + w.voix : null].filter(x => x && x !== 'aucune' && x !== 'aucun').join(' · ') || 'sans effet',
+          aria: i === selI ? 'true' : 'false', ring: i === selI ? '3px solid ' + T[st.t].accent : 'none', pick: pick('sel', i) };
+      }),
+      sel,
+      wanims: WA.map((x, i) => ({ label: x, aria: i === waOf(selI) ? 'true' : 'false', ring: i === waOf(selI) ? '2px solid var(--accent)' : 'none', pick: () => this.setState({ wa: { ...st.wa, [key]: i } }) })),
+      sons: SO.map((x, i) => ({ label: x, on: i === soOf(selI) ? 'chip-on' : '', pick: () => this.setState({ son: { ...st.son, [key]: i } }) })),
+      onde: sel.voix === '—' ? Array(20).fill(3) : [6, 10, 16, 8, 18, 12, 20, 9, 14, 6, 11, 19, 15, 7, 12, 18, 10, 6, 14, 9],
+      vedCls: vedOn ? 'toggle-on' : '', vedAria: vedOn ? 'true' : 'false', ved: () => this.setState({ ved: { ...st.ved, [st.salle * 10 + selI]: !vedOn } }),
+      pubLabel: st.pub ? 'Publié !' : 'Publier', publier: () => this.setState({ pub: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,802 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Main.dc.html": {
+      "h": 1680,
+      "page": "systeme",
+      "title": "Fondations",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "ds-composants.dc.html": {
+      "h": 1880,
+      "is_interactive": true,
+      "page": "systeme",
+      "title": "Composants · 1",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "ds-composants-2.dc.html": {
+      "h": 1880,
+      "page": "systeme",
+      "title": "Composants · 2 & animations",
+      "w": 1440,
+      "x": 3040,
+      "y": 0
+    },
+    "m-accueil.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Accueil",
+      "w": 375,
+      "x": 0,
+      "y": 0
+    },
+    "m-chargement.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Chargement du canvas",
+      "w": 375,
+      "x": 455,
+      "y": 0
+    },
+    "m-canvas-invite.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Canvas · invité",
+      "w": 375,
+      "x": 910,
+      "y": 0
+    },
+    "m-connexion.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Connexion",
+      "w": 375,
+      "x": 1365,
+      "y": 0
+    },
+    "m-canvas.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Canvas · connecté (viser, poser, palette)",
+      "w": 375,
+      "x": 1820,
+      "y": 0
+    },
+    "m-inspecteur.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Inspecteur de pixel",
+      "w": 375,
+      "x": 2275,
+      "y": 0
+    },
+    "m-inspecteur-origine.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Inspecteur · œuvre d'origine",
+      "w": 375,
+      "x": 2730,
+      "y": 0
+    },
+    "m-partage.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Partager une position",
+      "w": 375,
+      "x": 3185,
+      "y": 0
+    },
+    "m-alerte.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Alerte · œuvre retouchée",
+      "w": 375,
+      "x": 3640,
+      "y": 0
+    },
+    "m-musee.dc.html": {
+      "h": 1640,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Le Musée",
+      "w": 375,
+      "x": 0,
+      "y": 1540
+    },
+    "m-visite.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Visite guidée (auto)",
+      "w": 375,
+      "x": 455,
+      "y": 1540
+    },
+    "m-oeuvre.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Page œuvre (cartel)",
+      "w": 375,
+      "x": 910,
+      "y": 1540
+    },
+    "m-exposer.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Exposer mon œuvre",
+      "w": 375,
+      "x": 1365,
+      "y": 1540
+    },
+    "m-musees.dc.html": {
+      "x": 2020,
+      "y": 1540,
+      "w": 375,
+      "h": 1320,
+      "page": "mobile",
+      "title": "Musées des joueurs",
+      "is_interactive": true
+    },
+    "m-musee-perso.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Musée de Brindille (visite)",
+      "w": 375,
+      "x": 2475,
+      "y": 1540
+    },
+    "m-musee-editeur.dc.html": {
+      "h": 2300,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Mon musée · éditeur",
+      "w": 375,
+      "x": 2930,
+      "y": 1540
+    },
+    "m-musee-oeuvre-perso.dc.html": {
+      "x": 3385,
+      "y": 1540,
+      "w": 375,
+      "h": 1480,
+      "page": "mobile",
+      "title": "Personnaliser une œuvre",
+      "is_interactive": true
+    },
+    "m-profil.dc.html": {
+      "h": 1760,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Profil public /u/brindille",
+      "w": 375,
+      "x": 4040,
+      "y": 1540
+    },
+    "m-profil-edition.dc.html": {
+      "h": 1420,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Édition du profil (aperçu en direct)",
+      "w": 375,
+      "x": 4495,
+      "y": 1540
+    },
+    "m-claim-zone.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Revendiquer · 1. zone",
+      "w": 375,
+      "x": 0,
+      "y": 4200
+    },
+    "m-claim-form.dc.html": {
+      "h": 1080,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Revendiquer · 2. détails",
+      "w": 375,
+      "x": 455,
+      "y": 4200
+    },
+    "m-revendications.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Fil des revendications",
+      "w": 375,
+      "x": 910,
+      "y": 4200
+    },
+    "m-activite.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Activité en direct",
+      "w": 375,
+      "x": 1565,
+      "y": 4200
+    },
+    "m-classement.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Classement",
+      "w": 375,
+      "x": 2020,
+      "y": 4200
+    },
+    "m-timelapse.dc.html": {
+      "h": 1080,
+      "is_interactive": true,
+      "page": "mobile",
+      "title": "Timelapse & archives",
+      "w": 375,
+      "x": 2475,
+      "y": 4200
+    },
+    "d-accueil.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Accueil",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "d-canvas-invite.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Canvas · invité",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "d-connexion.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Connexion",
+      "w": 1440,
+      "x": 3040,
+      "y": 0
+    },
+    "d-canvas.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Canvas · connecté + inspecteur au survol",
+      "w": 1440,
+      "x": 4560,
+      "y": 0
+    },
+    "d-musee.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Le Musée",
+      "w": 1440,
+      "x": 0,
+      "y": 1260
+    },
+    "d-visite.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Visite guidée",
+      "w": 1440,
+      "x": 1520,
+      "y": 1260
+    },
+    "d-oeuvre.dc.html": {
+      "h": 1200,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Page œuvre",
+      "w": 1440,
+      "x": 3040,
+      "y": 1260
+    },
+    "d-musee-perso.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Musée de Brindille (visite)",
+      "w": 1440,
+      "x": 4760,
+      "y": 1260
+    },
+    "d-musee-editeur.dc.html": {
+      "x": 6280,
+      "y": 1260,
+      "w": 1440,
+      "h": 900,
+      "page": "desktop",
+      "title": "Mon musée · éditeur (aperçu en direct)",
+      "is_interactive": true
+    },
+    "d-profil.dc.html": {
+      "h": 1640,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Profil public",
+      "w": 1440,
+      "x": 8000,
+      "y": 1260
+    },
+    "d-profil-edition.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Édition du profil",
+      "w": 1440,
+      "x": 9520,
+      "y": 1260
+    },
+    "d-claim.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Revendiquer une œuvre",
+      "w": 1440,
+      "x": 0,
+      "y": 3260
+    },
+    "d-activite.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Activité & revendications",
+      "w": 1440,
+      "x": 1520,
+      "y": 3260
+    },
+    "d-classement.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Classement",
+      "w": 1440,
+      "x": 3040,
+      "y": 3260
+    },
+    "d-timelapse.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "page": "desktop",
+      "title": "Timelapse & archives",
+      "w": 1440,
+      "x": 4560,
+      "y": 3260
+    },
+    "a-dashboard.dc.html": {
+      "h": 1320,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Tableau de bord",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "a-claims.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "File des revendications",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "a-utilisateurs.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Utilisateurs",
+      "w": 1440,
+      "x": 3040,
+      "y": 0
+    },
+    "a-zone.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Outil zone · effacer / restaurer / attribuer",
+      "w": 1440,
+      "x": 4560,
+      "y": 0
+    },
+    "a-moderation.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Modération",
+      "w": 1440,
+      "x": 0,
+      "y": 1440
+    },
+    "a-journal.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Journal admin",
+      "w": 1440,
+      "x": 1520,
+      "y": 1440
+    },
+    "a-reglages.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Réglages",
+      "w": 1440,
+      "x": 3040,
+      "y": 1440
+    },
+    "am-dashboard.dc.html": {
+      "h": 1560,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Tableau de bord · mobile",
+      "w": 375,
+      "x": 0,
+      "y": 2700
+    },
+    "am-claims.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Revendication · mobile",
+      "w": 375,
+      "x": 455,
+      "y": 2700
+    },
+    "am-utilisateurs.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Utilisateurs · mobile",
+      "w": 375,
+      "x": 910,
+      "y": 2700
+    },
+    "e-perdue-m.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "etats",
+      "title": "Connexion perdue",
+      "w": 375,
+      "x": 0,
+      "y": 0
+    },
+    "e-banni-m.dc.html": {
+      "h": 812,
+      "page": "etats",
+      "title": "Compte suspendu",
+      "w": 375,
+      "x": 455,
+      "y": 0
+    },
+    "e-maintenance-m.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "etats",
+      "title": "Maintenance",
+      "w": 375,
+      "x": 910,
+      "y": 0
+    },
+    "e-lecture-seule-m.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "etats",
+      "title": "Lecture seule + annonce",
+      "w": 375,
+      "x": 1365,
+      "y": 0
+    },
+    "e-vides-m.dc.html": {
+      "h": 812,
+      "is_interactive": true,
+      "page": "etats",
+      "title": "Profil vide",
+      "w": 375,
+      "x": 1820,
+      "y": 0
+    },
+    "e-chargement-d.dc.html": {
+      "h": 900,
+      "page": "etats",
+      "title": "Chargement · desktop",
+      "w": 1440,
+      "x": 0,
+      "y": 1172
+    },
+    "e-perdue-d.dc.html": {
+      "h": 900,
+      "page": "etats",
+      "title": "Connexion perdue · desktop",
+      "w": 1440,
+      "x": 1520,
+      "y": 1172
+    },
+    "e-maintenance-d.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "etats",
+      "title": "Maintenance · desktop",
+      "w": 1440,
+      "x": 3040,
+      "y": 1172
+    },
+    "e-vides-d.dc.html": {
+      "h": 1000,
+      "page": "etats",
+      "title": "États vides",
+      "w": 1440,
+      "x": 4560,
+      "y": 1172
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-26T01:20:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "page": "mobile",
+    "view": "canvas"
+  },
+  "notes": {
+    "t-systeme-0-0": {
+      "x": 0,
+      "y": -300,
+      "text": "Design system",
+      "kind": "title1",
+      "maxW": 4480,
+      "page": "systeme"
+    },
+    "t-mobile-0-0": {
+      "x": 0,
+      "y": -300,
+      "text": "Découverte & canvas",
+      "kind": "title1",
+      "maxW": 4015,
+      "page": "mobile"
+    },
+    "t-mobile-1-0": {
+      "x": 0,
+      "y": 1240,
+      "text": "Le Musée",
+      "kind": "title1",
+      "maxW": 1740,
+      "page": "mobile"
+    },
+    "t-mobile-1-1": {
+      "x": 2020,
+      "y": 1240,
+      "text": "Musées perso (bonus)",
+      "kind": "title1",
+      "maxW": 1740,
+      "page": "mobile"
+    },
+    "t-mobile-1-2": {
+      "x": 4040,
+      "y": 1240,
+      "text": "Profil",
+      "kind": "title1",
+      "maxW": 830,
+      "page": "mobile"
+    },
+    "t-mobile-2-0": {
+      "x": 0,
+      "y": 3900,
+      "text": "Revendiquer une œuvre",
+      "kind": "title1",
+      "maxW": 1285,
+      "page": "mobile"
+    },
+    "t-mobile-2-1": {
+      "x": 1565,
+      "y": 3900,
+      "text": "Communauté",
+      "kind": "title1",
+      "maxW": 1285,
+      "page": "mobile"
+    },
+    "t-desktop-0-0": {
+      "x": 0,
+      "y": -300,
+      "text": "Accueil, connexion & canvas",
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "desktop"
+    },
+    "t-desktop-1-0": {
+      "x": 0,
+      "y": 960,
+      "text": "Le Musée",
+      "kind": "title1",
+      "maxW": 4480,
+      "page": "desktop"
+    },
+    "t-desktop-1-1": {
+      "x": 4760,
+      "y": 960,
+      "text": "Musées perso (bonus)",
+      "kind": "title1",
+      "maxW": 2960,
+      "page": "desktop"
+    },
+    "t-desktop-1-2": {
+      "x": 8000,
+      "y": 960,
+      "text": "Profil",
+      "kind": "title1",
+      "maxW": 2960,
+      "page": "desktop"
+    },
+    "t-desktop-2-0": {
+      "x": 0,
+      "y": 2960,
+      "text": "Revendication & communauté",
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "desktop"
+    },
+    "t-admin-0-0": {
+      "x": 0,
+      "y": -300,
+      "text": "Admin · desktop",
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "admin"
+    },
+    "t-admin-2-0": {
+      "x": 0,
+      "y": 2400,
+      "text": "Admin · mobile",
+      "kind": "title1",
+      "maxW": 1285,
+      "page": "admin"
+    },
+    "t-etats-0-0": {
+      "x": 0,
+      "y": -300,
+      "text": "États · mobile",
+      "kind": "title1",
+      "maxW": 2195,
+      "page": "etats"
+    },
+    "t-etats-1-0": {
+      "x": 0,
+      "y": 872,
+      "text": "États · desktop",
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "etats"
+    },
+    "n-bonus-mobile": {
+      "x": 4990,
+      "y": 1540,
+      "w": 380,
+      "fill": "orange",
+      "size": "m",
+      "page": "mobile",
+      "text": "Bonus · Musées perso\nÀ faire APRÈS le socle (comptes, pixels liés, claims, admin).\n\nChaque joueur ouvre son musée : ses œuvres + ses coups de cœur, un thème, des couleurs de la palette, une musique, des particules, un guide pixel, une animation d'entrée, un livre d'or.\nPar œuvre : commentaire vocal, son au passage, animation (rejouer sa construction depuis les sauvegardes, zoom lent, scintille), taille, cadre, spot.\n\nSons importés : validés par l'équipe avant publication."
+    },
+    "n-bonus-desktop": {
+      "x": 11080,
+      "y": 1260,
+      "w": 420,
+      "fill": "orange",
+      "size": "m",
+      "page": "desktop",
+      "text": "Bonus · Musées perso\nL'éditeur desktop est la version confortable : réglages à gauche, aperçu en direct au centre, l'œuvre sélectionnée à droite. Sur mobile, les mêmes réglages sont empilés (voir page Joueur · mobile)."
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "ds-composants.dc.html",
+    "ds-composants-2.dc.html",
+    "m-accueil.dc.html",
+    "m-chargement.dc.html",
+    "m-canvas-invite.dc.html",
+    "m-connexion.dc.html",
+    "m-canvas.dc.html",
+    "m-inspecteur.dc.html",
+    "m-inspecteur-origine.dc.html",
+    "m-partage.dc.html",
+    "m-alerte.dc.html",
+    "m-musee.dc.html",
+    "m-visite.dc.html",
+    "m-oeuvre.dc.html",
+    "m-exposer.dc.html",
+    "m-musees.dc.html",
+    "m-musee-perso.dc.html",
+    "m-musee-editeur.dc.html",
+    "m-musee-oeuvre-perso.dc.html",
+    "m-profil.dc.html",
+    "m-profil-edition.dc.html",
+    "m-claim-zone.dc.html",
+    "m-claim-form.dc.html",
+    "m-revendications.dc.html",
+    "m-activite.dc.html",
+    "m-classement.dc.html",
+    "m-timelapse.dc.html",
+    "d-accueil.dc.html",
+    "d-canvas-invite.dc.html",
+    "d-connexion.dc.html",
+    "d-canvas.dc.html",
+    "d-musee.dc.html",
+    "d-visite.dc.html",
+    "d-oeuvre.dc.html",
+    "d-musee-perso.dc.html",
+    "d-musee-editeur.dc.html",
+    "d-profil.dc.html",
+    "d-profil-edition.dc.html",
+    "d-claim.dc.html",
+    "d-activite.dc.html",
+    "d-classement.dc.html",
+    "d-timelapse.dc.html",
+    "a-dashboard.dc.html",
+    "a-claims.dc.html",
+    "a-utilisateurs.dc.html",
+    "a-zone.dc.html",
+    "a-moderation.dc.html",
+    "a-journal.dc.html",
+    "a-reglages.dc.html",
+    "am-dashboard.dc.html",
+    "am-claims.dc.html",
+    "am-utilisateurs.dc.html",
+    "e-perdue-m.dc.html",
+    "e-banni-m.dc.html",
+    "e-maintenance-m.dc.html",
+    "e-lecture-seule-m.dc.html",
+    "e-vides-m.dc.html",
+    "e-chargement-d.dc.html",
+    "e-perdue-d.dc.html",
+    "e-maintenance-d.dc.html",
+    "e-vides-d.dc.html"
+  ],
+  "pages": [
+    {
+      "id": "systeme",
+      "name": "Design system"
+    },
+    {
+      "id": "mobile",
+      "name": "Joueur · mobile"
+    },
+    {
+      "id": "desktop",
+      "name": "Joueur · desktop"
+    },
+    {
+      "id": "admin",
+      "name": "Admin"
+    },
+    {
+      "id": "etats",
+      "name": "États"
+    }
+  ],
+  "title": "BetterPlace — Redesign"
+}

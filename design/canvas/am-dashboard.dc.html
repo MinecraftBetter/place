@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Admin · tableau de bord (mobile)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 375px; height: 1560px; display: flex; flex-direction: column; position: relative">
+<header style="display: flex; align-items: center; gap: 10px; padding: 12px 16px 8px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 24px; height: 24px">
+<span class="pixel b" style="font-size: 17px; flex-grow: 1">BetterPlace</span>
+<span class="pill st-neutre">Admin</span>
+<a class="btn btn-sm btn-icon btn-ghost" href="m-canvas.dc.html" aria-label="Retour au site"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 4H4v16h6M14 8l4 4-4 4M8 12h10"></path></svg></a>
+</header>
+<nav class="scroll-x" aria-label="Administration" style="display: flex; gap: 8px; padding: 0 16px 10px; border-bottom: 1px solid var(--line)"><a class="chip chip-on" href="am-dashboard.dc.html">Tableau</a><a class="chip" href="am-claims.dc.html">Revendications · 3</a><a class="chip" href="am-utilisateurs.dc.html">Utilisateurs</a><a class="chip" href="a-zone.dc.html">Zone</a><a class="chip" href="a-moderation.dc.html">Modération · 4</a><a class="chip" href="a-reglages.dc.html">Réglages</a></nav>
+<div style="padding: 16px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: center; gap: 10px"><h1 class="fs-h2" style="flex-grow: 1">Tableau de bord</h1><span class="fs-cap t2" style="display: flex; align-items: center; gap: 6px"><span class="live"></span>direct</span></div>
+<div class="seg" role="group" aria-label="Période" style="width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))"><sc-for list="{{periods}}" as="p" hint-placeholder-count="3"><button class="{{p.on}}" onClick="{{p.pick}}" style="justify-content: center">{{p.label}}</button></sc-for></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{kpis}}" as="k" hint-placeholder-count="6">
+<a class="card kpi" href="{{k.href}}" style="color: var(--text); padding: 12px 14px"><span class="fs-over">{{k.label}}</span><span class="kpi-v" style="font-size: 24px">{{k.v}}<span class="t3" style="font-size: 13px">{{k.suffix}}</span></span><span class="{{k.dcls}}">{{k.d}}</span></a>
+</sc-for>
+</div>
+
+<div class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; gap: 8px"><span class="fs-h3" style="flex-grow: 1">Pixels par heure</span><span class="pill st-neutre">illustration</span></div>
+<div style="height: 120px; display: flex; align-items: flex-end; gap: 2px; border-bottom: 1px solid var(--line-2)">
+<sc-for list="{{heures}}" as="b" hint-placeholder-count="24"><div style="flex-grow: 1; height: {{b.h}}px; background: {{b.bg}}; border-radius: 3px 3px 0 0"></div></sc-for>
+</div>
+<div style="display: flex; justify-content: space-between" class="mono fs-cap t3"><span>0 h</span><span>12 h</span><span>23 h</span></div>
+</div>
+
+<div class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; gap: 8px"><span class="fs-h3" style="flex-grow: 1">Activité historique</span><span class="pill st-valide">réel</span></div>
+<span class="fs-cap t3">Minutes actives par mois, d'après les sauvegardes.</span>
+<div style="height: 120px; display: flex; align-items: flex-end; gap: 2px; border-bottom: 1px solid var(--line-2)">
+<sc-for list="{{mois}}" as="b" hint-placeholder-count="19"><div style="flex-grow: 1; height: {{b.h}}px; background: var(--accent); border-radius: 3px 3px 0 0"></div></sc-for>
+</div>
+<div style="display: flex; justify-content: space-between" class="mono fs-cap t3"><span>sept. 22</span><span>déc. 22</span><span>mars 24</span></div>
+<span class="fs-cap t2">Pics : déc. 2022 (6 102 min), sept. 2022 (2 941), mars 2024 (1 676).</span>
+</div>
+
+<div class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<span class="fs-h3">Top contributeurs · 7 j</span>
+<sc-for list="{{top}}" as="t" hint-placeholder-count="5">
+<div style="display: grid; grid-template-columns: 24px 96px minmax(0, 1fr) 48px; align-items: center; gap: 8px"><img class="av av-24" src="{{t.img}}" alt=""><span class="fs-small b ellip">{{t.name}}</span><span class="bar-track" style="height: 8px"><span class="bar-fill" style="display: block; width: {{t.w}}%"></span></span><span class="mono fs-cap t2" style="text-align: right">{{t.v}}</span></div>
+</sc-for>
+</div>
+
+<div class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; gap: 8px"><span class="fs-h3" style="flex-grow: 1">Heatmap</span><span class="pill st-valide">réel</span></div>
+<div class="clip" style="position: relative; width: 311px; height: 233px; border-radius: 8px"><img class="px" src="/_blob/ababf51f1a3c698719ba2acb532237ea" alt="Heatmap d'activité" style="width: 311px; height: 233px"></div>
+<span class="fs-small b">Zones les plus retouchées</span>
+<sc-for list="{{zones}}" as="z" hint-placeholder-count="3"><a href="a-zone.dc.html" style="display: flex; align-items: center; gap: 8px; color: var(--text)"><span class="coord">x {{z.x}} · y {{z.y}}</span><span class="fs-small t2" style="flex-grow: 1">{{z.nom}}</span><span class="mono fs-cap">{{z.s}}</span></a></sc-for>
+</div>
+
+<div class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+<span class="fs-h3">Couleurs du canvas</span>
+<sc-for list="{{couleurs}}" as="c" hint-placeholder-count="5"><div style="display: flex; align-items: center; gap: 8px"><span class="swatch swatch-xs" style="width: 16px; height: 16px; background: {{c.hex}}"></span><span class="fs-small" style="flex-grow: 1">{{c.nom}}</span><span class="mono fs-cap t2">{{c.p}}</span></div></sc-for>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":1560}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { per: 0 }; }
+  renderVals() {
+    const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    const per = this.state.per;
+    const K = [['Connectés', '27', '/64', 'en direct', 'delta-up', 'am-utilisateurs.dc.html'], ['Pixels', ['1 204', '96 210', '402 880'][per], '', ['dernière heure', '7 jours', '30 jours'][per], 't3 fs-cap', 'a-zone.dc.html'], ['Joueurs actifs', ['41', '118', '203'][per], '', ['24 h', '7 jours', '30 jours'][per], 't3 fs-cap', 'am-utilisateurs.dc.html'], ['Nouveaux comptes', ['3', '12', '164'][per], '', ['24 h', '7 jours', '30 jours'][per], 't3 fs-cap', 'am-utilisateurs.dc.html'], ['À valider', '3', '', 'dont 1 à départager', 'tgold fs-cap', 'am-claims.dc.html'], ['Modération', '4', '', 'signalements', 'tgold fs-cap', 'a-moderation.dc.html']];
+    const HR = [310, 180, 95, 60, 40, 32, 45, 120, 260, 380, 520, 610, 700, 640, 720, 890, 1020, 1180, 1320, 1410, 1500, 1380, 1204, 0];
+    const MO = [2941, 12, 6, 6102, 81, 23, 6, 169, 96, 94, 698, 34, 14, 7, 0, 0, 2, 52, 1676];
+    const T = [['Kaelen', '/_blob/5d9a3101799969b7e8ff499c137dc669', 2390], ['Zozo42', '/_blob/e869fcd7638341e8f44d1dfa79b9fc20', 2104], ['Brindille', '/_blob/f341ef9fb793c7257cb54f723280da10', 1877], ['Evan', '/_blob/c266e1d407907a93a6dc2fbd5560c5ab', 1502], ['Mamie Pixel', '/_blob/ae4dfc14c12f74add0a65a59f762ca51', 980]];
+    return {
+      theme: this.props.theme ?? 'sombre',
+      periods: ['24 h', '7 jours', '30 jours'].map((label, i) => ({ label, on: i === per ? 'on' : '', pick: () => this.setState({ per: i }) })),
+      kpis: K.map(([label, v, suffix, d, dcls, href]) => ({ label, v, suffix, d, dcls, href })),
+      heures: HR.map((v, i) => ({ h: Math.round(v / 1500 * 116), bg: i === 22 ? 'var(--gold)' : 'var(--accent)' })),
+      mois: MO.map(v => ({ h: v ? Math.max(2, Math.round(v / 6102 * 116)) : 0 })),
+      top: T.map(([name, img, v]) => ({ name, img, v: fmt(v), w: Math.round(v / 2390 * 100) })),
+      zones: [[96, 128, 'haut, à gauche', '2 848'], [352, 32, 'haut, centre', '2 835'], [640, 736, 'bas, centre-droit', '2 250']].map(([x, y, nom, s]) => ({ x, y, nom, s })),
+      couleurs: [['#ffffff', 'blanc', '26,9 %'], ['#000000', 'noir', '11,0 %'], ['#5eb3ff', 'bleu evian', '3,6 %'], ['#333434', 'gris', '2,9 %'], ['#d4d7d9', 'gris clair', '1,9 %']].map(([hex, nom, p]) => ({ hex, nom, p }))
+    };
+  }
+}
+</script>
+</body>
+</html>

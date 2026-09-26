@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Connexion perdue</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp void" data-theme="{{theme}}" style="width: 375px; height: 812px">
+<div class="clip" style="position: absolute; inset: 0">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Canvas figé pendant la coupure" style="position: absolute; width: 3072px; height: 2304px; left: -1102px; top: -600px; filter: grayscale(.75) brightness(.7)">
+</div>
+<div style="position: absolute; left: 180px; top: 300px; width: 9px; height: 9px; outline: 2px dashed #fff; box-shadow: 0 0 0 3px #000"></div>
+<div style="position: absolute; left: 192px; top: 300px; width: 9px; height: 9px; outline: 2px dashed #fff; box-shadow: 0 0 0 3px #000"></div>
+<div class="banner banner-danger" style="position: absolute; top: 0; left: 0; right: 0; background: #3a1414; color: #ffb3b3; z-index: 10">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M2 8a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0M12 19h.01M3 3l18 18"></path></svg>
+<span style="flex-grow: 1">{{bannerText}}</span>
+<span class="mono fs-cap">{{attempt}}/3</span>
+</div>
+<sc-if value="{{failed}}" hint-placeholder-val="{{false}}">
+<div class="scrim" style="z-index: 25"></div>
+<div class="modal anim-feed" style="position: absolute; left: 16px; right: 16px; top: 220px; padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; z-index: 30">
+<img class="px" src="/_blob/bf33b3cfb8a0e1c819700e44225e8e67" alt="" style="width: 42px; height: 72px">
+<span class="fs-h2">Le cheval s'est échappé</span>
+<span class="fs-small t2 pretty">Impossible de rejoindre le serveur après 3 essais. Tes 2 pixels en attente seront envoyés dès le retour de la connexion.</span>
+<button class="btn btn-primary btn-block" onClick="{{retry}}">Réessayer</button>
+<button class="btn btn-ghost btn-block">Recharger la page</button>
+</div>
+</sc-if>
+<div class="glass" style="position: absolute; left: 12px; right: 12px; bottom: 88px; border-radius: 20px; padding: 12px; display: flex; align-items: center; gap: 12px; z-index: 10">
+<span class="swatch" style="background: #5eb3ff; width: 44px; height: 44px"></span>
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-body b">2 pixels en attente</span><span class="fs-cap t3">ils partiront au retour du réseau</span></div>
+<button class="btn btn-disabled btn-px" disabled style="width: 110px">Poser</button>
+</div>
+<nav class="nav-bottom" aria-label="Navigation principale">
+<a class="tab tab-on" href="m-canvas.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg>Canvas</a>
+<a class="tab" href="m-musee.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 9l9-6 9 6M5 10v9M9.5 10v9M14.5 10v9M19 10v9M3 21h18"></path></svg>Musée</a>
+<a class="tab" href="m-activite.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"></path></svg>Activité</a>
+<a class="tab" href="m-profil.dc.html"><img class="av av-24" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">Profil</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":812}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { a: 1 }; }
+  componentDidMount() { this.t = setInterval(() => { if (this.state.a < 4) this.setState({ a: this.state.a + 1 }); }, 1600); }
+  componentWillUnmount() { clearInterval(this.t); }
+  renderVals() {
+    const a = this.state.a;
+    return { theme: this.props.theme ?? 'sombre', attempt: Math.min(a, 3), failed: a > 3,
+      bannerText: a > 3 ? 'Connexion perdue' : 'Connexion perdue · nouvel essai dans ' + (4 - a) + ' s…',
+      retry: () => this.setState({ a: 1 }) };
+  }
+}
+</script>
+</body>
+</html>

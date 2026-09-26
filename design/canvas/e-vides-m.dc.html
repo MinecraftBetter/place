@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Profil vide</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 375px; height: 812px">
+<div style="height: 100%; display: flex; flex-direction: column">
+<div style="height: 120px; background: repeating-linear-gradient(45deg, var(--surface-2) 0 12px, var(--surface) 12px 24px); position: relative"></div>
+<div style="padding: 0 16px; margin-top: -40px; display: flex; flex-direction: column; gap: 12px; position: relative">
+<div style="display: flex; align-items: flex-end; justify-content: space-between">
+<img class="av av-96" src="/_blob/87121a75678f7bfaed28ff98e79fc01f" alt="Avatar généré" style="box-shadow: 0 0 0 4px var(--bg)">
+<a class="btn btn-sm" href="m-profil-edition.dc.html">Personnaliser</a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px"><h1 class="fs-h1">Nouveau_venu</h1><span class="fs-small t3">/u/nouveau-venu · arrivé aujourd'hui</span></div>
+<p class="fs-small t3" style="font-style: italic">Pas encore de bio.</p>
+</div>
+<div style="padding: 18px 16px 0; display: flex; flex-direction: column; gap: 14px">
+<div class="card" style="padding: 18px; display: flex; align-items: center; gap: 14px">
+<div class="anim-pop-loop" style="width: 28px; height: 28px; background: #3ee06c; flex-shrink: 0"></div>
+<div style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1"><span class="fs-body b">Pose ton premier pixel</span><span class="fs-cap t3">Ça débloque ton premier badge.</span></div>
+<a class="btn btn-primary btn-px btn-sm" href="m-canvas.dc.html">Y aller</a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span class="fs-h3">Badges</span>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px">
+<div class="badge-tile badge-lock" style="padding: 10px 4px 8px"><img class="badge-ico" src="/_blob/3f9a0b549c915690090cf921d02ac905" alt="" style="width: 32px; height: 32px"></div>
+<div class="badge-tile badge-lock" style="padding: 10px 4px 8px"><img class="badge-ico" src="/_blob/63303653cef451a330958decd16dc752" alt="" style="width: 32px; height: 32px"></div>
+<div class="badge-tile badge-lock" style="padding: 10px 4px 8px"><img class="badge-ico" src="/_blob/e6c31c8e89df74d7866cbe9e41ad94cb" alt="" style="width: 32px; height: 32px"></div>
+<div class="badge-tile badge-lock" style="padding: 10px 4px 8px"><img class="badge-ico" src="/_blob/95776fb89a0710cbea6cdfb13a35fa69" alt="" style="width: 32px; height: 32px"></div>
+<div class="badge-tile badge-lock" style="padding: 10px 4px 8px"><img class="badge-ico" src="/_blob/23e3f1976500fb6db719239b82a9b6d3" alt="" style="width: 32px; height: 32px"></div>
+</div>
+</div>
+<div class="card" style="padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; border-style: dashed">
+<span class="fs-body b">Aucune œuvre pour l'instant</span>
+<span class="fs-small t2 pretty">Tu as dessiné ici avant les comptes ? Revendique ton œuvre, elle apparaîtra ici avec le badge Pionnier.</span>
+<a class="btn btn-sm btn-gold btn-px" href="m-claim-zone.dc.html">Revendiquer une œuvre</a>
+</div>
+</div>
+</div>
+<nav class="nav-bottom" aria-label="Navigation principale">
+<a class="tab" href="m-canvas.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg>Canvas</a>
+<a class="tab" href="m-musee.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 9l9-6 9 6M5 10v9M9.5 10v9M14.5 10v9M19 10v9M3 21h18"></path></svg>Musée</a>
+<a class="tab" href="m-activite.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"></path></svg>Activité</a>
+<a class="tab tab-on" href="m-profil.dc.html"><img class="av av-24" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">Profil</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":812}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'sombre' }; }
+}
+</script>
+</body>
+</html>

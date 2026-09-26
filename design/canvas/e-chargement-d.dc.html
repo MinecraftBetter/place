@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Chargement · desktop</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp void" data-theme="{{theme}}" style="width: 1440px; height: 900px; position: relative">
+<div style="position: absolute; inset: 0; overflow: hidden"><img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; left: 50%; top: 50%; width: 1100px; height: 825px; margin: -412px 0 0 -550px; filter: blur(14px) brightness(.25) saturate(.6); transform: scale(1.1)"></div>
+<div style="position: relative; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px">
+<div style="display: flex; align-items: center; gap: 12px"><img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 36px; height: 36px"><span class="pixel b" style="font-size: 28px">BetterPlace</span></div>
+<div style="position: relative; width: 170px; height: 170px; display: flex; align-items: flex-end; justify-content: center">
+<div style="position: absolute; bottom: 0; width: 170px; height: 10px; background: repeating-linear-gradient(90deg, var(--line-2) 0 6px, transparent 6px 12px)"></div>
+<img class="px anim-bob" src="/_blob/bf33b3cfb8a0e1c819700e44225e8e67" alt="" style="width: 90px; height: 155px; margin-bottom: 8px">
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 12px; width: 480px">
+<span class="fs-h2">Téléchargement du canvas</span>
+<div class="pbar" style="width: 100%"><div class="pfill" style="width: 68%"></div></div>
+<div style="display: flex; justify-content: space-between; width: 100%" class="mono fs-small"><span class="t3">284 Ko / 418 Ko · 1024 × 768</span><span>68 %</span></div>
+</div>
+<div class="card glass" style="width: 480px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 10px" class="fs-small"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true" style="color: var(--accent-text)"><path d="M4 12l5 5L20 6"></path></svg><span>Connexion au serveur</span><span class="t3 mono" style="margin-left: auto">42 ms</span></div>
+<div style="display: flex; align-items: center; gap: 10px" class="fs-small"><span class="live" style="background: var(--gold)"></span><span>Téléchargement de l'image du canvas</span></div>
+<div style="display: flex; align-items: center; gap: 10px" class="fs-small t3"><span style="width: 8px; height: 8px; border: 1px solid var(--line-2)"></span><span>Qui a posé quoi (chargé à la demande)</span></div>
+</div>
+<span class="fs-cap t3">Astuce : survole un pixel pour voir qui l'a posé · <span class="kbd">G</span> affiche la grille</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'sombre' }; }
+}
+</script>
+</body>
+</html>

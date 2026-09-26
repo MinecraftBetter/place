@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Fil des revendications</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 375px; height: 1000px">
+
+<div style="padding: 16px 16px 0; display: flex; flex-direction: column; gap: 12px">
+<div class="toast anim-feed">
+<img src="/_blob/23e3f1976500fb6db719239b82a9b6d3" alt="" class="px" style="width: 28px; height: 28px">
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Demande envoyée</span><span class="fs-cap t3">Nyx doit confirmer, puis la communauté vote.</span></div>
+</div>
+<h1 class="fs-h1">Revendications</h1>
+<div class="seg" role="group" aria-label="Filtrer" style="align-self: flex-start">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button class="{{t.on}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for>
+</div>
+</div>
+
+<div style="padding: 14px 16px 100px; display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{claims}}" as="c" hint-placeholder-count="3">
+<article class="card" style="padding: 14px; display: flex; flex-direction: column; gap: 12px; border-color: {{c.border}}">
+<div style="display: flex; gap: 12px">
+<div class="clip" style="position: relative; width: 72px; height: 72px; border-radius: 10px; background: #fff; flex-shrink: 0">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: {{c.c.w}}px; height: {{c.c.h}}px; left: {{c.c.l}}px; top: {{c.c.t}}px">
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex-grow: 1">
+<div style="display: flex; align-items: center; gap: 6px"><span class="fs-body b ellip">{{c.title}}</span></div>
+<div style="display: flex; align-items: center; gap: 6px"><img class="av av-20" src="{{c.av}}" alt=""><span class="fs-small t2 ellip">{{c.by}}</span></div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap"><span class="pill {{c.pillCls}}">{{c.pill}}</span><span class="fs-cap t3">{{c.age}}</span></div>
+</div>
+</div>
+<p class="fs-small t2 pretty">« {{c.msg}} »</p>
+<div class="card-2" style="padding: 8px 10px; display: flex; align-items: center; gap: 8px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="color: var(--gold-text); flex-shrink: 0"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span class="fs-cap t2">{{c.save}}</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px">
+<button class="btn btn-sm {{c.plusCls}}" onClick="{{c.plus}}" aria-pressed="{{c.plusAria}}">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg>
+Je l'ai vu·e la faire · {{c.n}}</button>
+<button class="btn btn-sm btn-ghost">Un doute · {{c.d}}</button>
+</div>
+</article>
+</sc-for>
+</div>
+
+<nav class="nav-bottom" aria-label="Navigation principale">
+<a class="tab" href="m-canvas.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg>Canvas</a>
+<a class="tab" href="m-musee.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 9l9-6 9 6M5 10v9M9.5 10v9M14.5 10v9M19 10v9M3 21h18"></path></svg>Musée</a>
+<a class="tab tab-on" href="m-activite.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"></path></svg>Activité</a>
+<a class="tab" href="m-profil.dc.html"><img class="av av-24" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">Profil</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { tab: 0, plus: {} }; }
+  renderVals() {
+    const crop = (z, W, H, pad) => { const s = Math.min(W * pad / z[2], H * pad / z[3]); return { w: Math.round(1024 * s), h: Math.round(768 * s), l: Math.round(-z[0] * s + (W - z[2] * s) / 2), t: Math.round(-z[1] * s + (H - z[3] * s) / 2) }; };
+    const C = [
+      { id: 'laby', tab: 0, title: 'Labyrinthe doré', by: 'Brindille (toi) et Nyx', av: '/_blob/f341ef9fb793c7257cb54f723280da10', z: [257, 505, 64, 88], pill: 'En attente', pillCls: 'st-attente', age: 'il y a 1 min', msg: 'On l’a dessiné avec Nyx pendant la grosse soirée du 2 mars 2024.', save: 'Sauvegardes : dessiné le 2 mars 2024, personne d’autre ne le revendique.', n: 0, d: 0 },
+      { id: 'creeper', tab: 0, title: 'Creeper', by: 'Kaelen', av: '/_blob/5d9a3101799969b7e8ff499c137dc669', z: [178, 238, 22, 22], pill: '2 revendications', pillCls: 'st-conflit', age: 'il y a 2 h', msg: 'Mon tout premier dessin, le soir de l’ouverture.', save: 'Sauvegardes : présent dès le 10 sept. 2022. Zozo42 revendique aussi cette zone.', n: 12, d: 3, warn: true },
+      { id: 'sapin', tab: 0, title: 'Sapin de Noël', by: 'Mamie Pixel', av: '/_blob/ae4dfc14c12f74add0a65a59f762ca51', z: [980, 415, 44, 90], pill: 'En attente', pillCls: 'st-attente', age: 'hier', msg: 'Je le décore à chaque hiver, avec une nouvelle guirlande.', save: 'Sauvegardes : apparu le 15 déc. 2022, retouché jusqu’en mars 2024.', n: 21, d: 0 },
+      { id: 'drapeau', tab: 1, title: 'Drapeau & baguette', by: 'Tiago et Evan', av: '/_blob/7e0fc904fd2815638f5d4d965a1ab50a', z: [0, 170, 58, 86], pill: 'Validée', pillCls: 'st-valide', age: '15 oct.', msg: 'Le tout premier soir, sur le canvas de 256 pixels.', save: 'Sauvegardes : présent dès le 10 sept. 2022. Badges : Pionnier, Vétéran 2022, Bâtisseur, Indémodable.', n: 14, d: 0 },
+      { id: 'dunes', tab: 1, title: 'Dunes au couchant', by: 'Lucie_px', av: '/_blob/0877ddccb171e78f5bfa6672ce2eb035', z: [0, 513, 127, 204], pill: 'Validée', pillCls: 'st-valide', age: '12 oct.', msg: 'Posées le jour où le canvas s’est agrandi, à Noël 2022.', save: 'Sauvegardes : apparues le 27 déc. 2022. Badges : Pionnier, Vétéran 2022, Bâtisseur, Indémodable.', n: 9, d: 0 },
+      { id: 'torche', tab: 2, title: 'La grande torche', by: 'bot_404', av: '/_blob/56f14b0ba0b26cbc8df201433bc426d6', z: [928, 512, 28, 46], pill: 'Refusée', pillCls: 'st-refuse', age: '10 oct.', msg: 'C’est moi.', save: 'Attribuée à Poulpe par l’équipe après vérification.', n: 0, d: 7 }
+    ];
+    const tab = this.state.tab, P = this.state.plus;
+    const counts = [0, 1, 2].map(k => C.filter(c => c.tab === k).length);
+    return {
+      theme: this.props.theme ?? 'sombre',
+      tabs: ['En cours', 'Validées', 'Refusées'].map((label, i) => ({ label: label + ' · ' + counts[i], on: i === tab ? 'on' : '', pick: () => this.setState({ tab: i }) })),
+      claims: C.filter(c => c.tab === tab).map(c => ({ ...c, c: crop(c.z, 72, 72, 0.9), n: c.n + (P[c.id] ? 1 : 0), plusCls: P[c.id] ? 'btn-primary' : '', plusAria: P[c.id] ? 'true' : 'false', border: c.warn ? 'color-mix(in srgb, var(--warn) 45%, transparent)' : 'var(--line)', plus: () => this.setState({ plus: { ...P, [c.id]: !P[c.id] } }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

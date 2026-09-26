@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Timelapse & archives</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 1440px; height: 1000px; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 12px; padding: 20px 48px">
+<a href="d-accueil.dc.html" style="display: flex; align-items: center; gap: 10px; color: var(--text)"><img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 28px; height: 28px"><span class="pixel" style="font-size: 20px; font-weight: 600">BetterPlace</span></a>
+<nav style="display: flex; gap: 4px; margin-left: 20px" aria-label="Sections">
+<a class="btn btn-sm btn-ghost" href="d-canvas.dc.html">Canvas</a>
+<a class="btn btn-sm btn-ghost" href="d-musee.dc.html">Musée</a>
+<a class="btn btn-sm btn-ghost" href="d-activite.dc.html">Activité</a>
+<a class="btn btn-sm btn-ghost" href="d-classement.dc.html">Classement</a>
+<a class="btn btn-sm btn-ghost" href="d-timelapse.dc.html" style="color: var(--text); background: var(--surface-2)">Timelapse</a>
+</nav>
+<div style="flex-grow: 1"></div>
+<img class="av av-40" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="Mon profil" style="box-shadow: 0 0 0 2px #ff63aa">
+</header>
+
+<div style="display: grid; grid-template-columns: 904px minmax(0, 1fr); gap: 40px; padding: 8px 48px 0">
+<section style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: baseline; gap: 16px">
+<h1 class="fs-h1">Timelapse</h1>
+<span class="fs-small t2">{{nb}} jours d'activité, du 10 sept. 2022 au 28 mars 2024 · une image par jour (la dernière capture de la journée)</span>
+</div>
+<div class="void clip" style="position: relative; width: 904px; height: 678px; border-radius: 16px; border: 1px solid var(--line)">
+<img class="px" src="{{cur.url}}" alt="Le canvas le {{cur.label}}" style="position: absolute; left: 0; top: 0; width: {{cur.dw}}px; height: {{cur.dh}}px; background: #fff">
+<sc-if value="{{cur.petit}}" hint-placeholder-val="{{false}}">
+<span class="pill" style="position: absolute; right: 12px; bottom: 12px; background: rgba(10,9,8,.8); color: #f3efe6">le canvas grandira jusqu'ici · 1024 × 768</span>
+</sc-if>
+<div class="glass" style="position: absolute; left: 12px; top: 12px; border-radius: 12px; padding: 8px 12px; display: flex; flex-direction: column">
+<span class="mono b">{{cur.label}}</span>
+<span class="fs-cap t3">{{cur.size}} · {{cur.frames}} min d'activité ce jour-là</span>
+</div>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<button class="btn btn-icon btn-primary btn-round" onClick="{{toggle}}" aria-label="{{playLabel}}">
+<sc-if value="{{playing}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14"></rect><rect x="14" y="5" width="4" height="14"></rect></svg></sc-if>
+<sc-if value="{{paused}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"></path></svg></sc-if>
+</button>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px">
+<div style="display: flex; align-items: flex-end; gap: 1px; height: 40px">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="141"><div style="flex-grow: 1; height: {{b.h}}px; background: {{b.bg}}; border-radius: 1px"></div></sc-for>
+</div>
+<input type="range" min="0" max="{{max}}" value="{{i}}" onChange="{{seek}}" aria-label="Choisir une date" style="width: 100%; accent-color: var(--accent); margin: 0">
+<div style="display: flex; justify-content: space-between" class="fs-cap t3 mono"><span>sept. 2022</span><span>déc. 2022</span><span>juil. 2023</span><span>mars 2024</span></div>
+</div>
+<div class="seg" role="group" aria-label="Vitesse"><sc-for list="{{speeds}}" as="s" hint-placeholder-count="3"><button class="{{s.on}}" onClick="{{s.pick}}">{{s.label}}</button></sc-for></div>
+<a class="btn btn-icon" href="d-canvas.dc.html" aria-label="Ouvrir cette date sur le canvas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg></a>
+</div>
+</section>
+
+<aside style="display: flex; flex-direction: column; gap: 20px; padding-top: 52px">
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<span class="fs-h3">La vidéo</span>
+<p class="fs-small t2 pretty">Toute l'histoire du canvas en accéléré, générée chaque nuit à partir des sauvegardes.</p>
+<a class="btn btn-primary" href="/timelapse.mp4" download="">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M12 3v12M6 10l6 6 6-6M4 21h16"></path></svg>
+Télécharger timelapse.mp4</a>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; justify-content: space-between"><span class="fs-h3">Les archives</span><span class="fs-cap t3">un zip de sauvegardes par mois</span></div>
+<sc-for list="{{years}}" as="y" hint-placeholder-count="3">
+<div style="display: flex; align-items: flex-start; gap: 10px">
+<span class="mono b" style="width: 44px; padding-top: 6px">{{y.y}}</span>
+<div style="display: flex; flex-wrap: wrap; gap: 6px; flex-grow: 1">
+<sc-for list="{{y.m}}" as="m" hint-placeholder-count="4">
+<sc-if value="{{m.ok}}" hint-placeholder-val="{{true}}"><a class="chip" href="{{m.href}}" download="" style="height: 30px; gap: 4px">{{m.label}}<span class="mono t3" style="font-size: 11px">{{m.j}} j</span></a></sc-if>
+<sc-if value="{{m.vide}}" hint-placeholder-val="{{false}}"><span class="chip" title="Il n'y a pas eu d'activité sur la toile" style="height: 30px; opacity: .45; text-decoration: line-through">{{m.label}}</span></sc-if>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span class="fs-h3">Les jours les plus actifs</span>
+<button class="card-2" onClick="{{goto0}}" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; font: inherit; color: var(--text); cursor: pointer; text-align: left"><span class="mono fs-cap t3" style="width: 18px">1</span><span class="fs-small b" style="flex-grow: 1">11 sept. 2022</span><span class="mono fs-cap t2">870 min</span></button>
+<button class="card-2" onClick="{{goto1}}" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; font: inherit; color: var(--text); cursor: pointer; text-align: left"><span class="mono fs-cap t3" style="width: 18px">2</span><span class="fs-small b" style="flex-grow: 1">20 déc. 2022</span><span class="mono fs-cap t2">839 min</span></button>
+<button class="card-2" onClick="{{goto2}}" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; font: inherit; color: var(--text); cursor: pointer; text-align: left"><span class="mono fs-cap t3" style="width: 18px">3</span><span class="fs-small b" style="flex-grow: 1">26 déc. 2022</span><span class="mono fs-cap t2">567 min</span></button>
+<button class="card-2" onClick="{{goto3}}" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; font: inherit; color: var(--text); cursor: pointer; text-align: left"><span class="mono fs-cap t3" style="width: 18px">4</span><span class="fs-small b" style="flex-grow: 1">17 sept. 2022</span><span class="mono fs-cap t2">464 min</span></button>
+<button class="card-2" onClick="{{goto4}}" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; font: inherit; color: var(--text); cursor: pointer; text-align: left"><span class="mono fs-cap t3" style="width: 18px">5</span><span class="fs-small b" style="flex-grow: 1">25 déc. 2022</span><span class="mono fs-cap t2">417 min</span></button>
+</div>
+
+<div class="card-2" style="padding: 12px 14px; display: flex; flex-direction: column; gap: 6px">
+<span class="fs-over">Le canvas a grandi</span>
+<span class="fs-small mono">256×256 → 512×256 → 512×512 → 1024×512 → 1024×768</span>
+<span class="fs-cap t3">10 sept. → 11 sept. → 13 sept. → 21 sept. → 25 déc. 2022</span>
+</div>
+</aside>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    const F = [["2022-09-10","23:55",256,256,"/_blob/0fced4dac6fc121b77d5a6010e9be7fa",4],["2022-09-11","22:43",512,256,"/_blob/79ba2c66842debbc0d64c889da6969c2",870],["2022-09-13","23:09",512,512,"/_blob/7f67de8e11dbc64aee8fec7d3404a107",332],["2022-09-28","11:55",1024,512,"/_blob/66a081e6082fb3d122727543de7ff0dd",2],["2022-12-20","23:59",1024,512,"/_blob/b2eaac5866695933d9aa37eccd18d5c5",839],["2022-12-27","19:55",1024,768,"/_blob/bf7d03c8a52e22d17aebc2a43e029faf",234],["2023-02-10","12:51",1024,768,"/_blob/a05c6cabeba72f2810c2749c982742b1",2],["2023-07-01","00:12",1024,768,"/_blob/c1f4f0154ee8a94392f02f85a33e7e55",2],["2023-08-12","15:48",1024,768,"/_blob/4b1555f1262fa557755b334a88c6712d",2],["2024-02-26","23:38",1024,768,"/_blob/2c10bd28375a533cef3de1075a5da857",52],["2024-03-02","23:46",1024,768,"/_blob/2b799ef0bf8c36dc6cc65cd0886f6336",402],["2024-03-28","23:04",1024,768,"/_blob/e6e62f71b5d85c751836ffeb46aa443e",11]];
+    this.state = { snaps: F, i: F.length - 1, playing: false, step: 1 };
+  }
+  componentDidMount() {
+    fetch('/_blob/13409ad3d1878e63b00e00a4f02c0001').then(r => r.json()).then(d => {
+      const s = d.snapshots.map(x => [x.date, x.time, x.w, x.h, x.url, x.framesThatDay]);
+      this.setState({ snaps: s, i: s.length - 1 });
+    }).catch(() => {});
+    this.t = setInterval(() => { if (this.state.playing) { const n = this.state.snaps.length; this.setState({ i: (this.state.i + this.state.step) % n }); } }, 250);
+  }
+  componentWillUnmount() { clearInterval(this.t); }
+  jump(date) { const j = this.state.snaps.findIndex(s => s[0] === date); if (j >= 0) this.setState({ i: j, playing: false }); }
+  renderVals() {
+    const MO = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+    const S = this.state.snaps, i = Math.min(this.state.i, S.length - 1), c = S[i];
+    const [yy, mm, dd] = c[0].split('-');
+    const pl = this.state.playing;
+    const full = { '2022-09': 16, '2022-10': 5, '2022-11': 3, '2022-12': 24, '2023-01': 9, '2023-02': 8, '2023-03': 3, '2023-04': 10, '2023-05': 6, '2023-06': 6, '2023-07': 13, '2023-08': 6, '2023-09': 5, '2023-10': 3, '2024-01': 1, '2024-02': 1, '2024-03': 22 };
+    const years = [['2022', [9, 10, 11, 12]], ['2023', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]], ['2024', [1, 2, 3]]].map(([y, ms]) => ({
+      y, m: ms.map(m => { const k = y + '-' + String(m).padStart(2, '0'); const j = full[k] || 0; return { label: MO[m - 1], j, ok: j > 0, vide: j === 0, href: '/archives/archive-' + k + '.zip' }; })
+    }));
+    return {
+      theme: this.props.theme ?? 'sombre', i, max: S.length - 1, nb: S.length > 20 ? S.length : 141,
+      cur: { url: c[4], label: (+dd) + ' ' + MO[+mm - 1] + ' ' + yy + ' · ' + c[1], size: c[2] + ' × ' + c[3], frames: c[5], dw: Math.round(c[2] / 1024 * 904), dh: Math.round(c[3] / 768 * 678), petit: c[3] < 768 },
+      bars: S.map((s, j) => ({ h: Math.max(2, Math.round(Math.log10(s[5] + 1) / Math.log10(871) * 40)), bg: j === i ? 'var(--accent)' : (j < i ? 'var(--text-3)' : 'var(--line-2)') })),
+      playing: pl, paused: !pl, playLabel: pl ? 'Pause' : 'Lecture',
+      toggle: () => this.setState({ playing: !pl, i: (!pl && i === S.length - 1) ? 0 : i }),
+      seek: (e) => this.setState({ i: Number(e.target.value), playing: false }),
+      speeds: [['×1', 1], ['×4', 4], ['×10', 10]].map(([label, v]) => ({ label, on: this.state.step === v ? 'on' : '', pick: () => this.setState({ step: v }) })),
+      goto0: () => this.jump('2022-09-11'),
+      goto1: () => this.jump('2022-12-20'),
+      goto2: () => this.jump('2022-12-26'),
+      goto3: () => this.jump('2022-09-17'),
+      goto4: () => this.jump('2022-12-25'),
+      years
+    };
+  }
+}
+</script>
+</body>
+</html>

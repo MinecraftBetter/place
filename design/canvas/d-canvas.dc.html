@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Canvas · connecté</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp void" data-theme="{{theme}}" style="width: 1440px; height: 900px">
+
+<div class="clip" style="position: absolute; inset: 0">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Canvas BetterPlace, zoom ×2,5" style="position: absolute; width: 2560px; height: 1920px; left: -380px; top: -500px">
+</div>
+<sc-if value="{{grid}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(0,0,0,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,.18) 1px, transparent 1px); background-size: 10px 10px; background-position: 0 0"></div>
+</sc-if>
+
+<div style="position: absolute; left: 793px; top: 248px; width: 7px; height: 7px; outline: 2px solid #fff; box-shadow: 0 0 0 3px #000"></div>
+<div class="card elev anim-feed" style="position: absolute; left: 812px; top: 226px; width: 290px; padding: 12px; display: flex; flex-direction: column; gap: 10px; z-index: 6">
+<div style="display: flex; align-items: center; gap: 10px">
+<div style="width: 28px; height: 28px; border-radius: 6px; background: #5eb3ff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.2)"></div>
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">bleu evian <span class="mono t3" style="font-weight: 400">#5EB3FF</span></span><span class="mono fs-cap t3">x 470 · y 300</span></div>
+</div>
+<a href="d-profil.dc.html" style="display: flex; align-items: center; gap: 10px; color: var(--text)"><img class="av av-32" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt=""><span class="fs-small" style="flex-grow: 1"><b>Brindille</b> <span class="t3">· il y a 3 min</span></span><span class="fs-cap tac b">Profil</span></a>
+<a href="d-oeuvre.dc.html" class="card-2" style="display: flex; align-items: center; gap: 8px; padding: 8px; color: var(--text)"><span class="fs-cap t3">Œuvre</span><span class="fs-small b" style="flex-grow: 1">Bord de mer</span><span class="kbd">I</span></a>
+</div>
+
+<header class="glass" style="position: absolute; top: 16px; left: 16px; right: 16px; height: 60px; border-radius: 18px; display: flex; align-items: center; gap: 12px; padding: 0 12px 0 16px; z-index: 10">
+<a href="d-accueil.dc.html" style="display: flex; align-items: center; gap: 10px; color: var(--text)"><img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 28px; height: 28px"><span class="pixel" style="font-size: 20px; font-weight: 600">BetterPlace</span></a>
+<nav style="display: flex; gap: 4px; margin-left: 12px" aria-label="Sections">
+<a class="btn btn-sm btn-ghost" href="d-canvas.dc.html" style="color: var(--text); background: var(--surface-2)">Canvas</a>
+<a class="btn btn-sm btn-ghost" href="d-musee.dc.html">Musée</a>
+<a class="btn btn-sm btn-ghost" href="d-activite.dc.html">Activité</a>
+<a class="btn btn-sm btn-ghost" href="d-classement.dc.html">Classement</a>
+<a class="btn btn-sm btn-ghost" href="d-timelapse.dc.html">Timelapse</a>
+</nav>
+<div style="flex-grow: 1"></div>
+<span class="fs-small t2" style="display: inline-flex; align-items: center; gap: 8px"><span class="live"></span>27 connectés</span>
+<a class="btn btn-sm btn-gold btn-px" href="d-claim.dc.html">Revendiquer</a>
+<a href="d-profil.dc.html" aria-label="Mon profil" style="position: relative"><img class="av av-40" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="" style="box-shadow: 0 0 0 2px #ff63aa"><span class="count" style="position: absolute; top: -4px; right: -4px">1</span></a>
+</header>
+
+<aside class="glass" style="position: absolute; left: 16px; top: 92px; width: 116px; border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 10px; z-index: 10">
+<div style="display: grid; grid-template-columns: repeat(3, 28px); gap: 6px">
+<sc-for list="{{palette}}" as="c" hint-placeholder-count="30">
+<button class="swatch {{c.sel}}" style="background: {{c.hex}}; width: 28px; height: 28px; border-radius: 7px" title="{{c.name}}" aria-label="{{c.name}}" onClick="{{c.pick}}"></button>
+</sc-for>
+</div>
+<div class="rule"></div>
+<div style="display: flex; align-items: center; gap: 8px"><span class="swatch" style="background: {{cur.hex}}; width: 28px; height: 28px; border-radius: 7px"></span><span class="fs-cap b ellip">{{cur.name}}</span></div>
+<input class="input input-mono" aria-label="Couleur hexadécimale" value="{{cur.hexU}}" style="height: 32px; font-size: 12px; padding: 0 8px">
+<div style="display: flex; flex-direction: column; gap: 4px"><div class="cooldown"><div style="width: 100%; background: var(--accent)"></div></div><span class="fs-cap t3">Prêt à poser</span></div>
+</aside>
+
+<aside class="glass" style="position: absolute; right: 16px; top: 92px; width: 300px; border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 6px; z-index: 10">
+<div style="display: flex; align-items: center; gap: 8px; padding: 2px 4px 6px"><span class="live"></span><span class="fs-small b" style="flex-grow: 1">En direct</span><button class="btn btn-sm btn-icon btn-ghost" aria-label="Replier le fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button></div>
+<sc-for list="{{feed}}" as="e" hint-placeholder-count="6">
+<a href="{{e.href}}" style="display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; color: var(--text); background: {{e.bg}}">
+<img class="{{e.cls}}" src="{{e.img}}" alt="" style="width: 28px; height: 28px">
+<span class="fs-cap" style="flex-grow: 1"><b>{{e.who}}</b> <span class="t2">{{e.what}}</span></span>
+<span class="fs-cap t3 mono">{{e.age}}</span>
+</a>
+</sc-for>
+</aside>
+
+<div class="glass" style="position: absolute; left: 50%; transform: translateX(-50%); bottom: 20px; height: 56px; border-radius: 18px; padding: 0 8px 0 16px; display: flex; align-items: center; gap: 8px; z-index: 10">
+<span class="mono fs-small" style="min-width: 140px">x 470 · y 300 · ×2,5</span>
+<button class="btn btn-icon btn-sm btn-ghost" aria-label="Zoom arrière"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="btn btn-icon btn-sm btn-ghost" aria-label="Zoom avant"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="btn btn-icon btn-sm {{gridCls}}" aria-label="Grille" aria-pressed="{{gridAria}}" onClick="{{toggleGrid}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg></button>
+<button class="btn btn-icon btn-sm btn-ghost" aria-label="Pipette"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M14 4l6 6-3 3-6-6zM11 7l-7 7v3h3l7-7"></path></svg></button>
+<button class="btn btn-icon btn-sm btn-ghost" aria-label="Copier le lien de cette vue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"></path></svg></button>
+<span style="width: 1px; height: 28px; background: var(--line)"></span>
+<span class="fs-cap t3" style="display: flex; align-items: center; gap: 6px; padding-right: 8px"><span class="kbd">Clic gauche</span>déplacer <span class="kbd">Molette</span>pipette <span class="kbd">Clic droit</span>poser</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { sel: 21, grid: false }; }
+  renderVals() {
+    const P = [['#000000','noir'],['#333434','gris'],['#d4d7d9','gris clair'],['#ffffff','blanc'],['#6d302f','maron'],['#6d001a','rouge marronâtre'],['#9c451a','maron clair'],['#be0027','rouge'],['#ff2651','rouge clair'],['#ff2d00','rouge'],['#ffa800','orange foncé'],['#ffd623','jaune'],['#fff8b8','beige'],['#7eed38','vert clair'],['#00cc4e','vert'],['#00a344','vert foncé'],['#598d5a','vert foncé foncé'],['#004b6f','bleu sous marin'],['#009eaa','bleu marin'],['#00ccc0','bleu sale de bain'],['#33E9F4','cian'],['#5eb3ff','bleu evian'],['#245aea','bleu ciel'],['#313ac1','bleu ciel violet'],['#1832a4','ciel violet foncé'],['#511e9f','violet'],['#6a5cff','violet clair'],['#b44ac0','violet clair rose'],['#ff63aa','rose'],['#e4abff','rose clair']];
+    const s = this.state.sel, g = this.state.grid;
+    const F = [
+      { img: '/_blob/c266e1d407907a93a6dc2fbd5560c5ab', who: 'Evan', what: 'dessine près de 310 · 342', age: '4 s', href: 'd-canvas.dc.html' },
+      { img: '/_blob/f341ef9fb793c7257cb54f723280da10', who: 'Brindille', what: 'a posé 12 pixels', age: '1 min', href: 'd-canvas.dc.html' },
+      { img: '/_blob/e869fcd7638341e8f44d1dfa79b9fc20', who: 'Zozo42', what: 'a ajouté une pizza à Bord de mer', age: '4 min', href: 'd-oeuvre.dc.html', bg: 'var(--info-soft)' },
+      { img: '/_blob/23e3f1976500fb6db719239b82a9b6d3', px: true, who: 'Lucie_px', what: 'devient Pionnière', age: '12 min', href: 'd-oeuvre.dc.html', bg: 'var(--gold-soft)' },
+      { img: '/_blob/ae4dfc14c12f74add0a65a59f762ca51', who: 'Mamie Pixel', what: 'expose Sapin de Noël', age: '20 min', href: 'd-musee.dc.html' },
+      { img: '/_blob/5d9a3101799969b7e8ff499c137dc669', who: 'Kaelen', what: 'revendique Creeper', age: '2 h', href: 'd-activite.dc.html' }
+    ];
+    return {
+      theme: this.props.theme ?? 'sombre',
+      palette: P.map(([hex, name], i) => ({ hex, name, sel: i === s ? 'swatch-sel' : '', pick: () => this.setState({ sel: i }) })),
+      cur: { hex: P[s][0], name: P[s][1], hexU: P[s][0].toUpperCase() },
+      feed: F.map(e => ({ ...e, cls: e.px ? 'px' : 'av av-24', bg: e.bg || 'transparent' })),
+      grid: g, gridCls: g ? 'btn-primary' : 'btn-ghost', gridAria: g ? 'true' : 'false', toggleGrid: () => this.setState({ grid: !g })
+    };
+  }
+}
+</script>
+</body>
+</html>

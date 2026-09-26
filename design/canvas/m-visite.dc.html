@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Visite guidée</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="sombre" style="width: 375px; height: 812px; background: #0a0908">
+
+<div class="clip" style="position: absolute; inset: 0">
+<img class="px cam" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="{{cur.title}}" style="position: absolute; left: 0; top: 160px; width: 375px; height: 281px; transform: {{cur.tf}}">
+</div>
+<div style="position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(10,9,8,.75) 0%, transparent 16%, transparent 52%, rgba(10,9,8,.92) 70%)"></div>
+
+<div style="position: absolute; top: 12px; left: 12px; right: 12px; display: flex; flex-direction: column; gap: 12px; z-index: 5">
+<div style="display: flex; gap: 4px">
+<sc-for list="{{segs}}" as="g" hint-placeholder-count="7">
+<div class="story-seg"><div class="{{g.cls}}" style="width: {{g.w}}"></div></div>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 22px; height: 22px">
+<span class="fs-small b" style="flex-grow: 1">Visite guidée · {{cur.salle}}</span>
+<a class="btn btn-icon btn-ghost" href="m-musee.dc.html" aria-label="Quitter la visite" style="color: #f3efe6"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+</div>
+</div>
+
+<div style="position: absolute; left: 16px; right: 16px; bottom: 24px; display: flex; flex-direction: column; gap: 14px; z-index: 5">
+<div class="anim-feed" style="display: flex; flex-direction: column; gap: 6px">
+<span class="fs-over" style="color: #f5c77a">{{cur.over}}</span>
+<h1 class="fs-h1" style="font-size: 30px">{{cur.title}}</h1>
+<div style="display: flex; align-items: center; gap: 8px">
+<img class="av av-24" src="{{cur.av}}" alt="">
+<span class="fs-small t2">{{cur.by}}</span>
+</div>
+<p class="fs-small t2 pretty" style="font-style: italic; min-height: 40px">{{cur.quote}}</p>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<button class="btn btn-icon glass btn-round" onClick="{{prev}}" aria-label="Œuvre précédente"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button>
+<button class="btn btn-icon glass btn-round" onClick="{{toggle}}" aria-label="{{playLabel}}">
+<sc-if value="{{playing}}" hint-placeholder-val="{{true}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14"></rect><rect x="14" y="5" width="4" height="14"></rect></svg></sc-if>
+<sc-if value="{{paused}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"></path></svg></sc-if>
+</button>
+<button class="btn btn-icon glass btn-round" onClick="{{next}}" aria-label="Œuvre suivante"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+<div style="flex-grow: 1"></div>
+<a class="btn glass" href="m-canvas-invite.dc.html" style="border-radius: 999px">Voir sur le canvas</a>
+<button class="btn btn-icon glass btn-round" onClick="{{like}}" aria-label="Coup de cœur">
+<img src="/_blob/6803d1100c44fc8a9af2da77d6e517b2" alt="" class="px {{likeCls}}" style="width: 22px; height: 22px"></button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":375,"height":812}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { i: 0, playing: true, liked: {} }; }
+  componentDidMount() { this.t = setInterval(() => { if (this.state.playing) this.go(1); }, 4500); }
+  componentWillUnmount() { clearInterval(this.t); }
+  go(d) { const n = this.stops().length; this.setState({ i: (this.state.i + d + n) % n }); }
+  stops() {
+    return [
+      { title: 'Le place en entier', over: 'Bienvenue', by: '1 024 × 768 pixels, posés entre amis depuis le 10 sept. 2022', quote: '« Chaque pixel a été posé par quelqu\u2019un. »', av: '/_blob/97636cf87922ce258aeeac3e914fff4d', salle: 'Entrée', z: null },
+      { title: 'Bord de mer', over: 'Paysages · 2022', by: 'Brindille', quote: '« Dessinée en une journée, le 13 septembre 2022. »', av: '/_blob/f341ef9fb793c7257cb54f723280da10', salle: 'Paysages', z: [397, 250, 115, 122] },
+      { title: 'Drapeau & baguette', over: 'Pionnières · 2022', by: 'Tiago & Evan', quote: '« Là depuis le tout premier jour du canvas. »', av: '/_blob/7e0fc904fd2815638f5d4d965a1ab50a', salle: 'Pionnières', z: [0, 170, 58, 86] },
+      { title: 'Dunes au couchant', over: 'Paysages · 2022', by: 'Lucie_px', quote: '« Posées à Noël, le jour où le canvas s\u2019est agrandi. »', av: '/_blob/0877ddccb171e78f5bfa6672ce2eb035', salle: 'Paysages', z: [0, 513, 127, 204] },
+      { title: 'Cube JustBetter', over: 'Drapeaux & logos · 2022', by: 'Evan', quote: '« Le logo, en version 42 pixels de large. »', av: '/_blob/c266e1d407907a93a6dc2fbd5560c5ab', salle: 'Drapeaux & logos', z: [310, 342, 42, 46] },
+      { title: 'Sapin de Noël', over: 'Pionnières · 2022', by: 'Mamie Pixel', quote: '« Il gagne une guirlande à chaque hiver. »', av: '/_blob/ae4dfc14c12f74add0a65a59f762ca51', salle: 'Pionnières', z: [980, 415, 44, 90] },
+      { title: 'Pas vraiment', over: 'Clins d\u2019œil · 2023', by: 'Zozo42', quote: '« En cours depuis 2023. Promis. »', av: '/_blob/e869fcd7638341e8f44d1dfa79b9fc20', salle: 'Clins d\u2019œil', z: [846, 512, 88, 76] }
+    ];
+  }
+  renderVals() {
+    const S = this.stops(), i = this.state.i, k0 = 375 / 1024;
+    const tf = (z) => {
+      if (!z) return 'translate(0px, 0px) scale(1)';
+      const s = Math.min(330 / (z[2] * k0), 300 / (z[3] * k0));
+      const tx = 187.5 - s * (z[0] + z[2] / 2) * k0, ty = 140 - s * (z[1] + z[3] / 2) * k0;
+      return 'translate(' + tx.toFixed(1) + 'px, ' + ty.toFixed(1) + 'px) scale(' + s.toFixed(3) + ')';
+    };
+    const cur = { ...S[i], tf: tf(S[i].z) };
+    const pl = this.state.playing;
+    return {
+      cur, playing: pl, paused: !pl, playLabel: pl ? 'Pause' : 'Lecture',
+      segs: S.map((_, j) => ({ cls: j === i ? ('anim-fill' + (pl ? '' : ' paused')) : '', w: j < i ? '100%' : (j === i ? '' : '0%') })),
+      prev: () => this.go(-1), next: () => this.go(1),
+      toggle: () => this.setState({ playing: !pl }),
+      likeCls: this.state.liked[i] ? 'anim-pop' : '',
+      like: () => this.setState({ liked: { ...this.state.liked, [i]: !this.state.liked[i] } })
+    };
+  }
+}
+</script>
+</body>
+</html>

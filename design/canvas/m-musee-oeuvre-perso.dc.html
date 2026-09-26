@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Personnaliser une œuvre</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 375px; height: 1480px; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 8px; padding: 12px 12px 8px">
+<a class="btn btn-icon btn-ghost" href="m-musee-editeur.dc.html" aria-label="Retour à mon musée"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<div style="display: flex; flex-direction: column; flex-grow: 1">
+<h1 class="fs-h3">Bord de mer</h1>
+<span class="fs-cap t3">Salle 1 · Mes œuvres · 1 / 2</span>
+</div>
+<a class="btn btn-sm btn-primary" href="m-musee-editeur.dc.html">Enregistrer</a>
+</header>
+
+<div style="padding: 0 16px">
+<div class="clip" style="position: relative; height: 300px; border-radius: 16px; background: linear-gradient(180deg, #0a2340, #1c4f7c); border: 1px solid var(--line)">
+<div style="position: absolute; left: 0; right: 0; bottom: 0; height: 40px; background: repeating-linear-gradient(0deg, #2a1a0f 0 10px, #3a2616 10px 12px)"></div>
+<div style="position: absolute; left: 50%; top: 0; width: 260px; height: 260px; margin-left: -130px; background: radial-gradient(ellipse 50% 60% at 50% 0%, {{spotGlow}}, transparent 72%)"></div>
+<sc-for list="{{parts}}" as="p" hint-placeholder-count="8"><span class="part part-monte" style="left: {{p.x}}px; top: {{p.y}}px; background: #cfe8ff; animation-delay: {{p.d}}s"></span></sc-for>
+<div class="{{cadreCls}}" style="position: absolute; left: 50%; top: {{topY}}px; transform: translateX(-50%)">
+<div class="{{passeCls}}"><div class="clip" style="position: relative; width: {{fw}}px; height: {{fh}}px; background: #fff">
+<sc-if value="{{isBuild}}" hint-placeholder-val="{{false}}">
+<img class="px" src="/_blob/ffce91aae9826291a78bcaa83f94c7fc" alt="La construction de l'œuvre, image {{frame}} sur 6" style="position: absolute; top: 0; height: {{fh}}px; width: {{stripW}}px; left: {{stripL}}px">
+</sc-if>
+<sc-if value="{{isStill}}" hint-placeholder-val="{{true}}">
+<img class="px {{stillCls}}" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Bord de mer" style="position: absolute; width: {{c.w}}px; height: {{c.h}}px; left: {{c.l}}px; top: {{c.t}}px; transform-origin: 50% 40%">
+</sc-if>
+</div></div>
+<sc-if value="{{isSparkle}}" hint-placeholder-val="{{false}}">
+<span class="part part-scint" style="left: -4px; top: 10px; width: 4px; height: 4px; background: #fff8b8"></span>
+<span class="part part-scint" style="right: -5px; top: 60px; width: 4px; height: 4px; background: #fff8b8; animation-delay: -.8s"></span>
+<span class="part part-scint" style="left: 40%; bottom: -6px; width: 4px; height: 4px; background: #fff8b8; animation-delay: -1.6s"></span>
+</sc-if>
+</div>
+<div class="glass" style="position: absolute; left: 10px; top: 10px; border-radius: 999px; padding: 4px 10px; color: #f3efe6"><span class="fs-cap b">Aperçu · {{animLabel}}</span></div>
+<sc-if value="{{isBuild}}" hint-placeholder-val="{{false}}">
+<div class="glass" style="position: absolute; right: 10px; top: 10px; border-radius: 999px; padding: 4px 10px; color: #f3efe6"><span class="fs-cap mono">{{frameDate}}</span></div>
+</sc-if>
+</div>
+</div>
+
+<div style="padding: 20px 16px 32px; display: flex; flex-direction: column; gap: 22px">
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Animation de l'œuvre</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{anims}}" as="a" hint-placeholder-count="4">
+<button onClick="{{a.pick}}" aria-pressed="{{a.aria}}" class="card-2" style="font: inherit; color: var(--text); text-align: left; padding: 10px 12px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; outline: {{a.ring}}; outline-offset: -2px">
+<span class="fs-small b">{{a.label}}</span><span class="fs-cap t3">{{a.sub}}</span>
+</button>
+</sc-for>
+</div>
+<span class="hint">« Rejouer sa construction » utilise les sauvegardes du canvas : l'essentiel de cette œuvre a été dessiné le 13 sept. 2022.</span>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<span class="label">Le mot de l'artiste</span>
+<textarea class="textarea" aria-label="Texte du cartel" style="min-height: 72px">Ma toute première œuvre. La pizza est arrivée plus tard, je l'adore.</textarea>
+<div class="card-2" style="padding: 10px 12px; display: flex; align-items: center; gap: 12px">
+<button class="btn btn-icon btn-round" onClick="{{rec}}" aria-label="{{recLabel}}" style="width: 40px; height: 40px; background: {{recBg}}; color: #fff; border: 0; flex-shrink: 0">
+<sc-if value="{{recording}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14"></rect></svg></sc-if>
+<sc-if value="{{notRecording}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="9" y="3" width="6" height="11"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></sc-if>
+</button>
+<div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
+<span class="fs-small b">{{recTitle}}</span>
+<div class="onde" style="color: {{ondeColor}}">
+<sc-for list="{{onde}}" as="o" hint-placeholder-count="28"><span style="height: {{o}}px"></span></sc-for>
+</div>
+</div>
+<span class="mono fs-cap t3">{{recTime}}</span>
+</div>
+<span class="hint">Commentaire vocal de 30 s maximum, joué quand un visiteur s'arrête devant l'œuvre.</span>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Son au passage</span>
+<div class="scroll-x" style="display: flex; gap: 8px; margin: 0 -16px; padding: 0 16px">
+<sc-for list="{{sons}}" as="s" hint-placeholder-count="5"><button class="chip {{s.on}}" onClick="{{s.pick}}" style="cursor: pointer">{{s.label}}</button></sc-for>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Taille au mur</span>
+<div class="seg" role="group" aria-label="Taille au mur" style="align-self: flex-start">
+<sc-for list="{{tailles}}" as="t" hint-placeholder-count="3"><button class="{{t.on}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Cadre</span>
+<div class="seg" role="group" aria-label="Cadre" style="align-self: flex-start">
+<sc-for list="{{cadres}}" as="t" hint-placeholder-count="4"><button class="{{t.on}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<span class="label">Couleur du spot</span>
+<div style="display: flex; gap: 8px">
+<sc-for list="{{spots}}" as="s" hint-placeholder-count="6"><button class="swatch swatch-s {{s.sel}}" style="background: {{s.hex}}; border-radius: 999px" aria-label="{{s.name}}" onClick="{{s.pick}}"></button></sc-for>
+</div>
+</section>
+
+<section class="card" style="padding: 4px 14px">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 0">
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Œuvre vedette</span><span class="fs-cap t3">seule sur son mur, la visite guidée s'y arrête plus longtemps</span></div>
+<button class="toggle {{vedCls}}" aria-pressed="{{vedAria}}" aria-label="Œuvre vedette" onClick="{{ved}}"></button>
+</div>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":1480}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { anim: 1, frame: 0, rec: 0, son: 1, taille: 1, cadre: 0, spot: 0, ved: true }; }
+  componentDidMount() {
+    this.t = setInterval(() => {
+      if (this.state.anim === 1) this.setState({ frame: (this.state.frame + 1) % 6 });
+      if (this.state.rec === 1 && this.state.recT < 18) this.setState({ recT: (this.state.recT || 0) + 1 });
+    }, 700);
+  }
+  componentWillUnmount() { clearInterval(this.t); }
+  renderVals() {
+    const st = this.state;
+    const A = [['Aucune', 'l’œuvre, tout simplement'], ['Rejouer sa construction', 'depuis les sauvegardes'], ['Zoom lent', 'la caméra s’approche'], ['Scintille', 'petites étoiles pixel']];
+    const S = ['Aucun', 'Vague', 'Clochette', 'Pièce 8-bit', 'Mouette', '+ Importer'];
+    const TA = [['Petite', 150], ['Moyenne', 190], ['Grande', 230]];
+    const CA = [['Comme le musée', 'cadre-or', 'passe'], ['Bois', 'cadre', 'passe'], ['Pixel', 'px-corners-s', ''], ['Aucun', '', '']];
+    const SP = [['#fff8b8', 'beige', 'rgba(255,236,190,.34)'], ['#5eb3ff', 'bleu evian', 'rgba(94,179,255,.34)'], ['#ff63aa', 'rose', 'rgba(255,99,170,.3)'], ['#7eed38', 'vert clair', 'rgba(126,237,56,.28)'], ['#ffa800', 'orange foncé', 'rgba(255,168,0,.3)'], ['#e4abff', 'rose clair', 'rgba(228,171,255,.3)']];
+    const DATES = ['11 sept. 2022', '12 sept. 2022', '13 sept. 2022', '20 sept. 2022', '12 déc. 2022', 'aujourd’hui'];
+    const fh = TA[st.taille][1], fw = Math.round(fh * 115 / 122);
+    const s = fh / 122;
+    const z = [397, 250, 115, 122], k = fh / z[3];
+    const c = { w: Math.round(1024 * k), h: Math.round(768 * k), l: Math.round(-z[0] * k), t: Math.round(-z[1] * k) };
+    const ondeBase = [6, 10, 16, 8, 18, 12, 20, 9, 14, 6, 11, 19, 15, 7, 12, 18, 10, 6, 14, 20, 8, 12, 16, 9, 6, 13, 10, 7];
+    const rec = st.rec, recT = st.recT || 0;
+    const pick = (key, i) => () => this.setState({ [key]: i });
+    return {
+      theme: this.props.theme ?? 'sombre',
+      fw, fh, topY: Math.max(14, Math.round((240 - fh - 32) / 2)), c,
+      isBuild: st.anim === 1, isStill: st.anim !== 1, stillCls: st.anim === 2 ? 'anim-zoomlent' : '',
+      isSparkle: st.anim === 3, frame: st.frame + 1, frameDate: DATES[st.frame],
+      stripW: Math.round(730 * s), stripL: -Math.round(st.frame * 123 * s),
+      animLabel: A[st.anim][0],
+      anims: A.map((a, i) => ({ label: a[0], sub: a[1], aria: i === st.anim ? 'true' : 'false', ring: i === st.anim ? '2px solid var(--accent)' : 'none', pick: pick('anim', i) })),
+      parts: Array.from({ length: 8 }, (_, i) => ({ x: 20 + (i * 47) % 320, y: 120 + (i * 29) % 130, d: -(i * 0.6).toFixed(1) })),
+      cadreCls: CA[st.cadre][1], passeCls: CA[st.cadre][2],
+      spotGlow: SP[st.spot][2],
+      recording: rec === 1, notRecording: rec !== 1,
+      recBg: rec === 1 ? '#d63b3b' : '#e0474c',
+      recLabel: rec === 1 ? 'Arrêter l’enregistrement' : 'Enregistrer un commentaire vocal',
+      recTitle: rec === 0 ? 'Commentaire vocal enregistré' : (rec === 1 ? 'Enregistrement…' : 'Nouveau commentaire prêt'),
+      recTime: rec === 0 ? '0:18' : ('0:' + String(recT).padStart(2, '0')),
+      ondeColor: rec === 1 ? 'var(--danger-text)' : 'var(--accent-text)',
+      onde: rec === 1 ? ondeBase.map((h, i) => (i < recT * 1.5 ? h : 3)) : ondeBase,
+      rec: () => this.setState({ rec: rec === 1 ? 2 : 1, recT: 0 }),
+      sons: S.map((label, i) => ({ label, on: i === st.son ? 'chip-on' : '', pick: pick('son', i) })),
+      tailles: TA.map((t, i) => ({ label: t[0], on: i === st.taille ? 'on' : '', pick: pick('taille', i) })),
+      cadres: CA.map((t, i) => ({ label: t[0], on: i === st.cadre ? 'on' : '', pick: pick('cadre', i) })),
+      spots: SP.map((t, i) => ({ hex: t[0], name: t[1], sel: i === st.spot ? 'swatch-sel' : '', pick: pick('spot', i) })),
+      vedCls: st.ved ? 'toggle-on' : '', vedAria: st.ved ? 'true' : 'false', ved: () => this.setState({ ved: !st.ved })
+    };
+  }
+}
+</script>
+</body>
+</html>

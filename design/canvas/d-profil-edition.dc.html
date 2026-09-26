@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Édition du profil</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 1440px; height: 1000px; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 12px; padding: 20px 48px; border-bottom: 1px solid var(--line)">
+<a class="btn btn-icon btn-ghost" href="d-profil.dc.html" aria-label="Retour au profil"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<h1 class="fs-h2" style="flex-grow: 1">Modifier mon profil</h1>
+<a class="btn btn-ghost" href="d-profil.dc.html">Annuler</a>
+<a class="btn btn-primary" href="d-profil.dc.html">Enregistrer</a>
+</header>
+
+<div style="display: grid; grid-template-columns: 1fr 520px; gap: 48px; padding: 28px 48px">
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px 32px; align-content: start">
+<div class="field"><label class="label" for="dp-pseudo">Pseudo</label><input id="dp-pseudo" class="input" value="{{name}}" onChange="{{setName}}"><span class="hint">place.justbetter.fr/u/{{slug}}</span></div>
+<div class="field"><span class="label">Avatar</span><div style="display: flex; align-items: center; gap: 12px"><img class="av av-48" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="Avatar actuel"><button class="btn btn-sm">Importer</button><button class="btn btn-sm btn-ghost">Générer un pixel-avatar</button></div></div>
+<div class="field" style="grid-column: 1 / -1"><label class="label" for="dp-bio">Bio</label><textarea id="dp-bio" class="textarea" value="{{bio}}" onChange="{{setBio}}" style="min-height: 72px"></textarea><span class="hint">{{bioLen}} / 160</span></div>
+<div class="field"><span class="label">Bannière</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{banners}}" as="b" hint-placeholder-count="3">
+<button onClick="{{b.pick}}" aria-label="{{b.label}}" style="appearance: none; padding: 0; border: 0; height: 56px; border-radius: 10px; overflow: hidden; position: relative; cursor: pointer; background: {{b.bg}}; outline: {{b.ring}}; outline-offset: 2px">
+<sc-if value="{{b.img}}" hint-placeholder-val="{{true}}"><img class="px" src="{{b.src}}" alt="" style="position: absolute; left: -20px; top: 0; width: 168px; height: 56px"></sc-if>
+<span class="pill" style="position: absolute; left: 6px; bottom: 6px; background: rgba(10,9,8,.8); color: #f3efe6">{{b.label}}</span>
+</button>
+</sc-for>
+</div></div>
+<div class="field"><span class="label">Couleur d'accent</span>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<sc-for list="{{accents}}" as="a" hint-placeholder-count="8"><button class="swatch swatch-s {{a.sel}}" style="background: {{a.hex}}; width: 36px; height: 36px; border-radius: 999px" aria-label="{{a.name}}" onClick="{{a.pick}}"></button></sc-for>
+</div></div>
+<div class="field" style="grid-column: 1 / -1"><span class="label">Couleur préférée de la palette</span>
+<div style="display: grid; grid-template-columns: repeat(15, 32px); gap: 6px">
+<sc-for list="{{palette}}" as="c" hint-placeholder-count="30"><button class="swatch {{c.sel}}" style="background: {{c.hex}}; width: 32px; height: 32px; border-radius: 8px" aria-label="{{c.name}}" title="{{c.name}}" onClick="{{c.pick}}"></button></sc-for>
+</div></div>
+<div class="card" style="grid-column: 1 / -1; padding: 4px 16px">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line)"><span class="fs-small" style="flex-grow: 1">Afficher ma carte de contributions</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Afficher ma carte de contributions"></button></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line)"><span class="fs-small" style="flex-grow: 1">M'avertir quand une de mes œuvres est retouchée</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Alertes de retouche"></button></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 0"><span class="fs-small" style="flex-grow: 1">Mon musée est public</span><button class="toggle toggle-on" aria-pressed="true" aria-label="Musée public"></button></div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span class="fs-over">Aperçu en direct</span>
+<div class="card elev" style="overflow: hidden">
+<div class="clip" style="position: relative; height: 130px; background: {{banBg}}">
+<sc-if value="{{banImg}}" hint-placeholder-val="{{true}}"><img class="px" src="{{banSrc}}" alt="" style="position: absolute; left: -10px; top: -30px; width: 540px; height: 180px"></sc-if>
+</div>
+<div style="padding: 0 22px 22px; margin-top: -44px; display: flex; flex-direction: column; gap: 10px; position: relative">
+<img class="av av-96" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="" style="box-shadow: 0 0 0 4px var(--surface), 0 0 0 8px {{accent}}">
+<div style="display: flex; align-items: baseline; gap: 10px"><span class="pixel b" style="font-size: 30px">{{name}}</span><span class="mono fs-small t3">/u/{{slug}}</span></div>
+<p class="fs-body t2 pretty">{{bio}}</p>
+<div style="display: flex; align-items: center; gap: 10px"><span class="pill" style="background: {{accentSoft}}; color: {{accent}}">#4 cette semaine</span><span class="swatch swatch-xs" style="background: {{fav.hex}}"></span><span class="fs-cap t3">{{fav.name}}</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div class="card-2" style="padding: 10px"><span class="mono b">4 812</span><br><span class="fs-cap t3">pixels posés</span></div>
+<div class="card-2" style="padding: 10px"><span class="mono b">3 107</span><br><span class="fs-cap t3">encore visibles</span></div>
+<div class="card-2" style="padding: 10px"><span class="mono b tgold">13 305</span><br><span class="fs-cap t3">pionniers</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { acc: 0, ban: 0, fav: 28, name: 'Brindille', bio: 'Je peins des couchers de soleil pixel par pixel. Ne touchez pas à mes cactus (ou alors avec goût).' }; }
+  renderVals() {
+    const P = [['#000000','noir'],['#333434','gris'],['#d4d7d9','gris clair'],['#ffffff','blanc'],['#6d302f','maron'],['#6d001a','rouge marronâtre'],['#9c451a','maron clair'],['#be0027','rouge'],['#ff2651','rouge clair'],['#ff2d00','rouge'],['#ffa800','orange foncé'],['#ffd623','jaune'],['#fff8b8','beige'],['#7eed38','vert clair'],['#00cc4e','vert'],['#00a344','vert foncé'],['#598d5a','vert foncé foncé'],['#004b6f','bleu sous marin'],['#009eaa','bleu marin'],['#00ccc0','bleu sale de bain'],['#33E9F4','cian'],['#5eb3ff','bleu evian'],['#245aea','bleu ciel'],['#313ac1','bleu ciel violet'],['#1832a4','ciel violet foncé'],['#511e9f','violet'],['#6a5cff','violet clair'],['#b44ac0','violet clair rose'],['#ff63aa','rose'],['#e4abff','rose clair']];
+    const A = [['#ff63aa','rose'],['#5eb3ff','bleu evian'],['#3ee06c','vert'],['#ffd623','jaune'],['#ffa800','orange foncé'],['#6a5cff','violet clair'],['#00ccc0','bleu sale de bain'],['#ff2651','rouge clair']];
+    const B = [{ label: 'Désert', src: '/_blob/cc413a0d8f0d50bdb65c0368abda34b1', img: true }, { label: 'Nuit', src: '/_blob/8afa245023c40a55d0ce31d6de0a0663', img: true }, { label: 'Uni', img: false, src: '' }];
+    const st = this.state, acc = A[st.acc][0], b = B[st.ban];
+    const hexA = (h, a) => { const n = parseInt(h.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; };
+    return {
+      theme: this.props.theme ?? 'sombre', accent: acc, accentSoft: hexA(acc, .16),
+      banImg: b.img, banSrc: b.src, banBg: b.img ? '#000' : hexA(acc, .35),
+      name: st.name, slug: st.name.toLowerCase().replace(/[^a-z0-9_]+/g, '-'), bio: st.bio, bioLen: st.bio.length,
+      setName: (e) => this.setState({ name: e.target.value || 'Brindille' }), setBio: (e) => this.setState({ bio: e.target.value.slice(0, 160) }),
+      fav: { hex: P[st.fav][0], name: P[st.fav][1] },
+      banners: B.map((x, i) => ({ ...x, bg: x.img ? '#000' : hexA(acc, .35), ring: i === st.ban ? '3px solid ' + acc : 'none', pick: () => this.setState({ ban: i }) })),
+      accents: A.map(([hex, name], i) => ({ hex, name, sel: i === st.acc ? 'swatch-sel' : '', pick: () => this.setState({ acc: i }) })),
+      palette: P.map(([hex, name], i) => ({ hex, name, sel: i === st.fav ? 'swatch-sel' : '', pick: () => this.setState({ fav: i }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

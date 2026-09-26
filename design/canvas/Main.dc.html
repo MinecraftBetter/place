@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Fondations</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 1440px; height: 1680px; padding: 64px 72px; display: flex; flex-direction: column; gap: 56px">
+
+<header style="display: flex; align-items: flex-end; justify-content: space-between; gap: 48px">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: center; gap: 16px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 64px; height: 64px">
+<img src="/_blob/bf33b3cfb8a0e1c819700e44225e8e67" alt="Mascotte cowboy" class="px anim-bob" style="width: 36px; height: 62px">
+</div>
+<h1 class="fs-display">BetterPlace</h1>
+<p class="fs-h3 t2" style="font-weight: 500; max-width: 560px">Design system du redesign — canvas collaboratif 1024×1024 de JustBetter, sombre par défaut, pixel en clin d'œil, western dans l'âme.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; width: 760px">
+<div class="card" style="padding: 18px; display: flex; flex-direction: column; gap: 8px">
+<span class="fs-over">Principe 1</span>
+<span class="fs-h3">Le canvas est la star</span>
+<span class="fs-small t2 pretty">L'interface flotte en surcouche légère, repliable, jamais pleine largeur sur le canvas.</span>
+</div>
+<div class="card" style="padding: 18px; display: flex; flex-direction: column; gap: 8px">
+<span class="fs-over">Principe 2</span>
+<span class="fs-h3">Pixel en clin d'œil</span>
+<span class="fs-small t2 pretty">Typo pixel pour les titres, coins crénelés sur les actions clés ; le reste est net et sans-serif.</span>
+</div>
+<div class="card" style="padding: 18px; display: flex; flex-direction: column; gap: 8px">
+<span class="fs-over">Principe 3</span>
+<span class="fs-h3">Le saloon, pas le costume</span>
+<span class="fs-small t2 pretty">L'univers western passe par la mascotte, le cuir doré et le ton des textes — pas par des décors.</span>
+</div>
+</div>
+</header>
+
+<div class="rule-px"></div>
+
+<section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: baseline; gap: 12px"><h2 class="fs-h2">Couleurs · sombre</h2><span class="fs-small t3">par défaut — « nuit du désert »</span></div>
+<div class="bp" data-theme="sombre" style="border-radius: 16px; padding: 20px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; border: 1px solid var(--line)">
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line-2)"></div><span class="fs-cap b">--bg</span><span class="fs-cap mono t3">#11100E</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line)"></div><span class="fs-cap b">--surface</span><span class="fs-cap mono t3">#1C1B18</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--surface-2)"></div><span class="fs-cap b">--surface-2</span><span class="fs-cap mono t3">#24221E</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--line-2)"></div><span class="fs-cap b">--line-2</span><span class="fs-cap mono t3">#4B463E</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--text)"></div><span class="fs-cap b">--text</span><span class="fs-cap mono t3">#F3EFE6</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--text-3)"></div><span class="fs-cap b">--text-3</span><span class="fs-cap mono t3">#979083</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--accent)"></div><span class="fs-cap b">--accent</span><span class="fs-cap mono t3">#3EE06C · vert JustBetter</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--gold)"></div><span class="fs-cap b">--gold</span><span class="fs-cap mono t3">#F0B75A · cuir, Pionnier</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--danger)"></div><span class="fs-cap b">--danger</span><span class="fs-cap mono t3">#FF6B6B</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--warn)"></div><span class="fs-cap b">--warn</span><span class="fs-cap mono t3">#F5A524 · conflit</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--info)"></div><span class="fs-cap b">--info</span><span class="fs-cap mono t3">#5EB3FF · bleu evian</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div class="void" style="height: 56px; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--line)"></div><span class="fs-cap b">--void</span><span class="fs-cap mono t3">autour du canvas</span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: baseline; gap: 12px"><h2 class="fs-h2">Couleurs · clair</h2><span class="fs-small t3">« parchemin »</span></div>
+<div class="bp" data-theme="clair" style="border-radius: 16px; padding: 20px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; border: 1px solid var(--line)">
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line-2)"></div><span class="fs-cap b">--bg</span><span class="fs-cap mono t3">#F3EEE3</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line)"></div><span class="fs-cap b">--surface</span><span class="fs-cap mono t3">#FFFCF6</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line)"></div><span class="fs-cap b">--surface-2</span><span class="fs-cap mono t3">#F6F0E4</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--line-2)"></div><span class="fs-cap b">--line-2</span><span class="fs-cap mono t3">#C8BCA5</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--text)"></div><span class="fs-cap b">--text</span><span class="fs-cap mono t3">#1C1A16</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--text-3)"></div><span class="fs-cap b">--text-3</span><span class="fs-cap mono t3">#6C6457</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--accent)"></div><span class="fs-cap b">--accent</span><span class="fs-cap mono t3">#2FD064 · texte #13793A</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--gold)"></div><span class="fs-cap b">--gold</span><span class="fs-cap mono t3">#C98A2B · texte #8E5A0C</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--danger)"></div><span class="fs-cap b">--danger</span><span class="fs-cap mono t3">#D63B3B</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--warn)"></div><span class="fs-cap b">--warn</span><span class="fs-cap mono t3">#C77A00</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 10px; background: var(--info)"></div><span class="fs-cap b">--info</span><span class="fs-cap mono t3">#1F6FD1</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div class="void" style="height: 56px; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--line)"></div><span class="fs-cap b">--void</span><span class="fs-cap mono t3">#E4DCCB</span></div>
+</div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: baseline; gap: 12px"><h2 class="fs-h2">Palette du canvas</h2><span class="fs-small t3">conservée telle quelle, noms compris — 30 couleurs + champ hexadécimal libre</span></div>
+<div style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{palette}}" as="c" hint-placeholder-count="30">
+<div style="display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line)">
+<div class="swatch swatch-s" style="background: {{c.hex}}"></div>
+<div style="display: flex; flex-direction: column; min-width: 0">
+<span class="fs-cap b ellip">{{c.name}}</span>
+<span class="mono t3" style="font-size: 11px">{{c.hex}}</span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px">
+<div style="display: flex; flex-direction: column; gap: 20px">
+<h2 class="fs-h2">Typographie</h2>
+<div class="card" style="padding: 24px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span class="fs-display">Le plus beau place</span><span class="fs-cap t3 mono">Pixelify Sans 56/56 · 600</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span class="fs-h1">Coucher de soleil au Far West</span><span class="fs-cap t3 mono">34/37 · 600</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span class="fs-h2">Classement de la semaine</span><span class="fs-cap t3 mono">24/28 · 600</span></div>
+<div class="rule"></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span class="fs-h3">Instrument Sans — interface</span><span class="fs-cap t3 mono">18/23 · 600</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span class="fs-body t2">Chaque nouveau pixel est lié au compte qui l'a posé.</span><span class="fs-cap t3 mono">15/22 · 400</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span class="fs-small t2">Posé il y a 3 min par Brindille</span><span class="fs-cap t3 mono">13/19</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span class="fs-over">Revendications en attente</span><span class="fs-cap t3 mono">11 · capitales +9 %</span></div>
+<div class="rule"></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span class="mono" style="font-size: 15px">x 684 · y 655 · ×8</span><span class="fs-cap t3 mono">JetBrains Mono — coordonnées, chiffres</span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 20px">
+<h2 class="fs-h2">Espacements & formes</h2>
+<div class="card" style="padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<span class="fs-over">Échelle · base 4</span>
+<div style="display: flex; align-items: flex-end; gap: 14px">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 4px; height: 4px; background: var(--accent)"></div><span class="fs-cap mono t3">4</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 8px; height: 8px; background: var(--accent)"></div><span class="fs-cap mono t3">8</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 12px; height: 12px; background: var(--accent)"></div><span class="fs-cap mono t3">12</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 16px; height: 16px; background: var(--accent)"></div><span class="fs-cap mono t3">16</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 24px; height: 24px; background: var(--accent)"></div><span class="fs-cap mono t3">24</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 32px; height: 32px; background: var(--accent)"></div><span class="fs-cap mono t3">32</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 48px; height: 48px; background: var(--accent)"></div><span class="fs-cap mono t3">48</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 64px; height: 64px; background: var(--accent)"></div><span class="fs-cap mono t3">64</span></div>
+</div>
+<div class="rule"></div>
+<span class="fs-over">Rayons</span>
+<div style="display: flex; align-items: flex-end; gap: 16px">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: var(--surface-3); border-radius: 4px"></div><span class="fs-cap mono t3">4 · coord</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: var(--surface-3); border-radius: 8px"></div><span class="fs-cap mono t3">8</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: var(--surface-3); border-radius: 12px"></div><span class="fs-cap mono t3">12 · champ</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: var(--surface-3); border-radius: 16px"></div><span class="fs-cap mono t3">16 · carte</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; background: var(--surface-3); border-radius: 24px"></div><span class="fs-cap mono t3">24 · tiroir</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div class="px-corners" style="width: 56px; height: 56px; background: var(--accent)"></div><span class="fs-cap mono t3">crénelé</span></div>
+</div>
+<div class="rule"></div>
+<span class="fs-over">Élévations</span>
+<div style="display: flex; gap: 16px">
+<div class="card" style="flex-grow: 1; height: 64px; display: flex; align-items: center; justify-content: center"><span class="fs-cap t2">Carte · bordure</span></div>
+<div class="glass" style="flex-grow: 1; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center"><span class="fs-cap t2">Verre · sur canvas</span></div>
+<div class="card elev" style="flex-grow: 1; height: 64px; display: flex; align-items: center; justify-content: center"><span class="fs-cap t2">Modale · ombre</span></div>
+</div>
+</div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: baseline; gap: 12px"><h2 class="fs-h2">Icônes</h2><span class="fs-small t3">trait 2 px, extrémités carrées, grille 24 — nettes comme des pixels</span></div>
+<div class="card" style="padding: 20px 24px; display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 18px 8px">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg><span class="fs-cap t3">Canvas</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 9l9-6 9 6M5 10v9M9.5 10v9M14.5 10v9M19 10v9M3 21h18"></path></svg><span class="fs-cap t3">Musée</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"></path></svg><span class="fs-cap t3">Activité</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="8" y="3" width="8" height="8"></rect><path d="M4 21v-3a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v3"></path></svg><span class="fs-cap t3">Profil</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M14 4l6 6-3 3-6-6zM11 7l-7 7v3h3l7-7"></path></svg><span class="fs-cap t3">Pipette</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="5" y="5" width="14" height="14"></rect><path d="M12 2v6M12 16v6M2 12h6M16 12h6"></path></svg><span class="fs-cap t3">Viser</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 3"></rect></svg><span class="fs-cap t3">Rectangle</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M7 18c-3-2-4-5-2-8s7-5 11-4 5 5 2 8-7 3-9 2M7 18l-1 3"></path></svg><span class="fs-cap t3">Lasso</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 20L15 9M17 3v4M15 5h4M20 10v2M19 11h2M9 3v2M8 4h2"></path></svg><span class="fs-cap t3">Baguette</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"></path></svg><span class="fs-cap t3">Partager</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M5 21V4h11l-2 4 2 4H5"></path></svg><span class="fs-cap t3">Revendiquer</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"></path></svg><span class="fs-cap t3">Retouches</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M7 4h10v6a5 5 0 0 1-10 0zM7 6H3v2a3 3 0 0 0 4 3M17 6h4v2a3 3 0 0 1-4 3M12 15v4M8 21h8"></path></svg><span class="fs-cap t3">Classement</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M7 4l13 8-13 8z"></path></svg><span class="fs-cap t3">Timelapse</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 4v6h6"></path><path d="M5 15a8 8 0 1 0 1-7L4 10"></path></svg><span class="fs-cap t3">Restaurer</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 16V10a6 6 0 0 1 12 0v6l2 2H4zM10 21h4"></path></svg><span class="fs-cap t3">Alertes</span></div>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":1680}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const P = [['#000000','noir'],['#333434','gris'],['#d4d7d9','gris clair'],['#ffffff','blanc'],['#6d302f','maron'],['#6d001a','rouge marronâtre'],['#9c451a','maron clair'],['#be0027','rouge'],['#ff2651','rouge clair'],['#ff2d00','rouge'],['#ffa800','orange foncé'],['#ffd623','jaune'],['#fff8b8','beige'],['#7eed38','vert clair'],['#00cc4e','vert'],['#00a344','vert foncé'],['#598d5a','vert foncé foncé'],['#004b6f','bleu sous marin'],['#009eaa','bleu marin'],['#00ccc0','bleu sale de bain'],['#33E9F4','cian'],['#5eb3ff','bleu evian'],['#245aea','bleu ciel'],['#313ac1','bleu ciel violet'],['#1832a4','ciel violet foncé'],['#511e9f','violet'],['#6a5cff','violet clair'],['#b44ac0','violet clair rose'],['#ff63aa','rose'],['#e4abff','rose clair']];
+    return { theme: this.props.theme ?? 'sombre', palette: P.map(([hex, name]) => ({ hex, name })) };
+  }
+}
+</script>
+</body>
+</html>

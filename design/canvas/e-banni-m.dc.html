@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Compte suspendu</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 375px; height: 812px">
+<div style="height: 100%; display: flex; flex-direction: column; padding: 20px 20px 28px; gap: 18px">
+<div style="display: flex; align-items: center; gap: 10px"><img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 26px; height: 26px"><span class="pixel b" style="font-size: 18px">BetterPlace</span></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center">
+<div style="position: relative; width: 120px; height: 120px; display: flex; align-items: flex-end; justify-content: center">
+<div style="position: absolute; inset: 0; border-radius: 999px; background: var(--warn-soft)"></div>
+<img class="px" src="/_blob/bf33b3cfb8a0e1c819700e44225e8e67" alt="" style="position: relative; width: 54px; height: 93px; margin-bottom: 10px">
+</div>
+<h1 class="fs-h1" style="font-size: 30px">Ton compte est suspendu</h1>
+<p class="fs-body t2 pretty">Jusqu'au <b style="color: var(--text)">15 oct. à 18:00</b>. Tu peux regarder le canvas, mais pas dessiner pour l'instant.</p>
+<div class="card" style="padding: 14px 16px; width: 100%; text-align: left; display: flex; flex-direction: column; gap: 6px">
+<span class="fs-over">Motif</span>
+<span class="fs-small">Beaucoup de pixels posés en très peu de temps : on dirait un script automatique.</span>
+<span class="fs-cap t3">Décision de l'équipe · 14 oct. 11:38</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<a class="btn btn-primary btn-block" href="m-canvas-invite.dc.html">Regarder le canvas</a>
+<a class="btn btn-ghost btn-block" href="mailto:[ADRESSE DE CONTACT]">C'est une erreur ? Écrire à l'équipe</a>
+<p class="fs-cap t3 pretty" style="text-align: center">Compte banni définitivement : même écran, sans date de fin, avec le bouton « Écrire à l'équipe ».</p>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":812}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'sombre' }; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Le Musée</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp spot" data-theme="{{theme}}" style="width: 1440px; height: 1100px; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 12px; padding: 20px 48px">
+<a href="d-accueil.dc.html" style="display: flex; align-items: center; gap: 10px; color: var(--text)"><img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 28px; height: 28px"><span class="pixel" style="font-size: 20px; font-weight: 600">BetterPlace</span></a>
+<nav style="display: flex; gap: 4px; margin-left: 20px" aria-label="Sections">
+<a class="btn btn-sm btn-ghost" href="d-canvas.dc.html">Canvas</a>
+<a class="btn btn-sm btn-ghost" href="d-musee.dc.html" style="color: var(--text); background: var(--surface-2)">Musée</a>
+<a class="btn btn-sm btn-ghost" href="d-activite.dc.html">Activité</a>
+<a class="btn btn-sm btn-ghost" href="d-classement.dc.html">Classement</a>
+<a class="btn btn-sm btn-ghost" href="d-timelapse.dc.html">Timelapse</a>
+</nav>
+<div style="flex-grow: 1"></div>
+<a class="btn btn-sm" href="d-musee-editeur.dc.html">Mon musée</a>
+<a class="btn btn-sm btn-gold btn-px" href="m-exposer.dc.html">Exposer une œuvre</a>
+<img class="av av-40" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="" style="box-shadow: 0 0 0 2px #ff63aa">
+</header>
+
+<section style="display: grid; grid-template-columns: 718px 1fr; gap: 48px; padding: 16px 48px 0; align-items: center">
+<a class="cadre-or" href="d-oeuvre.dc.html" style="display: block">
+<div class="clip" style="position: relative; width: 700px; height: 460px; background: #fff">
+<img class="px anim-cam" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Vol de caméra du canvas entier jusqu'à Bord de mer" style="position: absolute; left: 0; top: -32.5px; width: 700px; height: 525px; --tx: -1141px; --ty: -758px; --s: 4.8">
+</div>
+</a>
+<div style="display: flex; flex-direction: column; gap: 18px">
+<span class="fs-over" style="color: var(--gold-text)">À l'affiche cette semaine</span>
+<h1 class="fs-display" style="font-size: 52px">Bord de mer</h1>
+<div style="display: flex; align-items: center; gap: 10px"><img class="av av-32" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt=""><span class="fs-body"><a href="d-profil.dc.html">Brindille</a> <span class="t3">· 13 sept. 2022 · 115 × 122 · salle Paysages</span></span></div>
+<p class="fs-body t2 pretty" style="font-style: italic">« Dessinée en une journée. La pizza de Zozo42 est arrivée en 2024 : elle est restée, elle fait partie du décor. »</p>
+<div style="display: flex; gap: 10px">
+<a class="btn btn-primary btn-lg btn-px" href="d-visite.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M7 4l13 8-13 8z"></path></svg>Visite guidée</a>
+<a class="btn btn-lg" href="d-oeuvre.dc.html">Rejouer la construction</a>
+<button class="btn btn-lg" onClick="{{like}}" aria-pressed="{{likedAria}}"><img src="/_blob/6803d1100c44fc8a9af2da77d6e517b2" alt="" class="px {{likeAnim}}" style="width: 22px; height: 22px">{{likes}}</button>
+</div>
+</div>
+</section>
+
+<section style="padding: 36px 48px 0; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: center; gap: 16px">
+<h2 class="fs-h2" style="flex-grow: 1">Les salles</h2>
+<sc-for list="{{salles}}" as="s" hint-placeholder-count="6"><button class="chip {{s.on}}" onClick="{{s.pick}}" style="cursor: pointer">{{s.label}} <span class="mono" style="opacity: .7">{{s.n}}</span></button></sc-for>
+</div>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 28px 24px">
+<sc-for list="{{works}}" as="w" hint-placeholder-count="6">
+<a href="d-oeuvre.dc.html" style="display: flex; flex-direction: column; gap: 10px; color: var(--text)">
+<div class="cadre"><div class="passe"><div class="clip" style="position: relative; width: 150px; height: 130px; background: #fff">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: {{w.c.w}}px; height: {{w.c.h}}px; left: {{w.c.l}}px; top: {{w.c.t}}px">
+</div></div></div>
+<div style="display: flex; flex-direction: column"><span class="fs-small b ellip">{{w.title}}</span><span class="fs-cap t3 ellip">{{w.by}}</span><span class="fs-cap t3" style="display: flex; align-items: center; gap: 4px"><img src="/_blob/6803d1100c44fc8a9af2da77d6e517b2" alt="" class="px" style="width: 12px; height: 12px">{{w.likes}}</span></div>
+</a>
+</sc-for>
+</div>
+<sc-if value="{{vide}}" hint-placeholder-val="{{false}}"><p class="fs-body t2">Cette salle est encore vide : les personnages du canvas n'attendent que leurs artistes.</p></sc-if>
+</section>
+
+<section style="padding: 36px 48px 0; display: flex; flex-direction: column; gap: 16px">
+<h2 class="fs-h2">Musées des joueurs</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
+<a href="d-musee-perso.dc.html" style="border-radius: 16px; overflow: hidden; color: #f3efe6; background: linear-gradient(180deg, #0a2340, #1c4f7c); display: flex; align-items: center; gap: 14px; padding: 18px"><img class="av av-48" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt=""><span style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-body b">Musée de Brindille</span><span class="fs-cap" style="color: #a9c8e6">Marée · Vagues 8-bit · 213 visites</span></span><span class="eq" style="color: #5eb3ff"><span></span><span></span><span></span><span></span></span></a>
+<a href="d-musee-perso.dc.html" style="border-radius: 16px; overflow: hidden; color: #f3efe6; background: repeating-linear-gradient(90deg, #5a3218 0 14px, #6d3d1e 14px 16px); display: flex; align-items: center; gap: 14px; padding: 18px"><img class="av av-48" src="/_blob/7e0fc904fd2815638f5d4d965a1ab50a" alt=""><span style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-body b">Musée de Tiago</span><span class="fs-cap" style="color: #f3d9b0">Saloon · Saloon au piano · 148 visites</span></span></a>
+<a href="d-musee-perso.dc.html" style="border-radius: 16px; overflow: hidden; color: #f3efe6; background: linear-gradient(180deg, #120b2a, #26164f); display: flex; align-items: center; gap: 14px; padding: 18px"><img class="av av-48" src="/_blob/ae4dfc14c12f74add0a65a59f762ca51" alt=""><span style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-body b">Musée de Mamie Pixel</span><span class="fs-cap" style="color: #d8c8f5">Étoiles · silence · 96 visites</span></span></a>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { salle: 0, liked: false }; }
+  renderVals() {
+    const crop = (z, W, H, pad) => { const s = Math.min(W * pad / z[2], H * pad / z[3]); return { w: Math.round(1024 * s), h: Math.round(768 * s), l: Math.round(-z[0] * s + (W - z[2] * s) / 2), t: Math.round(-z[1] * s + (H - z[3] * s) / 2) }; };
+    const W = [
+      { title: 'Drapeau & baguette', by: 'Tiago & Evan · 2022', z: [0, 170, 58, 86], likes: 112, salle: [0, 1, 5] },
+      { title: 'Dunes au couchant', by: 'Lucie_px · 2022', z: [0, 513, 127, 204], likes: 64, salle: [0, 1, 2] },
+      { title: 'Cube JustBetter', by: 'Evan · 2022', z: [310, 342, 42, 46], likes: 57, salle: [0, 1, 5] },
+      { title: 'Bord de mer', by: 'Brindille · 2022', z: [397, 250, 115, 122], likes: 48, salle: [0, 1, 2] },
+      { title: 'Pas vraiment', by: 'Zozo42 · 2023', z: [846, 512, 88, 76], likes: 41, salle: [0, 1, 4] },
+      { title: 'Sapin de Noël', by: 'Mamie Pixel · 2022', z: [980, 415, 44, 90], likes: 35, salle: [0, 1, 4] },
+      { title: 'La torche', by: 'Poulpe · 2023', z: [928, 512, 28, 46], likes: 18, salle: [1, 4] }
+    ];
+    const S = [['Coups de cœur', 6], ['Pionnières', 7], ['Paysages', 2], ['Personnages', 0], ['Clins d’œil', 3], ['Drapeaux & logos', 2]];
+    const sal = this.state.salle, liked = this.state.liked;
+    const works = W.filter(w => w.salle.includes(sal)).slice(0, 6).map(w => ({ ...w, c: crop(w.z, 150, 130, 0.88) }));
+    return {
+      theme: this.props.theme ?? 'sombre', works, vide: works.length === 0,
+      salles: S.map(([label, n], i) => ({ label, n, on: i === sal ? 'chip-on' : '', pick: () => this.setState({ salle: i }) })),
+      likes: liked ? 49 : 48, likedAria: liked ? 'true' : 'false', likeAnim: liked ? 'anim-pop' : '', like: () => this.setState({ liked: !liked })
+    };
+  }
+}
+</script>
+</body>
+</html>

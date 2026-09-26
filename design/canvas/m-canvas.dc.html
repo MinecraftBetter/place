@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Canvas · connecté</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp void" data-theme="{{theme}}" style="width: 375px; height: 812px">
+
+<div class="clip" style="position: absolute; inset: 0">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Canvas BetterPlace, zoom ×8 sur la mer" style="position: absolute; width: 8192px; height: 6144px; left: -3572px; top: -2486px">
+</div>
+
+<sc-if value="{{placed}}" hint-placeholder-val="{{false}}">
+<div class="anim-ring" style="position: absolute; left: 188px; top: 330px; width: 8px; height: 8px; border: 2px solid {{cur.hex}}"></div>
+<div class="anim-pop" style="position: absolute; left: 188px; top: 330px; width: 8px; height: 8px; background: {{cur.hex}}"></div>
+</sc-if>
+<div class="reticle" style="left: 184px; top: 326px; width: 16px; height: 16px"></div>
+<div style="position: absolute; left: 191px; top: 312px; width: 2px; height: 10px; background: #fff; box-shadow: 0 0 0 1px #000"></div>
+<div style="position: absolute; left: 191px; top: 346px; width: 2px; height: 10px; background: #fff; box-shadow: 0 0 0 1px #000"></div>
+<div style="position: absolute; left: 170px; top: 333px; width: 10px; height: 2px; background: #fff; box-shadow: 0 0 0 1px #000"></div>
+<div style="position: absolute; left: 204px; top: 333px; width: 10px; height: 2px; background: #fff; box-shadow: 0 0 0 1px #000"></div>
+
+<div class="loupe" style="left: 136px; top: 176px; width: 112px; height: 112px">
+<div style="display: grid; grid-template-columns: repeat(7, 16px); width: 112px; height: 112px">
+<sc-for list="{{loupe}}" as="l" hint-placeholder-count="49">
+<div style="width: 16px; height: 16px; background: {{l.c}}"></div>
+</sc-for>
+</div>
+<div style="position: absolute; left: 46px; top: 46px; width: 20px; height: 20px; border: 2px solid #000; box-shadow: 0 0 0 1px #fff"></div>
+</div>
+
+<div style="position: absolute; top: 12px; left: 12px; right: 12px; display: flex; align-items: center; gap: 8px; z-index: 10">
+<a class="glass" href="m-accueil.dc.html" aria-label="Accueil" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center"><img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 24px; height: 24px"></a>
+<div class="glass" style="height: 44px; border-radius: 14px; padding: 0 12px; display: flex; align-items: center; gap: 8px">
+<span class="mono fs-small">x 470 · y 352</span><span class="mono fs-cap t3">×8</span>
+</div>
+<div style="flex-grow: 1"></div>
+<a class="glass" href="m-profil.dc.html" aria-label="Mon profil, 1 alerte" style="position: relative; width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center">
+<img class="av av-32" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">
+<span class="count" style="position: absolute; top: -4px; right: -4px">1</span>
+</a>
+</div>
+
+<sc-if value="{{placed}}" hint-placeholder-val="{{false}}">
+<div class="toast anim-feed" style="position: absolute; top: 66px; left: 12px; right: 64px; z-index: 11">
+<div style="width: 22px; height: 22px; background: {{cur.hex}}; box-shadow: inset 0 0 0 2px rgba(0,0,0,.2); flex-shrink: 0"></div>
+<div style="display: flex; flex-direction: column"><span class="fs-small b">Pixel posé</span><span class="fs-cap t3 mono">x 470 · y 352 · {{cur.name}}</span></div>
+</div>
+</sc-if>
+
+<div style="position: absolute; right: 12px; top: 68px; display: flex; flex-direction: column; gap: 8px; z-index: 10">
+<div class="glass" style="border-radius: 14px; padding: 0 10px; height: 32px; display: flex; align-items: center; gap: 6px"><span class="live"></span><span class="fs-cap b">27</span></div>
+<button class="btn btn-icon glass" aria-label="Afficher la grille" style="border-radius: 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg></button>
+<a class="btn btn-icon glass" href="m-inspecteur.dc.html" aria-label="Inspecter le pixel visé" style="border-radius: 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16 16l5 5"></path></svg></a>
+<button class="btn btn-icon glass" aria-label="Pipette" style="border-radius: 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M14 4l6 6-3 3-6-6zM11 7l-7 7v3h3l7-7"></path></svg></button>
+<a class="btn btn-icon glass" href="m-partage.dc.html" aria-label="Partager la position" style="border-radius: 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"></path></svg></a>
+</div>
+
+<div class="glass" style="position: absolute; left: 12px; right: 12px; bottom: 88px; border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 12px; z-index: 10">
+<div style="display: flex; align-items: center; gap: 12px">
+<button onClick="{{openDrawer}}" aria-label="Ouvrir la palette" style="appearance: none; border: 0; background: transparent; padding: 0; display: flex; align-items: center; gap: 10px; color: var(--text); font: inherit; cursor: pointer; flex-grow: 1; text-align: left">
+<span class="swatch" style="background: {{cur.hex}}; width: 44px; height: 44px"></span>
+<span style="display: flex; flex-direction: column"><span class="fs-body b">{{cur.name}}</span><span class="mono fs-cap t3">{{cur.hexU}}</span></span>
+</button>
+<sc-if value="{{ready}}" hint-placeholder-val="{{true}}">
+<button class="btn btn-primary btn-px" onClick="{{place}}" style="width: 132px; height: 48px; font-size: 16px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><rect x="7" y="7" width="10" height="10"></rect></svg>
+Poser</button>
+</sc-if>
+<sc-if value="{{placed}}" hint-placeholder-val="{{false}}">
+<button class="btn btn-disabled btn-px" onClick="{{reset}}" style="width: 132px; height: 48px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"></path></svg>
+<span class="mono">0:05</span></button>
+</sc-if>
+</div>
+<sc-if value="{{placed}}" hint-placeholder-val="{{false}}">
+<div class="cooldown"><div style="width: 8%"></div></div>
+</sc-if>
+<div style="display: flex; align-items: center; gap: 8px">
+<sc-for list="{{recent}}" as="c" hint-placeholder-count="6">
+<button class="swatch swatch-s {{c.sel}}" style="background: {{c.hex}}; width: 36px; height: 36px" aria-label="{{c.name}}" onClick="{{c.pick}}"></button>
+</sc-for>
+<button class="btn btn-sm" onClick="{{openDrawer}}" style="margin-left: auto">Palette</button>
+</div>
+</div>
+
+<nav class="nav-bottom" aria-label="Navigation principale">
+<a class="tab tab-on" href="m-canvas.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg>Canvas</a>
+<a class="tab" href="m-musee.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 9l9-6 9 6M5 10v9M9.5 10v9M14.5 10v9M19 10v9M3 21h18"></path></svg>Musée</a>
+<a class="tab" href="m-activite.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"></path></svg>Activité<span class="count">3</span></a>
+<a class="tab" href="m-profil.dc.html"><img class="av av-24" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">Profil</a>
+</nav>
+
+<sc-if value="{{open}}" hint-placeholder-val="{{false}}">
+<button class="scrim" onClick="{{closeDrawer}}" aria-label="Fermer la palette" style="border: 0; padding: 0; cursor: pointer"></button>
+<div class="sheet anim-feed" style="padding: 0 16px 24px; display: flex; flex-direction: column; gap: 16px">
+<div class="grab"></div>
+<div style="display: flex; align-items: center; gap: 12px">
+<span class="swatch" style="background: {{cur.hex}}; width: 52px; height: 52px; border-radius: 12px"></span>
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-h3">{{cur.name}}</span><span class="fs-cap t3">30 couleurs · ou un hex libre</span></div>
+<button class="btn btn-icon btn-ghost" onClick="{{closeDrawer}}" aria-label="Fermer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(7, 44px); gap: 5px; justify-content: space-between">
+<sc-for list="{{palette}}" as="c" hint-placeholder-count="30">
+<button class="swatch {{c.sel}}" style="background: {{c.hex}}" aria-label="{{c.name}}" title="{{c.name}}" onClick="{{c.pick}}"></button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<label class="label" for="hexm">Hex</label>
+<input id="hexm" class="input input-mono" value="{{cur.hexU}}" style="flex-grow: 1">
+<button class="btn btn-icon" aria-label="Pipette"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M14 4l6 6-3 3-6-6zM11 7l-7 7v3h3l7-7"></path></svg></button>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":812}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { sel: 28, open: false, placed: false }; }
+  renderVals() {
+    const P = [['#000000','noir'],['#333434','gris'],['#d4d7d9','gris clair'],['#ffffff','blanc'],['#6d302f','maron'],['#6d001a','rouge marronâtre'],['#9c451a','maron clair'],['#be0027','rouge'],['#ff2651','rouge clair'],['#ff2d00','rouge'],['#ffa800','orange foncé'],['#ffd623','jaune'],['#fff8b8','beige'],['#7eed38','vert clair'],['#00cc4e','vert'],['#00a344','vert foncé'],['#598d5a','vert foncé foncé'],['#004b6f','bleu sous marin'],['#009eaa','bleu marin'],['#00ccc0','bleu sale de bain'],['#33E9F4','cian'],['#5eb3ff','bleu evian'],['#245aea','bleu ciel'],['#313ac1','bleu ciel violet'],['#1832a4','ciel violet foncé'],['#511e9f','violet'],['#6a5cff','violet clair'],['#b44ac0','violet clair rose'],['#ff63aa','rose'],['#e4abff','rose clair']];
+    const s = this.state.sel;
+    const mk = (i) => ({ hex: P[i][0], name: P[i][1], sel: i === s ? 'swatch-sel' : '', pick: () => this.setState({ sel: i, open: false, placed: false }) });
+    const cur = { hex: P[s][0], name: P[s][1], hexU: P[s][0].toUpperCase() };
+    const rows = ['#5eb3ff', '#33e9f4', '#33e9f4', '#245aea', '#1832a4', '#1832a4', '#245aea'];
+    const loupe = [];
+    for (let i = 0; i < 49; i++) loupe.push({ c: i === 24 && this.state.placed ? cur.hex : (i === 7 ? '#5eb3ff' : rows[Math.floor(i / 7)]) });
+    return {
+      theme: this.props.theme ?? 'sombre', cur, loupe,
+      palette: P.map((_, i) => mk(i)), recent: [28, 29, 27, 11, 0, 3].map(mk),
+      open: this.state.open, placed: this.state.placed, ready: !this.state.placed,
+      openDrawer: () => this.setState({ open: true }), closeDrawer: () => this.setState({ open: false }),
+      place: () => this.setState({ placed: true }), reset: () => this.setState({ placed: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

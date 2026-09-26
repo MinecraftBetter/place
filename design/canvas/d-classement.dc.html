@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Classement</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp spot" data-theme="{{theme}}" style="width: 1440px; height: 900px; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 12px; padding: 20px 48px">
+<a href="d-accueil.dc.html" style="display: flex; align-items: center; gap: 10px; color: var(--text)"><img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 28px; height: 28px"><span class="pixel" style="font-size: 20px; font-weight: 600">BetterPlace</span></a>
+<nav style="display: flex; gap: 4px; margin-left: 20px" aria-label="Sections">
+<a class="btn btn-sm btn-ghost" href="d-canvas.dc.html">Canvas</a>
+<a class="btn btn-sm btn-ghost" href="d-musee.dc.html">Musée</a>
+<a class="btn btn-sm btn-ghost" href="d-activite.dc.html">Activité</a>
+<a class="btn btn-sm btn-ghost" href="d-classement.dc.html" style="color: var(--text); background: var(--surface-2)">Classement</a>
+<a class="btn btn-sm btn-ghost" href="d-timelapse.dc.html">Timelapse</a>
+</nav>
+<div style="flex-grow: 1"></div>
+<img class="av av-40" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="Mon profil" style="box-shadow: 0 0 0 2px #ff63aa">
+</header>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 48px; padding: 8px 48px 0">
+<section style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: center; gap: 16px">
+<h1 class="fs-h1" style="flex-grow: 1">Classement</h1>
+<div class="seg" role="group" aria-label="Période"><sc-for list="{{periods}}" as="p" hint-placeholder-count="3"><button class="{{p.on}}" onClick="{{p.pick}}">{{p.label}}</button></sc-for></div>
+</div>
+<p class="fs-small t2 pretty">Pixels posés sur la période. Ceux d'avant les comptes comptent aussi, grâce aux œuvres revendiquées (pixels pionniers).</p>
+
+<div style="display: flex; align-items: flex-end; justify-content: center; gap: 24px; padding-top: 12px">
+<sc-for list="{{podium}}" as="p" hint-placeholder-count="3">
+<a href="d-profil.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 200px; color: var(--text)">
+<img class="av anim-bob" src="{{p.img}}" alt="" style="width: {{p.sz}}px; height: {{p.sz}}px; border-radius: 16px; box-shadow: 0 0 0 3px var(--bg), 0 0 0 6px {{p.ring}}">
+<span class="fs-body b">{{p.name}}</span>
+<span class="mono fs-small t2">{{p.val}}</span>
+<div class="px-corners" style="width: 100%; height: {{p.h}}px; background: var(--surface-2); display: flex; align-items: flex-start; justify-content: center; padding-top: 12px; box-shadow: inset 0 4px 0 {{p.ring}}"><span class="pixel b" style="font-size: 30px; color: {{p.ring}}">{{p.rank}}</span></div>
+</a>
+</sc-for>
+</div>
+
+<div class="card" style="overflow: hidden">
+<table class="table">
+<thead><tr><th style="width: 60px">Rang</th><th>Joueur</th><th class="num">Pixels</th><th class="num">Encore visibles</th><th>Badges</th></tr></thead>
+<tbody>
+<sc-for list="{{rest}}" as="r" hint-placeholder-count="5">
+<tr style="background: {{r.bg}}">
+<td class="mono t3">#{{r.rank}}</td>
+<td><a href="d-profil.dc.html" style="display: flex; align-items: center; gap: 10px; color: var(--text)"><img class="av av-32" src="{{r.img}}" alt=""><span class="b">{{r.name}}</span></a></td>
+<td class="num">{{r.val}}</td>
+<td class="num t2">{{r.vis}}</td>
+<td><div style="display: flex; gap: 4px"><sc-for list="{{r.badges}}" as="b" hint-placeholder-count="2"><img class="px" src="{{b}}" alt="" style="width: 22px; height: 22px"></sc-for></div></td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+</section>
+
+<aside style="display: flex; flex-direction: column; gap: 16px; padding-top: 6px">
+<div class="card-2" style="padding: 14px 16px; display: flex; align-items: center; gap: 12px; background: var(--accent-soft)">
+<img class="av av-48" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-over">Toi</span><span class="fs-body b">#{{me.rank}} · {{me.val}}</span><span class="fs-cap t3">{{me.next}}</span></div>
+</div>
+<h2 class="fs-h3">Œuvres coup de cœur</h2>
+<sc-for list="{{oeuvres}}" as="o" hint-placeholder-count="5">
+<a href="d-oeuvre.dc.html" style="display: flex; align-items: center; gap: 12px; color: var(--text)">
+<span class="mono fs-cap t3" style="width: 18px">{{o.rank}}</span>
+<span class="cadre" style="padding: 4px; display: block"><span class="clip" style="display: block; position: relative; width: 56px; height: 56px; background: #fff"><img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: {{o.c.w}}px; height: {{o.c.h}}px; left: {{o.c.l}}px; top: {{o.c.t}}px"></span></span>
+<span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span class="fs-small b ellip">{{o.title}}</span><span class="fs-cap t3 ellip">{{o.by}}</span></span>
+<span class="fs-small b" style="display: flex; align-items: center; gap: 4px"><img class="px" src="/_blob/6803d1100c44fc8a9af2da77d6e517b2" alt="" style="width: 16px; height: 16px">{{o.likes}}</span>
+</a>
+</sc-for>
+</aside>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { per: 1 }; }
+  renderVals() {
+    const A = { Brindille: '/_blob/f341ef9fb793c7257cb54f723280da10', Zozo42: '/_blob/e869fcd7638341e8f44d1dfa79b9fc20', 'Lucie_px': '/_blob/0877ddccb171e78f5bfa6672ce2eb035', 'Mamie Pixel': '/_blob/ae4dfc14c12f74add0a65a59f762ca51', Kaelen: '/_blob/5d9a3101799969b7e8ff499c137dc669', Evan: '/_blob/c266e1d407907a93a6dc2fbd5560c5ab', Poulpe: '/_blob/87121a75678f7bfaed28ff98e79fc01f', Tiago: '/_blob/7e0fc904fd2815638f5d4d965a1ab50a', Nyx: '/_blob/bc30bd15326365cf8bb885bc739e1c59' };
+    const B = { pion: '/_blob/23e3f1976500fb6db719239b82a9b6d3', vet: '/_blob/8e59643dedb0d006275198ee3f7e2152', resto: '/_blob/e6c31c8e89df74d7866cbe9e41ad94cb', mil: '/_blob/63303653cef451a330958decd16dc752', noct: '/_blob/95776fb89a0710cbea6cdfb13a35fa69', top: '/_blob/69beee23018a4a3f3252357aee18effd', bat: '/_blob/3855c10f72c916de01abc66e49e813ca' };
+    const BD = { Tiago: [B.pion, B.vet, B.bat], Evan: [B.pion, B.vet, B.mil], 'Lucie_px': [B.pion, B.vet, B.bat], Brindille: [B.resto, B.noct, B.mil], Kaelen: [B.top, B.mil], 'Mamie Pixel': [B.pion, B.vet], Zozo42: [B.top, B.mil], Nyx: [B.noct], Poulpe: [B.pion] };
+    const J = [
+      [['Zozo42', 412, 380], ['Kaelen', 377, 360], ['Evan', 290, 281], ['Brindille', 188, 171], ['Poulpe', 140, 139], ['Nyx', 96, 90], ['Tiago', 61, 61], ['Lucie_px', 40, 40]],
+      [['Kaelen', 2390, 2102], ['Zozo42', 2104, 1760], ['Brindille', 1877, 1690], ['Evan', 1502, 1455], ['Mamie Pixel', 980, 975], ['Nyx', 744, 701], ['Poulpe', 520, 519], ['Tiago', 310, 310]],
+      [['Lucie_px', 12418, 11960], ['Brindille', 11292, 9870], ['Tiago', 9120, 8400], ['Evan', 8760, 8120], ['Kaelen', 6210, 4302], ['Mamie Pixel', 4610, 4410], ['Zozo42', 3890, 2210], ['Nyx', 2686, 2512]]
+    ];
+    const per = this.state.per;
+    const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    const L = J[per].slice().sort((a, b) => b[1] - a[1]);
+    const item = ([name, v, vis], i) => ({ name, rank: i + 1, val: fmt(v) + ' px', vis: fmt(vis), img: A[name], badges: BD[name] || [], bg: name === 'Brindille' ? 'var(--accent-soft)' : 'transparent' });
+    const top = L.slice(0, 3).map(item);
+    const H = [96, 132, 76], SZ = [64, 80, 56], RING = ['#d4d7d9', '#ffd623', '#9c451a'];
+    const me = L.findIndex(x => x[0] === 'Brindille');
+    const crop = (z, W, Hh, pad) => { const s = Math.min(W * pad / z[2], Hh * pad / z[3]); return { w: Math.round(1024 * s), h: Math.round(768 * s), l: Math.round(-z[0] * s + (W - z[2] * s) / 2), t: Math.round(-z[1] * s + (Hh - z[3] * s) / 2) }; };
+    const O = [['Drapeau & baguette', 'Tiago & Evan', 112, [0, 170, 58, 86]], ['Dunes au couchant', 'Lucie_px', 64, [0, 513, 127, 204]], ['Cube JustBetter', 'Evan', 57, [310, 342, 42, 46]], ['Bord de mer', 'Brindille', 48, [397, 250, 115, 122]], ['Pas vraiment', 'Zozo42', 41, [846, 512, 88, 76]], ['Sapin de Noël', 'Mamie Pixel', 35, [980, 415, 44, 90]]];
+    return {
+      theme: this.props.theme ?? 'sombre',
+      periods: ['Aujourd’hui', 'Semaine', 'Tout le temps'].map((label, i) => ({ label, on: i === per ? 'on' : '', pick: () => this.setState({ per: i }) })),
+      podium: [top[1], top[0], top[2]].map((p, j) => ({ ...p, h: H[j], sz: SZ[j], ring: RING[j] })),
+      rest: L.slice(3).map((x, i) => item(x, i + 3)),
+      me: { rank: me + 1, val: fmt(L[me][1]) + ' px', next: me > 0 ? 'encore ' + fmt(L[me - 1][1] - L[me][1] + 1) + ' px pour passer ' + L[me - 1][0] : 'tu es en tête !' },
+      oeuvres: O.map(([title, by, likes, z], i) => ({ title, by, likes, rank: i + 1, c: crop(z, 56, 56, 0.95) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

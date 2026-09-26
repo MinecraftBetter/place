@@ -1,0 +1,698 @@
+{
+ "laby": {
+  "zone": {
+   "pixels": 5632,
+   "pixels_de_l_oeuvre": 5371
+  },
+  "changements_dans_la_zone": 5441,
+  "apparition_estimee": "2023-07-20T21:05:00",
+  "terminee_vers": "2024-03-02T23:46:00",
+  "etat_actuel_pct": 100.0,
+  "pixels_poses_estimes": 5320,
+  "sessions": [
+   {
+    "debut": "2022-09-20T16:42:00",
+    "fin": "2022-09-20T16:42:00",
+    "duree_min": 0,
+    "pixels": 220
+   },
+   {
+    "debut": "2022-12-12T23:51:00",
+    "fin": "2022-12-12T23:51:00",
+    "duree_min": 0,
+    "pixels": 3
+   },
+   {
+    "debut": "2022-12-16T23:02:00",
+    "fin": "2022-12-16T23:02:00",
+    "duree_min": 0,
+    "pixels": 51
+   },
+   {
+    "debut": "2022-12-22T21:28:00",
+    "fin": "2022-12-22T21:28:00",
+    "duree_min": 0,
+    "pixels": 10
+   },
+   {
+    "debut": "2023-05-05T14:20:00",
+    "fin": "2023-05-05T14:20:00",
+    "duree_min": 0,
+    "pixels": 251
+   },
+   {
+    "debut": "2023-07-20T21:05:00",
+    "fin": "2023-07-20T21:05:00",
+    "duree_min": 0,
+    "pixels": 5
+   },
+   {
+    "debut": "2024-03-02T23:46:00",
+    "fin": "2024-03-02T23:46:00",
+    "duree_min": 0,
+    "pixels": 4780
+   }
+  ],
+  "pixels_par_heure": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   251,
+   0,
+   220,
+   0,
+   0,
+   0,
+   0,
+   15,
+   0,
+   4834
+  ],
+  "pixels_entre_2h_et_5h": 0,
+  "retouches": [],
+  "stabilite_min_12_mois_pct": 5.3,
+  "badges_proposes": [
+   {
+    "id": "pionnier",
+    "raison": "Œuvre d'avant la migration, revendiquée et validée"
+   },
+   {
+    "id": "batisseur",
+    "raison": "Œuvre de plus de 1 000 pixels posés"
+   }
+  ]
+ },
+ "drapeau": {
+  "zone": {
+   "pixels": 4988,
+   "pixels_de_l_oeuvre": 4218
+  },
+  "changements_dans_la_zone": 2388,
+  "remarque_apparition": "Déjà présente dans la première sauvegarde : date réelle antérieure.",
+  "apparition_estimee": "2022-09-10T23:55:00",
+  "terminee_vers": "2022-09-11T22:43:00",
+  "etat_actuel_pct": 100.0,
+  "pixels_poses_estimes": 1881,
+  "sessions": [
+   {
+    "debut": "2022-09-11T22:43:00",
+    "fin": "2022-09-11T22:43:00",
+    "duree_min": 0,
+    "pixels": 1881
+   }
+  ],
+  "pixels_par_heure": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   1881,
+   0
+  ],
+  "pixels_entre_2h_et_5h": 0,
+  "retouches": [],
+  "stabilite_min_12_mois_pct": 92.5,
+  "badges_proposes": [
+   {
+    "id": "pionnier",
+    "raison": "Œuvre d'avant la migration, revendiquée et validée"
+   },
+   {
+    "id": "veteran",
+    "raison": "Œuvre apparue dès la première saison (2022)"
+   },
+   {
+    "id": "batisseur",
+    "raison": "Œuvre de plus de 1 000 pixels posés"
+   },
+   {
+    "id": "indemodable",
+    "raison": "Œuvre restée intacte à 90 % pendant plus d'un an"
+   }
+  ]
+ },
+ "cube": {
+  "zone": {
+   "pixels": 1932,
+   "pixels_de_l_oeuvre": 1435
+  },
+  "changements_dans_la_zone": 2139,
+  "apparition_estimee": "2022-09-20T16:42:00",
+  "terminee_vers": "2024-03-02T23:46:00",
+  "etat_actuel_pct": 100.0,
+  "pixels_poses_estimes": 1406,
+  "sessions": [
+   {
+    "debut": "2022-09-20T16:42:00",
+    "fin": "2022-09-20T16:42:00",
+    "duree_min": 0,
+    "pixels": 734
+   },
+   {
+    "debut": "2022-12-13T23:59:00",
+    "fin": "2022-12-13T23:59:00",
+    "duree_min": 0,
+    "pixels": 63
+   },
+   {
+    "debut": "2022-12-15T23:27:00",
+    "fin": "2022-12-15T23:27:00",
+    "duree_min": 0,
+    "pixels": 16
+   },
+   {
+    "debut": "2022-12-22T21:28:00",
+    "fin": "2022-12-22T21:28:00",
+    "duree_min": 0,
+    "pixels": 436
+   },
+   {
+    "debut": "2023-07-24T22:53:00",
+    "fin": "2023-07-24T22:53:00",
+    "duree_min": 0,
+    "pixels": 30
+   },
+   {
+    "debut": "2024-03-02T23:46:00",
+    "fin": "2024-03-02T23:46:00",
+    "duree_min": 0,
+    "pixels": 127
+   }
+  ],
+  "pixels_par_heure": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   734,
+   0,
+   0,
+   0,
+   0,
+   436,
+   30,
+   206
+  ],
+  "pixels_entre_2h_et_5h": 0,
+  "retouches": [],
+  "stabilite_min_12_mois_pct": 80.8,
+  "badges_proposes": [
+   {
+    "id": "pionnier",
+    "raison": "Œuvre d'avant la migration, revendiquée et validée"
+   },
+   {
+    "id": "veteran",
+    "raison": "Œuvre apparue dès la première saison (2022)"
+   },
+   {
+    "id": "batisseur",
+    "raison": "Œuvre de plus de 1 000 pixels posés"
+   }
+  ]
+ },
+ "dunes": {
+  "zone": {
+   "pixels": 25908,
+   "pixels_de_l_oeuvre": 24836
+  },
+  "changements_dans_la_zone": 25470,
+  "apparition_estimee": "2022-12-27T19:55:00",
+  "terminee_vers": "2022-12-27T19:55:00",
+  "etat_actuel_pct": 100.0,
+  "pixels_poses_estimes": 22883,
+  "sessions": [
+   {
+    "debut": "2022-12-27T19:55:00",
+    "fin": "2022-12-27T19:55:00",
+    "duree_min": 0,
+    "pixels": 22883
+   }
+  ],
+  "pixels_par_heure": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   22883,
+   0,
+   0,
+   0,
+   0
+  ],
+  "pixels_entre_2h_et_5h": 0,
+  "retouches": [],
+  "stabilite_min_12_mois_pct": 92.4,
+  "badges_proposes": [
+   {
+    "id": "pionnier",
+    "raison": "Œuvre d'avant la migration, revendiquée et validée"
+   },
+   {
+    "id": "veteran",
+    "raison": "Œuvre apparue dès la première saison (2022)"
+   },
+   {
+    "id": "batisseur",
+    "raison": "Œuvre de plus de 1 000 pixels posés"
+   },
+   {
+    "id": "indemodable",
+    "raison": "Œuvre restée intacte à 90 % pendant plus d'un an"
+   }
+  ]
+ },
+ "sapin": {
+  "zone": {
+   "pixels": 3960,
+   "pixels_de_l_oeuvre": 3040
+  },
+  "changements_dans_la_zone": 3481,
+  "apparition_estimee": "2022-12-15T23:27:00",
+  "terminee_vers": "2024-03-08T00:41:00",
+  "etat_actuel_pct": 100.0,
+  "pixels_poses_estimes": 3064,
+  "sessions": [
+   {
+    "debut": "2022-09-28T11:55:00",
+    "fin": "2022-09-28T11:55:00",
+    "duree_min": 0,
+    "pixels": 42
+   },
+   {
+    "debut": "2022-12-15T23:27:00",
+    "fin": "2022-12-15T23:27:00",
+    "duree_min": 0,
+    "pixels": 687
+   },
+   {
+    "debut": "2022-12-22T21:28:00",
+    "fin": "2022-12-22T21:28:00",
+    "duree_min": 0,
+    "pixels": 473
+   },
+   {
+    "debut": "2022-12-27T19:55:00",
+    "fin": "2022-12-27T19:55:00",
+    "duree_min": 0,
+    "pixels": 1082
+   },
+   {
+    "debut": "2023-07-01T00:12:00",
+    "fin": "2023-07-01T00:12:00",
+    "duree_min": 0,
+    "pixels": 6
+   },
+   {
+    "debut": "2024-03-02T23:46:00",
+    "fin": "2024-03-02T23:46:00",
+    "duree_min": 0,
+    "pixels": 1
+   },
+   {
+    "debut": "2024-03-08T00:41:00",
+    "fin": "2024-03-08T00:41:00",
+    "duree_min": 0,
+    "pixels": 773
+   }
+  ],
+  "pixels_par_heure": [
+   779,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   42,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   1082,
+   0,
+   473,
+   0,
+   688
+  ],
+  "pixels_entre_2h_et_5h": 0,
+  "retouches": [],
+  "stabilite_min_12_mois_pct": 74.5,
+  "badges_proposes": [
+   {
+    "id": "pionnier",
+    "raison": "Œuvre d'avant la migration, revendiquée et validée"
+   },
+   {
+    "id": "veteran",
+    "raison": "Œuvre apparue dès la première saison (2022)"
+   },
+   {
+    "id": "batisseur",
+    "raison": "Œuvre de plus de 1 000 pixels posés"
+   }
+  ]
+ },
+ "mer": {
+  "zone": {
+   "pixels": 14030,
+   "pixels_de_l_oeuvre": 13305
+  },
+  "changements_dans_la_zone": 14105,
+  "apparition_estimee": "2022-09-13T23:09:00",
+  "terminee_vers": "2022-09-13T23:09:00",
+  "etat_actuel_pct": 100.0,
+  "pixels_poses_estimes": 12651,
+  "sessions": [
+   {
+    "debut": "2022-09-11T22:43:00",
+    "fin": "2022-09-11T22:43:00",
+    "duree_min": 0,
+    "pixels": 487
+   },
+   {
+    "debut": "2022-09-12T22:47:00",
+    "fin": "2022-09-12T22:47:00",
+    "duree_min": 0,
+    "pixels": 147
+   },
+   {
+    "debut": "2022-09-13T23:09:00",
+    "fin": "2022-09-13T23:09:00",
+    "duree_min": 0,
+    "pixels": 12017
+   }
+  ],
+  "pixels_par_heure": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   634,
+   12017
+  ],
+  "pixels_entre_2h_et_5h": 0,
+  "retouches": [],
+  "stabilite_min_12_mois_pct": 98.9,
+  "badges_proposes": [
+   {
+    "id": "pionnier",
+    "raison": "Œuvre d'avant la migration, revendiquée et validée"
+   },
+   {
+    "id": "veteran",
+    "raison": "Œuvre apparue dès la première saison (2022)"
+   },
+   {
+    "id": "batisseur",
+    "raison": "Œuvre de plus de 1 000 pixels posés"
+   },
+   {
+    "id": "indemodable",
+    "raison": "Œuvre restée intacte à 90 % pendant plus d'un an"
+   }
+  ]
+ },
+ "torche": {
+  "zone": {
+   "pixels": 1288,
+   "pixels_de_l_oeuvre": 519
+  },
+  "changements_dans_la_zone": 531,
+  "apparition_estimee": "2023-06-01T19:55:00",
+  "terminee_vers": "2023-06-01T19:55:00",
+  "etat_actuel_pct": 100.0,
+  "pixels_poses_estimes": 519,
+  "sessions": [
+   {
+    "debut": "2023-06-01T19:55:00",
+    "fin": "2023-06-01T19:55:00",
+    "duree_min": 0,
+    "pixels": 519
+   }
+  ],
+  "pixels_par_heure": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   519,
+   0,
+   0,
+   0,
+   0
+  ],
+  "pixels_entre_2h_et_5h": 0,
+  "retouches": [],
+  "stabilite_min_12_mois_pct": 0.2,
+  "badges_proposes": [
+   {
+    "id": "pionnier",
+    "raison": "Œuvre d'avant la migration, revendiquée et validée"
+   }
+  ]
+ },
+ "pasvraiment": {
+  "zone": {
+   "pixels": 6688,
+   "pixels_de_l_oeuvre": 708
+  },
+  "changements_dans_la_zone": 714,
+  "apparition_estimee": "2023-06-01T19:55:00",
+  "terminee_vers": "2024-03-22T20:10:00",
+  "etat_actuel_pct": 100.0,
+  "pixels_poses_estimes": 709,
+  "sessions": [
+   {
+    "debut": "2023-06-01T19:55:00",
+    "fin": "2023-06-01T19:55:00",
+    "duree_min": 0,
+    "pixels": 212
+   },
+   {
+    "debut": "2023-08-12T15:48:00",
+    "fin": "2023-08-12T15:48:00",
+    "duree_min": 0,
+    "pixels": 1
+   },
+   {
+    "debut": "2024-03-03T23:59:00",
+    "fin": "2024-03-03T23:59:00",
+    "duree_min": 0,
+    "pixels": 238
+   },
+   {
+    "debut": "2024-03-22T20:10:00",
+    "fin": "2024-03-22T20:10:00",
+    "duree_min": 0,
+    "pixels": 258
+   }
+  ],
+  "pixels_par_heure": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   0,
+   0,
+   212,
+   258,
+   0,
+   0,
+   238
+  ],
+  "pixels_entre_2h_et_5h": 0,
+  "retouches": [],
+  "stabilite_min_12_mois_pct": 0.1,
+  "badges_proposes": [
+   {
+    "id": "pionnier",
+    "raison": "Œuvre d'avant la migration, revendiquée et validée"
+   }
+  ]
+ },
+ "creeper": {
+  "zone": {
+   "pixels": 484,
+   "pixels_de_l_oeuvre": 241
+  },
+  "changements_dans_la_zone": 265,
+  "remarque_apparition": "Déjà présente dans la première sauvegarde : date réelle antérieure.",
+  "apparition_estimee": "2022-09-10T23:55:00",
+  "terminee_vers": "2022-12-12T23:51:00",
+  "etat_actuel_pct": 100.0,
+  "pixels_poses_estimes": 124,
+  "sessions": [
+   {
+    "debut": "2022-09-13T23:09:00",
+    "fin": "2022-09-13T23:09:00",
+    "duree_min": 0,
+    "pixels": 9
+   },
+   {
+    "debut": "2022-09-20T16:42:00",
+    "fin": "2022-09-20T16:42:00",
+    "duree_min": 0,
+    "pixels": 27
+   },
+   {
+    "debut": "2022-12-12T23:51:00",
+    "fin": "2022-12-12T23:51:00",
+    "duree_min": 0,
+    "pixels": 88
+   }
+  ],
+  "pixels_par_heure": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   27,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   97
+  ],
+  "pixels_entre_2h_et_5h": 0,
+  "retouches": [],
+  "stabilite_min_12_mois_pct": 92.1,
+  "badges_proposes": [
+   {
+    "id": "pionnier",
+    "raison": "Œuvre d'avant la migration, revendiquée et validée"
+   },
+   {
+    "id": "veteran",
+    "raison": "Œuvre apparue dès la première saison (2022)"
+   },
+   {
+    "id": "indemodable",
+    "raison": "Œuvre restée intacte à 90 % pendant plus d'un an"
+   }
+  ]
+ }
+}

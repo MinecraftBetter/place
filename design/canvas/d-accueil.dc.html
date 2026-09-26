@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Accueil</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp spot" data-theme="{{theme}}" style="width: 1440px; height: 900px; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 12px; padding: 20px 48px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 32px; height: 32px">
+<span class="pixel" style="font-size: 22px; font-weight: 600">BetterPlace</span>
+<nav style="display: flex; gap: 4px; margin-left: 20px" aria-label="Sections">
+<a class="btn btn-sm btn-ghost" href="d-canvas-invite.dc.html">Canvas</a>
+<a class="btn btn-sm btn-ghost" href="d-musee.dc.html">Musée</a>
+<a class="btn btn-sm btn-ghost" href="d-classement.dc.html">Classement</a>
+<a class="btn btn-sm btn-ghost" href="d-timelapse.dc.html">Timelapse</a>
+</nav>
+<div style="flex-grow: 1"></div>
+<a class="btn btn-sm btn-primary" href="d-connexion.dc.html">Se connecter</a>
+</header>
+
+<section style="display: grid; grid-template-columns: 520px 1fr; gap: 56px; padding: 36px 48px 0; align-items: center">
+<div style="display: flex; flex-direction: column; gap: 22px">
+<span class="fs-small t2" style="display: inline-flex; align-items: center; gap: 8px"><span class="live"></span>27 connectés en ce moment</span>
+<h1 class="fs-display" style="font-size: 72px">BetterPlace</h1>
+<p class="fs-h3 t2 pretty" style="font-weight: 500">Le canvas collaboratif de JustBetter : 1024 × 768 pixels à partager entre amis. Pose ton pixel, signe tes œuvres, expose-les au musée.</p>
+<div style="display: flex; gap: 12px">
+<a class="btn btn-primary btn-lg btn-px" href="d-canvas-invite.dc.html">Entrer dans le canvas</a>
+<a class="btn btn-lg" href="d-timelapse.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M7 4l13 8-13 8z"></path></svg>La timelapse</a>
+</div>
+<div class="card" style="padding: 16px; display: flex; gap: 14px; background: var(--gold-soft); border-color: color-mix(in srgb, var(--gold) 40%, transparent)">
+<img src="/_blob/6803d1100c44fc8a9af2da77d6e517b2" alt="" class="px" style="width: 26px; height: 26px; flex-shrink: 0">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span class="fs-body b tgold">Canvas en accès libre, entre amis</span>
+<span class="fs-small t2 pretty">Tout le monde peut dessiner partout, même par-dessus les autres : les blagues sont les bienvenues. Le but, c'est le plus beau place possible.</span>
+</div>
+</div>
+<div style="display: flex; gap: 18px; flex-wrap: wrap" class="fs-small t2">
+<span style="display: flex; align-items: center; gap: 6px"><span class="kbd">Clic gauche</span>se déplacer</span>
+<span style="display: flex; align-items: center; gap: 6px"><span class="kbd">Clic molette</span>pipette</span>
+<span style="display: flex; align-items: center; gap: 6px"><span class="kbd">Clic droit</span>poser un pixel</span>
+</div>
+</div>
+<div style="position: relative; height: 560px">
+<div class="clip frame-px" style="position: absolute; right: 40px; top: 0; width: 720px; height: 540px; transform: rotate(-1.5deg); background: #fff">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Le canvas actuel" style="width: 720px; height: 540px">
+</div>
+<img src="/_blob/bf33b3cfb8a0e1c819700e44225e8e67" alt="La mascotte cowboy" class="px anim-bob" style="position: absolute; right: 0; bottom: -20px; width: 108px; height: 186px">
+<a class="glass" href="d-musee.dc.html" style="position: absolute; left: 0; bottom: 40px; border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; color: var(--text)">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="color: var(--gold-text)"><path d="M3 9l9-6 9 6M5 10v9M9.5 10v9M14.5 10v9M19 10v9M3 21h18"></path></svg>
+<span style="display: flex; flex-direction: column"><span class="fs-small b">Visiter le musée</span><span class="fs-cap t3">visite guidée · musées des joueurs</span></span>
+</a>
+</div>
+</section>
+
+<footer style="margin-top: auto; padding: 0 48px 24px; display: flex; align-items: center; justify-content: space-between">
+<span class="fs-small t3">Tu as dessiné ici avant les comptes ? <a href="d-claim.dc.html">Revendique ton œuvre</a> et gagne le badge Pionnier.</span>
+<span class="fs-small t3">Fait avec <span style="color: #aa5757">&#10084;&#65038;</span> par Evan et Tiago</span>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'sombre' }; }
+}
+</script>
+</body>
+</html>

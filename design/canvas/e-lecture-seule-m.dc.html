@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Lecture seule</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp void" data-theme="{{theme}}" style="width: 375px; height: 812px">
+<div class="clip" style="position: absolute; inset: 0">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Canvas en lecture seule" style="position: absolute; width: 3072px; height: 2304px; left: -1102px; top: -600px">
+</div>
+<div style="position: absolute; top: 0; left: 0; right: 0; display: flex; flex-direction: column; z-index: 10">
+<div class="banner" style="background: #2a1d06; color: #f5c77a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 10v4h4l8 5V5L7 10zM18 9a4 4 0 0 1 0 6"></path></svg><span style="flex-grow: 1">Vernissage du musée à 18 h : canvas figé jusque-là.</span></div>
+<div class="banner" style="background: #0e2238; color: #8cc8ff"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="5" y="11" width="14" height="10"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span>Lecture seule jusqu'à 18:00</span></div>
+</div>
+<sc-if value="{{tried}}" hint-placeholder-val="{{false}}">
+<div class="toast anim-feed" style="position: absolute; left: 12px; right: 12px; top: 96px; z-index: 11"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="color: #8cc8ff"><rect x="5" y="11" width="14" height="10"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span class="fs-small">Pas de pixel pour l'instant : on regarde, on admire, on revient à 18 h.</span></div>
+</sc-if>
+<div class="glass" style="position: absolute; left: 12px; right: 12px; bottom: 88px; border-radius: 20px; padding: 12px; display: flex; align-items: center; gap: 12px; z-index: 10">
+<span class="swatch" style="background: #ff63aa; width: 44px; height: 44px; opacity: .5"></span>
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-body b">Lecture seule</span><span class="fs-cap t3">reprise à 18:00</span></div>
+<button class="btn btn-px" onClick="{{tryPose}}" style="width: 110px; opacity: .55">Poser</button>
+</div>
+<nav class="nav-bottom" aria-label="Navigation principale">
+<a class="tab tab-on" href="m-canvas.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg>Canvas</a>
+<a class="tab" href="m-musee.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 9l9-6 9 6M5 10v9M9.5 10v9M14.5 10v9M19 10v9M3 21h18"></path></svg>Musée</a>
+<a class="tab" href="m-activite.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"></path></svg>Activité</a>
+<a class="tab" href="m-profil.dc.html"><img class="av av-24" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">Profil</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":812}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { tried: false }; }
+  renderVals() { return { theme: this.props.theme ?? 'sombre', tried: this.state.tried, tryPose: () => this.setState({ tried: true }) }; }
+}
+</script>
+</body>
+</html>

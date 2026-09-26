@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Revendiquer · zone</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp void" data-theme="{{theme}}" style="width: 375px; height: 812px">
+
+<div class="clip" style="position: absolute; inset: 0">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Canvas, zoom sur le labyrinthe doré" style="position: absolute; width: 3584px; height: 2688px; left: -824px; top: -1621px">
+</div>
+
+<sc-if value="{{isRect}}" hint-placeholder-val="{{true}}">
+<div class="zone-box" style="left: 72px; top: 142px; width: 231px; height: 316px"></div>
+<div class="handle" style="left: 66px; top: 136px"></div><div class="handle" style="left: 297px; top: 136px"></div>
+<div class="handle" style="left: 66px; top: 452px"></div><div class="handle" style="left: 297px; top: 452px"></div>
+</sc-if>
+<sc-if value="{{isLasso}}" hint-placeholder-val="{{false}}">
+<svg width="375" height="812" viewBox="0 0 375 812" style="position: absolute; inset: 0" aria-hidden="true">
+<path d="M0 0H375V812H0Z M80 140 C140 128 250 136 300 144 C318 200 312 300 306 380 C304 430 310 452 280 460 C200 466 120 462 78 452 C64 400 70 300 66 220 C64 180 66 150 80 140Z" fill="rgba(8,7,6,.55)" fill-rule="evenodd"></path>
+<path d="M80 140 C140 128 250 136 300 144 C318 200 312 300 306 380 C304 430 310 452 280 460 C200 466 120 462 78 452 C64 400 70 300 66 220 C64 180 66 150 80 140Z" fill="none" stroke="#f0b75a" stroke-width="2.5" stroke-dasharray="6 4"></path>
+</svg>
+</sc-if>
+<sc-if value="{{isWand}}" hint-placeholder-val="{{false}}">
+<div class="zone-box" style="left: 88px; top: 160px; width: 199px; height: 280px; border-style: dotted; border-width: 3px"></div>
+<span class="pill" style="position: absolute; left: 88px; top: 132px; background: #241604; color: #f5c77a">4 couleurs contiguës · tolérance 0</span>
+</sc-if>
+
+<div style="position: absolute; top: 12px; left: 12px; right: 12px; display: flex; flex-direction: column; gap: 10px; z-index: 10">
+<div style="display: flex; align-items: center; gap: 8px">
+<a class="btn btn-icon glass" href="m-musee.dc.html" aria-label="Annuler" style="border-radius: 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+<div class="glass" style="height: 44px; border-radius: 14px; padding: 0 14px; display: flex; align-items: center; gap: 10px; flex-grow: 1">
+<span class="fs-small b" style="flex-grow: 1">Revendiquer une œuvre</span><span class="mono fs-cap t3">1 / 2</span>
+</div>
+</div>
+<div class="glass" style="border-radius: 14px; padding: 4px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px">
+<sc-for list="{{tools}}" as="t" hint-placeholder-count="3">
+<button onClick="{{t.pick}}" aria-pressed="{{t.aria}}" style="appearance: none; border: 0; height: 44px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; background: {{t.bg}}; color: {{t.fg}}">
+<sc-if value="{{t.r}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 3"></rect></svg></sc-if>
+<sc-if value="{{t.l}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M7 18c-3-2-4-5-2-8s7-5 11-4 5 5 2 8-7 3-9 2M7 18l-1 3"></path></svg></sc-if>
+<sc-if value="{{t.w}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 20L15 9M17 3v4M15 5h4M20 10v2M19 11h2M9 3v2M8 4h2"></path></svg></sc-if>
+{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<div class="sheet" style="padding: 0 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<div class="grab"></div>
+<p class="fs-small t2 pretty">{{hint}}</p>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<span class="coord">x 257 · y 505</span><span class="coord">64 × 88</span><span class="coord">5 632 px</span>
+</div>
+<div class="card-2" style="padding: 12px; display: flex; gap: 12px; align-items: flex-start; background: var(--gold-soft); border-color: color-mix(in srgb, var(--gold) 30%, transparent)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="color: var(--gold-text); flex-shrink: 0; margin-top: 2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span class="fs-small b">D'après les sauvegardes</span>
+<span class="fs-cap t2 pretty">Dessinée le 2 mars 2024 (402 minutes d'activité sur le canvas ce jour-là), par-dessus un dessin plus ancien. Personne d'autre ne la revendique.</span>
+</div>
+</div>
+<a class="btn btn-primary btn-lg btn-px btn-block" href="m-claim-form.dc.html">Suivant</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":812}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { tool: 0 }; }
+  renderVals() {
+    const T = ['Rectangle', 'Lasso', 'Baguette'];
+    const H = ['Étire le cadre autour de ton œuvre. Pince pour zoomer, deux doigts pour te déplacer.', 'Dessine le contour au doigt : idéal pour les formes irrégulières.', 'Touche une couleur : la sélection s’étend aux pixels voisins de même couleur. Touche encore pour ajouter.'];
+    const t = this.state.tool;
+    return {
+      theme: this.props.theme ?? 'sombre', isRect: t === 0, isLasso: t === 1, isWand: t === 2, hint: H[t],
+      tools: T.map((label, i) => ({ label, r: i === 0, l: i === 1, w: i === 2, aria: i === t ? 'true' : 'false', bg: i === t ? 'var(--text)' : 'transparent', fg: i === t ? 'var(--bg)' : 'var(--text-2)', pick: () => this.setState({ tool: i }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

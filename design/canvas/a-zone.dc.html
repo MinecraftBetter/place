@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Admin · outil zone</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 1440px; height: 900px; display: flex; position: relative">
+<aside style="width: 248px; flex-shrink: 0; border-right: 1px solid var(--line); background: var(--bg-2); display: flex; flex-direction: column; padding: 18px 14px; gap: 18px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 6px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 26px; height: 26px">
+<span class="pixel b" style="font-size: 18px">BetterPlace</span>
+<span class="pill st-neutre">Admin</span>
+</div>
+<nav class="sidenav" style="display: flex; flex-direction: column; gap: 2px" aria-label="Administration">
+<a href="a-dashboard.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>Tableau de bord</a>
+<a href="a-claims.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M5 21V4h11l-2 4 2 4H5"></path></svg>Revendications<span class="count" style="margin-left: auto; background: var(--gold); color: #241604">3</span></a>
+<a href="a-utilisateurs.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="6" y="3" width="7" height="7"></rect><path d="M2 21v-3a4 4 0 0 1 4-4h7a4 4 0 0 1 4 4v3M17 3a4 4 0 0 1 0 8M22 21v-3a4 4 0 0 0-3-3.8"></path></svg>Utilisateurs</a>
+<a href="a-zone.dc.html" class="on"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 3"></rect><path d="M4 12h4M16 12h4"></path></svg>Outil zone</a>
+<a href="a-moderation.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Modération<span class="count" style="margin-left: auto; background: var(--gold); color: #241604">4</span></a>
+<a href="a-journal.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="5" y="3" width="14" height="18"></rect><path d="M9 8h6M9 12h6M9 16h4"></path></svg>Journal</a>
+<a href="a-reglages.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><rect x="14" y="5" width="4" height="4"></rect><rect x="8" y="15" width="4" height="4"></rect></svg>Réglages</a>
+</nav>
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px">
+<div class="card-2" style="padding: 10px 12px; display: flex; flex-direction: column; gap: 4px">
+<span class="fs-cap t2" style="display: flex; align-items: center; gap: 6px"><span class="live"></span>Serveur en ligne</span>
+<span class="fs-cap t3 mono">27 / 64 connexions · sauvegarde il y a 12 s</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 6px">
+<img class="av av-32" src="/_blob/7e0fc904fd2815638f5d4d965a1ab50a" alt="">
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Tiago</span><span class="fs-cap t3">admin</span></span>
+<a class="btn btn-sm btn-icon btn-ghost" href="d-canvas.dc.html" aria-label="Retour au site"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 4H4v16h6M14 8l4 4-4 4M8 12h10"></path></svg></a>
+</div>
+</div>
+</aside>
+<main class="void clip" style="flex-grow: 1; min-width: 0; position: relative">
+<img class="px" src="{{canvasSrc}}" alt="Canvas, zoom ×3 sur la zone" style="position: absolute; width: 3072px; height: 2304px; left: 180px; top: -1425px">
+<div class="zone-box" style="left: 180px; top: 114px; width: 381px; height: 612px"></div>
+<div class="handle" style="left: 174px; top: 108px"></div><div class="handle" style="left: 555px; top: 108px"></div>
+<div class="handle" style="left: 174px; top: 720px"></div><div class="handle" style="left: 555px; top: 720px"></div>
+<div style="position: absolute; top: 16px; left: 16px; right: 16px; display: flex; align-items: center; gap: 10px">
+<div class="glass" style="border-radius: 14px; padding: 4px; display: flex; gap: 4px">
+<button style="appearance: none; border: 0; height: 40px; padding: 0 14px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 600; background: var(--text); color: var(--bg)">Rectangle</button>
+<button style="appearance: none; border: 0; height: 40px; padding: 0 14px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 600; background: transparent; color: var(--text-2)">Lasso</button>
+<button style="appearance: none; border: 0; height: 40px; padding: 0 14px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 600; background: transparent; color: var(--text-2)">Baguette</button>
+<button style="appearance: none; border: 0; height: 40px; padding: 0 14px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 600; background: transparent; color: var(--text-2)">Pixels d'un joueur</button>
+</div>
+<div style="flex-grow: 1"></div>
+<div class="glass" style="height: 44px; border-radius: 14px; padding: 0 14px; display: flex; align-items: center; gap: 8px"><span class="mono fs-small">x 0 · y 513 · 127 × 204</span></div>
+</div>
+<div class="glass" style="position: absolute; left: 16px; bottom: 16px; border-radius: 14px; padding: 10px 14px; display: flex; align-items: center; gap: 10px">
+<img class="av av-24" src="/_blob/56f14b0ba0b26cbc8df201433bc426d6" alt=""><span class="fs-small">Sélection auto : <b>tous les pixels de bot_404</b> (25 908 px en 7 min)</span>
+</div>
+</main>
+<aside style="width: 420px; flex-shrink: 0; border-left: 1px solid var(--line); padding: 22px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 4px"><h1 class="fs-h2">Outil zone</h1><span class="fs-small t2">Agir sur une zone du canvas. Tout est enregistré dans le journal et peut être annulé.</span></div>
+<div class="seg" role="group" aria-label="Action" style="width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))"><sc-for list="{{modes}}" as="m" hint-placeholder-count="3"><button class="{{m.on}}" onClick="{{m.pick}}" style="justify-content: center">{{m.label}}</button></sc-for></div>
+
+<sc-if value="{{isRestore}}" hint-placeholder-val="{{true}}">
+<div class="field"><span class="label">Restaurer depuis la sauvegarde du</span>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{saves}}" as="s" hint-placeholder-count="4">
+<button onClick="{{s.pick}}" class="card-2" style="font: inherit; color: var(--text); text-align: left; cursor: pointer; padding: 8px 10px; display: flex; align-items: center; gap: 10px; outline: {{s.ring}}; outline-offset: -2px">
+<span class="mono fs-small b" style="flex-grow: 1">{{s.label}}</span><span class="fs-cap t3">{{s.sub}}</span>
+</button>
+</sc-for>
+</div></div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span class="label">Avant / après</span>
+<div class="clip" style="position: relative; width: 376px; height: 200px; border-radius: 10px; background: #fff">
+<img class="px" src="/_blob/18dbd4f699e4b47d030eba7f2c07a76f" alt="Maintenant" style="position: absolute; left: 0; top: -130px; width: 376px; height: 604px">
+<div class="clip" style="position: absolute; left: 0; top: 0; bottom: 0; width: {{pos}}%"><img class="px" src="/_blob/3c6fe4bce8f48a7318b5e7335091763a" alt="Après restauration" style="position: absolute; left: 0; top: -130px; width: 376px; height: 604px"></div>
+<div style="position: absolute; top: 0; bottom: 0; left: {{pos}}%; width: 3px; margin-left: -1px; background: var(--accent); box-shadow: 0 0 0 1px #000"></div>
+<span class="pill" style="position: absolute; left: 8px; bottom: 8px; background: rgba(10,9,8,.85); color: #f3efe6">après</span>
+<span class="pill" style="position: absolute; right: 8px; bottom: 8px; background: rgba(10,9,8,.85); color: #f3efe6">maintenant</span>
+</div>
+<input type="range" min="0" max="100" value="{{pos}}" onChange="{{slide}}" aria-label="Comparer avant et après" style="width: 100%; accent-color: var(--accent)">
+</div>
+</sc-if>
+
+<sc-if value="{{isErase}}" hint-placeholder-val="{{false}}">
+<div class="card-2" style="padding: 14px; display: flex; flex-direction: column; gap: 8px">
+<span class="fs-small b">Effacer la zone</span>
+<span class="fs-cap t2 pretty">Les 25 908 pixels deviennent blancs. À réserver aux cas où aucune sauvegarde propre n'existe.</span>
+<div style="display: flex; gap: 8px; align-items: center"><span class="fs-cap t3">Remplir avec</span><span class="swatch swatch-s" style="background: #ffffff"></span><span class="fs-cap">blanc</span></div>
+</div>
+</sc-if>
+
+<sc-if value="{{isAssign}}" hint-placeholder-val="{{false}}">
+<div class="field"><label class="label" for="acompte">Attribuer la zone à</label>
+<div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16 16l5 5"></path></svg><input id="acompte" class="input" value="Lucie_px"></div></div>
+<div class="field"><label class="label" for="atitre">Titre de l'œuvre</label><input id="atitre" class="input" value="Dunes au couchant"></div>
+<div style="display: flex; align-items: center; gap: 10px"><span class="fs-small" style="flex-grow: 1">Badges calculés depuis les sauvegardes</span><span style="display: flex; gap: 4px"><img class="px" src="/_blob/23e3f1976500fb6db719239b82a9b6d3" alt="Pionnier" style="width: 22px; height: 22px"><img class="px" src="/_blob/8e59643dedb0d006275198ee3f7e2152" alt="Vétéran 2022" style="width: 22px; height: 22px"><img class="px" src="/_blob/3855c10f72c916de01abc66e49e813ca" alt="Bâtisseur" style="width: 22px; height: 22px"><img class="px" src="/_blob/45a6c6c32ac65feaffcc41a8d7170e4c" alt="Indémodable" style="width: 22px; height: 22px"></span></div>
+<span class="fs-cap t3 pretty">Sans demande préalable : le joueur est notifié et peut refuser l'attribution.</span>
+</sc-if>
+
+<div class="card-2" style="padding: 10px 12px; display: flex; flex-direction: column; gap: 4px">
+<span class="fs-small"><b>{{impact}}</b></span>
+<span class="fs-cap t3">{{impactSub}}</span>
+</div>
+<div class="field"><label class="label" for="amotif">Motif (journal)</label><input id="amotif" class="input" value="{{motif}}"></div>
+<button class="btn btn-primary btn-px" onClick="{{ask}}" style="margin-top: auto">{{cta}}</button>
+</aside>
+<sc-if value="{{confirm}}" hint-placeholder-val="{{false}}">
+<div class="scrim" style="z-index: 50"></div>
+<div class="modal anim-feed" style="position: absolute; left: 50%; top: 50%; width: 460px; margin: -140px 0 0 -230px; padding: 24px; display: flex; flex-direction: column; gap: 14px; z-index: 51">
+<span class="fs-h3">{{confirmTitle}}</span>
+<span class="fs-small t2 pretty">{{confirmText}}</span>
+<div style="display: flex; justify-content: flex-end; gap: 10px"><button class="btn btn-ghost" onClick="{{cancel}}">Annuler</button><button class="btn btn-primary" onClick="{{cancel}}">{{cta}}</button></div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { mode: 0, save: 0, pos: 55, confirm: false }; }
+  renderVals() {
+    const st = this.state;
+    const M = ['Restaurer', 'Effacer', 'Attribuer'];
+    const S = [['28/03/2024 · 23:04', 'dernière avant le spam'], ['22/03/2024 · 20:10', ''], ['14/03/2024 · 19:17', ''], ['08/03/2024 · 00:41', '']];
+    const CTA = ['Restaurer 25 908 pixels', 'Effacer 25 908 pixels', 'Attribuer à Lucie_px'];
+    return {
+      theme: this.props.theme ?? 'sombre',
+      canvasSrc: st.mode === 2 ? '/_blob/e6e62f71b5d85c751836ffeb46aa443e' : '/_blob/a3534a01b5a6ffdc91ecd5c346c066a4',
+      modes: M.map((label, i) => ({ label, on: i === st.mode ? 'on' : '', pick: () => this.setState({ mode: i }) })),
+      isRestore: st.mode === 0, isErase: st.mode === 1, isAssign: st.mode === 2,
+      saves: S.map(([label, sub], i) => ({ label, sub, ring: i === st.save ? '2px solid var(--accent)' : 'none', pick: () => this.setState({ save: i }) })),
+      pos: st.pos, slide: (e) => this.setState({ pos: Number(e.target.value) }),
+      impact: ['25 908 pixels vont changer', '25 908 pixels deviennent blancs', '25 908 pixels liés à Lucie_px'][st.mode],
+      impactSub: ['1 compte concerné (bot_404) · 0 pixel d’un autre joueur écrasé · les joueurs connectés voient le changement en direct', 'Aucune œuvre revendiquée n’est touchée en dehors de « Dunes au couchant »', 'L’œuvre apparaît sur son profil avec le badge Pionnier'][st.mode],
+      motif: ['Script automatique (bot_404) · restauration', 'Contenu à retirer', 'Attribution directe, auteur connu de tous'][st.mode],
+      cta: CTA[st.mode], ask: () => this.setState({ confirm: true }), cancel: () => this.setState({ confirm: false }), confirm: st.confirm,
+      confirmTitle: ['Restaurer cette zone ?', 'Effacer cette zone ?', 'Attribuer cette zone ?'][st.mode],
+      confirmText: ['Les 25 908 pixels de x 0 · y 513 (127 × 204) reprendront leur état du ' + S[st.save][0] + '. L’action est annulable depuis le journal pendant 30 jours.', 'La zone deviendra blanche pour tout le monde. L’action est annulable depuis le journal pendant 30 jours.', 'Lucie_px devient autrice de « Dunes au couchant ». Elle sera notifiée et pourra refuser.'][st.mode]
+    };
+  }
+}
+</script>
+</body>
+</html>

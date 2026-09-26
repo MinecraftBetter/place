@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Connexion</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp void" data-theme="{{theme}}" style="width: 1440px; height: 900px">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; left: 208px; top: 104px; width: 1024px; height: 768px; filter: blur(2px) saturate(.8)">
+<div class="scrim"></div>
+
+<div class="modal" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 460px; overflow: hidden; z-index: 30">
+<div class="clip" style="position: relative; height: 150px">
+<img class="px" src="/_blob/cc413a0d8f0d50bdb65c0368abda34b1" alt="" style="position: absolute; left: -20px; top: 0; width: 500px; height: 167px">
+<a class="btn btn-icon glass" href="d-canvas-invite.dc.html" aria-label="Fermer" style="position: absolute; top: 12px; right: 12px; border-radius: 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+<img src="/_blob/bf33b3cfb8a0e1c819700e44225e8e67" alt="" class="px anim-bob" style="position: absolute; left: 50%; bottom: -26px; margin-left: -32px; width: 64px; height: 110px">
+</div>
+<div style="padding: 40px 32px 28px; display: flex; flex-direction: column; gap: 18px; align-items: center; text-align: center">
+<h1 class="fs-h1">Mets ton chapeau</h1>
+<p class="fs-body t2 pretty">Connecte-toi pour dessiner : tes pixels porteront ton pseudo, et tu pourras revendiquer tes dessins d'avant les comptes.</p>
+<a class="btn btn-primary btn-lg btn-px btn-block" href="d-canvas.dc.html"><img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 22px; height: 22px">Se connecter avec JustBetter</a>
+<a class="btn btn-ghost btn-block" href="d-canvas-invite.dc.html">Continuer en invité</a>
+<p class="fs-cap t3 pretty">Ton pseudo et tes pixels sont publics. Tu peux modifier ton profil à tout moment.</p>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'sombre' }; }
+}
+</script>
+</body>
+</html>

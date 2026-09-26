@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>États vides</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 1440px; height: 1000px">
+<div style="padding: 48px 56px; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; align-items: baseline; gap: 14px"><h1 class="fs-h1">États vides</h1><span class="fs-small t3">un message utile et une seule action, jamais un écran blanc</span></div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px">
+<div class="card" style="padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; border-style: dashed; min-height: 230px; justify-content: center">
+<span style="width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); color: var(--text-3)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 9l9-6 9 6M5 10v9M9.5 10v9M14.5 10v9M19 10v9M3 21h18"></path></svg></span>
+<span class="fs-h3">Aucune œuvre dans cette salle</span>
+<span class="fs-small t2 pretty" style="max-width: 280px">Les personnages du canvas n'attendent que leurs artistes.</span>
+<a class="btn btn-sm" href="m-exposer.dc.html">Exposer une œuvre</a>
+</div>
+<div class="card" style="padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; border-style: dashed; min-height: 230px; justify-content: center">
+<span style="width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); color: var(--text-3)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"></path></svg></span>
+<span class="fs-h3">Nuit calme sur le canvas</span>
+<span class="fs-small t2 pretty" style="max-width: 280px">Personne ne dessine en ce moment. Le fil se remplit dès le prochain pixel.</span>
+<a class="btn btn-sm" href="d-canvas.dc.html">Aller dessiner</a>
+</div>
+<div class="card" style="padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; border-style: dashed; min-height: 230px; justify-content: center">
+<span style="width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); color: var(--text-3)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M7 4h10v6a5 5 0 0 1-10 0zM12 15v4M8 21h8"></path></svg></span>
+<span class="fs-h3">Personne n'a encore dessiné aujourd'hui</span>
+<span class="fs-small t2 pretty" style="max-width: 280px">Le classement du jour repart à zéro à minuit. La première place est libre !</span>
+<a class="btn btn-sm" href="d-canvas.dc.html">Poser le premier pixel</a>
+</div>
+<div class="card" style="padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; border-style: dashed; min-height: 230px; justify-content: center">
+<span style="width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); color: var(--text-3)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></span>
+<span class="fs-h3">Tout est traité</span>
+<span class="fs-small t2 pretty" style="max-width: 280px">Aucune revendication en attente. Tu peux aussi attribuer une zone directement.</span>
+<a class="btn btn-sm" href="a-zone.dc.html">Attribuer une zone</a>
+</div>
+<div class="card" style="padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; border-style: dashed; min-height: 230px; justify-content: center">
+<span style="width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); color: var(--text-3)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16 16l5 5"></path></svg></span>
+<span class="fs-h3">Aucun résultat pour « creper »</span>
+<span class="fs-small t2 pretty" style="max-width: 280px">Vérifie l'orthographe, ou cherche par coordonnées : 178, 238.</span>
+
+</div>
+<div class="card" style="padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; border-style: dashed; min-height: 230px; justify-content: center">
+<span style="width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); color: var(--text-3)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 20h4L20 8l-4-4L4 16z"></path></svg></span>
+<span class="fs-h3">Le livre d'or est vide</span>
+<span class="fs-small t2 pretty" style="max-width: 280px">Sois la première personne à laisser un mot à Brindille.</span>
+<a class="btn btn-sm" href="d-musee-perso.dc.html">Signer le livre d'or</a>
+</div>
+<div class="card" style="padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; border-style: dashed; min-height: 230px; justify-content: center">
+<span style="width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); color: var(--text-3)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="4" y="4" width="16" height="16"></rect><path d="M12 8v8M8 12h8"></path></svg></span>
+<span class="fs-h3">Pas encore de musée</span>
+<span class="fs-small t2 pretty" style="max-width: 280px">Choisis un thème, une musique et tes œuvres préférées : ton musée est prêt en deux minutes.</span>
+<a class="btn btn-sm" href="d-musee-editeur.dc.html">Créer mon musée</a>
+</div>
+<div class="card" style="padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; border-style: dashed; min-height: 230px; justify-content: center">
+<span style="width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); color: var(--text-3)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 16V10a6 6 0 0 1 12 0v6l2 2H4zM10 21h4"></path></svg></span>
+<span class="fs-h3">Aucune alerte</span>
+<span class="fs-small t2 pretty" style="max-width: 280px">On te préviendra si quelqu'un retouche une de tes œuvres.</span>
+
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'sombre' }; }
+}
+</script>
+</body>
+</html>

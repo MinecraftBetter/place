@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Accueil</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 375px; height: 1180px; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 10px; padding: 14px 16px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 28px; height: 28px">
+<span class="pixel" style="font-size: 20px; font-weight: 600; flex-grow: 1">BetterPlace</span>
+<a class="btn btn-sm" href="m-connexion.dc.html">Se connecter</a>
+</header>
+
+<section style="padding: 8px 16px 0; display: flex; flex-direction: column; gap: 20px">
+<div style="position: relative; height: 262px">
+<div class="clip frame-px" style="position: absolute; left: 0; top: 12px; width: 300px; height: 225px; background: #fff; transform: rotate(-2deg)">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Aperçu du canvas actuel (1024 × 768)" style="position: absolute; left: 0; top: 0; width: 300px; height: 225px">
+</div>
+<div class="glass" style="position: absolute; left: 12px; top: 22px; border-radius: 999px; padding: 6px 12px; display: flex; align-items: center; gap: 8px; transform: rotate(-2deg)">
+<span class="live"></span><span class="fs-cap b">27 connectés</span>
+</div>
+<img src="/_blob/bf33b3cfb8a0e1c819700e44225e8e67" alt="La mascotte cowboy de BetterPlace" class="px anim-bob" style="position: absolute; right: 4px; bottom: -10px; width: 84px; height: 145px">
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h1 class="fs-display" style="font-size: 48px">BetterPlace</h1>
+<p class="fs-body t2 pretty">Le canvas collaboratif de JustBetter : 1024 × 768 pixels à partager entre amis. Pose ton pixel, signe tes œuvres, expose-les au musée.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<a class="btn btn-primary btn-lg btn-px btn-block" href="m-chargement.dc.html">Entrer dans le canvas</a>
+<a class="btn btn-block" href="m-timelapse.dc.html">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M7 4l13 8-13 8z"></path></svg>
+Voir la timelapse</a>
+<a class="btn btn-block btn-ghost" href="m-musee.dc.html">Visiter le musée</a>
+</div>
+</section>
+
+<section style="padding: 28px 16px 0; display: flex; flex-direction: column; gap: 14px">
+<div class="card" style="padding: 16px; display: flex; gap: 14px; border-color: color-mix(in srgb, var(--gold) 40%, transparent); background: var(--gold-soft)">
+<img src="/_blob/6803d1100c44fc8a9af2da77d6e517b2" alt="" class="px" style="width: 24px; height: 24px; flex-shrink: 0; margin-top: 2px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span class="fs-body b tgold">Canvas en accès libre, entre amis</span>
+<p class="fs-small t2 pretty">Tout le monde peut dessiner partout, même par-dessus les autres. Les blagues sont les bienvenues !</p>
+<p class="fs-small t2 pretty">Le but : faire ensemble le plus beau place possible. Si tu retouches une œuvre, fais-le avec le sourire.</p>
+</div>
+</div>
+
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<span class="fs-over">Contrôles</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div class="card-2" style="padding: 12px; display: flex; flex-direction: column; gap: 6px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="color: var(--accent-text)"><rect x="5" y="5" width="14" height="14"></rect><path d="M12 2v6M12 16v6M2 12h6M16 12h6"></path></svg>
+<span class="fs-small b">Toucher</span><span class="fs-cap t3">viser un pixel, la loupe s'ouvre</span>
+</div>
+<div class="card-2" style="padding: 12px; display: flex; flex-direction: column; gap: 6px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="color: var(--accent-text)"><path d="M4 12l5 5L20 6"></path></svg>
+<span class="fs-small b">Poser</span><span class="fs-cap t3">confirmer avec le bouton</span>
+</div>
+<div class="card-2" style="padding: 12px; display: flex; flex-direction: column; gap: 6px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="color: var(--accent-text)"><path d="M4 10V4h6M20 14v6h-6M4 4l6 6M20 20l-6-6"></path></svg>
+<span class="fs-small b">Pincer</span><span class="fs-cap t3">zoomer et dézoomer</span>
+</div>
+<div class="card-2" style="padding: 12px; display: flex; flex-direction: column; gap: 6px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="color: var(--accent-text)"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"></path></svg>
+<span class="fs-small b">Deux doigts</span><span class="fs-cap t3">se déplacer</span>
+</div>
+</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 12px; padding: 4px 2px">
+<img class="av av-40" src="/_blob/23e3f1976500fb6db719239b82a9b6d3" alt="" style="background: transparent">
+<p class="fs-small t2 pretty" style="flex-grow: 1">Tu as dessiné ici avant les comptes ? <a href="m-claim-zone.dc.html">Revendique ton œuvre</a> et gagne le badge Pionnier.</p>
+</div>
+</section>
+
+<footer style="margin-top: auto; padding: 24px 16px 28px; display: flex; flex-direction: column; align-items: center; gap: 10px">
+<div class="rule-px"></div>
+<p class="fs-small t3" style="padding-top: 8px">Fait avec <span style="color: #aa5757">&#10084;&#65038;</span> par Evan et Tiago</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'sombre' }; }
+}
+</script>
+</body>
+</html>

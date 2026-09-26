@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Composants · 1</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 1440px; height: 1880px; padding: 64px 72px; display: flex; flex-direction: column; gap: 48px">
+
+<div style="display: flex; align-items: baseline; justify-content: space-between"><h1 class="fs-h1">Composants · 1</h1><span class="fs-small t3">boutons, champs, palette, avatars, badges</span></div>
+
+<section style="display: grid; grid-template-columns: 1.15fr 1fr; gap: 32px">
+<div class="card" style="padding: 28px; display: flex; flex-direction: column; gap: 22px">
+<h2 class="fs-h2">Boutons</h2>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<button class="btn btn-primary btn-px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><rect x="7" y="7" width="10" height="10"></rect></svg>
+Poser
+</button>
+<button class="btn btn-primary">Se connecter</button>
+<button class="btn">Secondaire</button>
+<button class="btn btn-ghost">Discret</button>
+<button class="btn btn-gold btn-px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M5 21V4h11l-2 4 2 4H5"></path></svg>
+Revendiquer
+</button>
+<button class="btn btn-ghost">Émettre un doute</button>
+<button class="btn btn-danger">Bannir</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<button class="btn btn-primary btn-lg btn-px">Entrer dans le canvas</button>
+<button class="btn btn-sm">Petit</button>
+<button class="btn btn-sm btn-primary">Valider</button>
+<button class="btn btn-primary btn-disabled" disabled>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"></path></svg>
+0:04
+</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<button class="btn btn-icon btn-round" aria-label="Zoom avant"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button class="btn btn-icon btn-round" aria-label="Zoom arrière"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button class="btn btn-icon btn-round" aria-label="Grille"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg></button>
+<button class="btn btn-icon btn-round" aria-label="Pipette"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M14 4l6 6-3 3-6-6zM11 7l-7 7v3h3l7-7"></path></svg></button>
+<button class="btn btn-icon btn-round" aria-label="Partager la position"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"></path></svg></button>
+<button class="btn btn-icon btn-ghost" aria-label="Fermer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<p class="fs-small t3 pretty">Hauteur 44 px partout où l'on tape au doigt (36 px en desktop dense). Les coins crénelés sont réservés aux actions qui marquent le canvas : Poser, Revendiquer, Entrer.</p>
+</div>
+
+<div class="card" style="padding: 28px; display: flex; flex-direction: column; gap: 22px">
+<h2 class="fs-h2">Pastilles & statuts</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span class="chip chip-on">Aujourd'hui</span><span class="chip">Semaine</span><span class="chip">Tout le temps</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span class="pill st-attente">En attente</span>
+<span class="pill st-valide">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg>
+Validée</span>
+<span class="pill st-refuse">Refusée</span>
+<span class="pill st-conflit">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true"><path d="M12 3l10 18H2z"></path></svg>
+À départager</span>
+<span class="pill st-info">Nouveau</span>
+<span class="pill st-neutre">Œuvre d'origine</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span class="coord">x 684 · y 655</span><span class="coord">×8</span>
+<span class="kbd">Clic droit</span><span class="kbd">Molette</span><span class="kbd">G</span><span class="kbd">+</span><span class="kbd">−</span>
+<span class="count">3</span>
+<span style="display: inline-flex; align-items: center; gap: 8px" class="fs-small t2"><span class="live"></span>27 connectés</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span class="fs-over">Délai entre deux pixels</span>
+<div style="display: flex; align-items: center; gap: 12px"><div class="cooldown" style="flex-grow: 1"><div style="width: 62%"></div></div><span class="mono fs-small t2">0:03</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span class="fs-over">Téléchargement du canvas</span>
+<div style="display: flex; align-items: center; gap: 12px"><div class="pbar" style="flex-grow: 1"><div class="pfill" style="width: 68%"></div></div><span class="mono fs-small">68 %</span></div>
+</div>
+</div>
+</section>
+
+<section style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px">
+<div class="card" style="padding: 28px; display: flex; flex-direction: column; gap: 18px">
+<h2 class="fs-h2">Champs</h2>
+<div class="field"><label class="label" for="c-titre">Titre de l'œuvre</label><input id="c-titre" class="input" value="Coucher de soleil au Far West"></div>
+<div class="field"><label class="label" for="c-rech">Recherche</label>
+<div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16 16l5 5"></path></svg><input id="c-rech" class="input" placeholder="Pseudo, œuvre, coordonnées…"></div></div>
+<div class="field"><label class="label" for="c-msg">Message ou preuve</label><textarea id="c-msg" class="textarea">Je l'ai dessinée pendant les vacances d'avril 2023, il y a le brouillon dans les archives du 12.</textarea><span class="hint">Lien vers une capture, un message Discord, un souvenir précis…</span></div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+<label class="fs-body" for="c-t1">Mode lecture seule</label>
+<button id="c-t1" class="toggle {{t1class}}" aria-pressed="{{t1}}" aria-label="Mode lecture seule" onClick="{{flipT1}}"></button>
+</div>
+<div class="seg" role="group" aria-label="Outil de sélection">
+<button class="on">Rectangle</button><button>Lasso</button><button>Baguette</button>
+</div>
+</div>
+
+<div class="card" style="padding: 28px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: baseline; justify-content: space-between"><h2 class="fs-h2">Palette</h2><span class="fs-small t3">cliquable</span></div>
+<div style="display: flex; align-items: center; gap: 14px; padding: 12px; border-radius: 14px; background: var(--surface-2)">
+<div class="swatch" style="background: {{cur.hex}}; width: 52px; height: 52px; border-radius: 12px"></div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+<span class="fs-h3">{{cur.name}}</span>
+<span class="mono fs-small t3">{{cur.hexU}}</span>
+</div>
+<button class="btn btn-icon btn-round" aria-label="Pipette"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M14 4l6 6-3 3-6-6zM11 7l-7 7v3h3l7-7"></path></svg></button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(10, 44px); gap: 8px">
+<sc-for list="{{palette}}" as="c" hint-placeholder-count="30">
+<button class="swatch {{c.sel}}" style="background: {{c.hex}}" title="{{c.name}}" aria-label="{{c.name}}" onClick="{{c.pick}}"></button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<label class="label" for="c-hex" style="white-space: nowrap">Hex libre</label>
+<input id="c-hex" class="input input-mono" value="{{cur.hexU}}" style="width: 140px">
+<span class="fs-cap t3">Toute couleur reste possible, comme aujourd'hui.</span>
+</div>
+</div>
+</section>
+
+<section style="display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 32px">
+<div class="card" style="padding: 28px; display: flex; flex-direction: column; gap: 20px">
+<h2 class="fs-h2">Avatars</h2>
+<div style="display: flex; align-items: flex-end; gap: 16px">
+<img class="av av-96 av-ring" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="Brindille" style="--ring: #ff63aa">
+<img class="av av-64" src="/_blob/7e0fc904fd2815638f5d4d965a1ab50a" alt="Tiago">
+<img class="av av-48" src="/_blob/c266e1d407907a93a6dc2fbd5560c5ab" alt="Evan">
+<img class="av av-40" src="/_blob/0877ddccb171e78f5bfa6672ce2eb035" alt="Lucie_px">
+<img class="av av-32" src="/_blob/5d9a3101799969b7e8ff499c137dc669" alt="Kaelen">
+<img class="av av-24" src="/_blob/e869fcd7638341e8f44d1dfa79b9fc20" alt="Zozo42">
+</div>
+<div style="display: flex; align-items: center; gap: 16px">
+<div class="av-stack">
+<img class="av av-32" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="Brindille">
+<img class="av av-32" src="/_blob/ae4dfc14c12f74add0a65a59f762ca51" alt="Mamie Pixel">
+<img class="av av-32" src="/_blob/ca85503a28c18a13d0d9228ef1330261" alt="Le Grand Sam">
+</div>
+<span class="fs-small t2">Brindille, Mamie Pixel et Le Grand Sam</span>
+</div>
+<p class="fs-small t3 pretty">Avatars pixel en rendu « pixelated », coins 10 px. L'anneau prend la couleur d'accent du profil. Sans avatar : identicon 7×7 généré depuis le pseudo, dans sa couleur préférée de la palette.</p>
+</div>
+
+<div class="card" style="padding: 28px; display: flex; flex-direction: column; gap: 20px">
+<h2 class="fs-h2">Badges</h2>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px">
+<div class="badge-tile anim-shine"><img class="badge-ico" src="/_blob/23e3f1976500fb6db719239b82a9b6d3" alt=""><span class="fs-small b tgold">Pionnier</span><span class="fs-cap t3 pretty">Œuvre d'avant la migration, revendiquée et validée</span></div>
+<div class="badge-tile"><img class="badge-ico" src="/_blob/8e59643dedb0d006275198ee3f7e2152" alt=""><span class="fs-small b tgold">Vétéran 2022</span><span class="fs-cap t3 pretty">Œuvre apparue dès la première saison (2022)</span></div>
+<div class="badge-tile"><img class="badge-ico" src="/_blob/45a6c6c32ac65feaffcc41a8d7170e4c" alt=""><span class="fs-small b">Indémodable</span><span class="fs-cap t3 pretty">Œuvre restée intacte à 90 % plus d'un an</span></div>
+<div class="badge-tile"><img class="badge-ico" src="/_blob/3f9a0b549c915690090cf921d02ac905" alt=""><span class="fs-small b">Premier pixel</span><span class="fs-cap t3 pretty">A posé son tout premier pixel</span></div>
+<div class="badge-tile"><img class="badge-ico" src="/_blob/e6c31c8e89df74d7866cbe9e41ad94cb" alt=""><span class="fs-small b">Restaurateur</span><span class="fs-cap t3 pretty">A restauré 50 pixels de ses œuvres ou de celles des autres</span></div>
+<div class="badge-tile"><img class="badge-ico" src="/_blob/95776fb89a0710cbea6cdfb13a35fa69" alt=""><span class="fs-small b">Noctambule</span><span class="fs-cap t3 pretty">100 pixels posés entre 2 h et 5 h</span></div>
+<div class="badge-tile"><img class="badge-ico" src="/_blob/63303653cef451a330958decd16dc752" alt=""><span class="fs-small b">Millier</span><span class="fs-cap t3 pretty">1 000 pixels posés</span></div>
+<div class="badge-tile"><img class="badge-ico" src="/_blob/69beee23018a4a3f3252357aee18effd" alt=""><span class="fs-small b">Top 10</span><span class="fs-cap t3 pretty">Dans le top 10 d'une semaine</span></div>
+<div class="badge-tile"><img class="badge-ico" src="/_blob/3855c10f72c916de01abc66e49e813ca" alt=""><span class="fs-small b">Bâtisseur</span><span class="fs-cap t3 pretty">Une œuvre de plus de 1 000 pixels</span></div>
+<div class="badge-tile badge-lock"><img class="badge-ico" src="/_blob/1c06a4e30f58c119f92e4c54be0b35dd" alt=""><span class="fs-small b">Témoin</span><span class="fs-cap t3 pretty">10 confirmations sur des revendications validées</span></div>
+</div>
+<p class="fs-small t3 pretty">Sprites 16×16 dessinés avec la palette du canvas. Verrouillé : 32 % d'opacité, niveaux de gris. <span class="tgold b">Calculés depuis les sauvegardes</span> à la validation d'un claim : Pionnier, Vétéran 2022, Bâtisseur, Noctambule, Indémodable — et les « pixels pionniers » estimés comptent pour Millier.</p>
+</div>
+</section>
+
+<section class="card" style="padding: 28px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; align-items: baseline; justify-content: space-between"><h2 class="fs-h2">Navigation</h2><span class="fs-small t3">barre inférieure mobile · barre haute desktop</span></div>
+<div style="display: flex; gap: 32px; align-items: flex-start">
+<div class="bp" data-theme="{{theme}}" style="width: 375px; height: 96px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg-2)">
+<nav class="nav-bottom" aria-label="Navigation principale">
+<a class="tab tab-on" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg>Canvas</a>
+<a class="tab" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 9l9-6 9 6M5 10v9M9.5 10v9M14.5 10v9M19 10v9M3 21h18"></path></svg>Musée</a>
+<a class="tab" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"></path></svg>Activité<span class="count">3</span></a>
+<a class="tab" href="#"><img class="av av-24" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">Profil</a>
+</nav>
+</div>
+<div class="glass" style="flex-grow: 1; height: 64px; border-radius: 18px; display: flex; align-items: center; gap: 12px; padding: 0 12px 0 16px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 28px; height: 28px">
+<span class="pixel" style="font-size: 20px; font-weight: 600">BetterPlace</span>
+<nav style="display: flex; gap: 4px; margin-left: 12px" aria-label="Sections">
+<a class="btn btn-sm btn-ghost" href="#" style="color: var(--text)">Canvas</a>
+<a class="btn btn-sm btn-ghost" href="#">Musée</a>
+<a class="btn btn-sm btn-ghost" href="#">Classement</a>
+<a class="btn btn-sm btn-ghost" href="#">Timelapse</a>
+</nav>
+<div style="flex-grow: 1"></div>
+<span class="fs-small t2" style="display: inline-flex; align-items: center; gap: 8px"><span class="live"></span>27 connectés</span>
+<button class="btn btn-sm btn-icon btn-ghost" aria-label="Alertes"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 16V10a6 6 0 0 1 12 0v6l2 2H4zM10 21h4"></path></svg></button>
+<button class="btn btn-sm btn-primary">Se connecter</button>
+</div>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":1880}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { sel: 28, t1: false }; }
+  renderVals() {
+    const P = [['#000000','noir'],['#333434','gris'],['#d4d7d9','gris clair'],['#ffffff','blanc'],['#6d302f','maron'],['#6d001a','rouge marronâtre'],['#9c451a','maron clair'],['#be0027','rouge'],['#ff2651','rouge clair'],['#ff2d00','rouge'],['#ffa800','orange foncé'],['#ffd623','jaune'],['#fff8b8','beige'],['#7eed38','vert clair'],['#00cc4e','vert'],['#00a344','vert foncé'],['#598d5a','vert foncé foncé'],['#004b6f','bleu sous marin'],['#009eaa','bleu marin'],['#00ccc0','bleu sale de bain'],['#33E9F4','cian'],['#5eb3ff','bleu evian'],['#245aea','bleu ciel'],['#313ac1','bleu ciel violet'],['#1832a4','ciel violet foncé'],['#511e9f','violet'],['#6a5cff','violet clair'],['#b44ac0','violet clair rose'],['#ff63aa','rose'],['#e4abff','rose clair']];
+    const s = this.state.sel;
+    const palette = P.map(([hex, name], i) => ({ hex, name, sel: i === s ? 'swatch-sel' : '', pick: () => this.setState({ sel: i }) }));
+    const cur = { hex: P[s][0], name: P[s][1], hexU: P[s][0].toUpperCase() };
+    return {
+      theme: this.props.theme ?? 'sombre', palette, cur,
+      t1: this.state.t1 ? 'true' : 'false', t1class: this.state.t1 ? 'toggle-on' : '',
+      flipT1: () => this.setState({ t1: !this.state.t1 })
+    };
+  }
+}
+</script>
+</body>
+</html>

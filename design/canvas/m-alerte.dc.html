@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Œuvre retouchée</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp void" data-theme="{{theme}}" style="width: 375px; height: 812px">
+
+<div class="clip" style="position: absolute; inset: 0">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Bord de mer, avec le ciel prolongé et une pizza ajoutée" style="position: absolute; width: 1638px; height: 1229px; left: -454px; top: -200px">
+<sc-if value="{{ghost}}" hint-placeholder-val="{{false}}">
+<img class="px anim-feed" src="/_blob/01eef418a066fab7122de68ce3d28d06" alt="Ta dernière version complète" style="position: absolute; left: 10px; top: 200px; width: 355px; height: 195px; opacity: .92">
+</sc-if>
+</div>
+<div style="position: absolute; left: 8px; top: 198px; width: 359px; height: 199px; border: 2px dashed var(--info); pointer-events: none"></div>
+<span class="pill" style="position: absolute; left: 8px; top: 172px; background: rgba(8,24,40,.9); color: #8cc8ff">136 pixels retouchés · ciel prolongé</span>
+
+<div class="toast anim-feed" style="position: absolute; top: 12px; left: 12px; right: 12px; z-index: 10">
+<img class="av av-32" src="/_blob/e869fcd7638341e8f44d1dfa79b9fc20" alt="">
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Zozo42 a retouché ton œuvre</span><span class="fs-cap t3">Bord de mer · il y a 4 min</span></div>
+</div>
+
+<div class="sheet" style="padding: 0 16px 24px; display: flex; flex-direction: column; gap: 14px">
+<div class="grab"></div>
+<h2 class="fs-h1" style="font-size: 28px">Ton œuvre a bougé</h2>
+<p class="fs-small t2 pretty"><b style="color: var(--text)">Zozo42</b> a retouché <b style="color: var(--text)">136 pixels</b> de ton ciel et l'a prolongé vers la gauche… avec une pizza. Une blague, une collab ? À toi de voir.</p>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column"><label class="fs-body" for="ghost">Voir l'original en calque</label><span class="fs-cap t3">ta dernière version complète</span></div>
+<button id="ghost" class="toggle {{ghostClass}}" aria-pressed="{{ghostAria}}" aria-label="Voir l'original en calque" onClick="{{flip}}"></button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<a class="btn btn-primary btn-px" href="m-canvas.dc.html" style="height: 52px">Retoucher</a>
+<button class="btn" onClick="{{keep}}" style="height: 52px">{{keepLabel}}</button>
+</div>
+<p class="fs-cap t3 pretty">« Retoucher » ouvre le canvas avec l'original en calque : la pipette propose la couleur d'origine de chaque pixel. « Je garde » met à jour ton œuvre avec l'ajout.</p>
+<a class="btn btn-ghost btn-sm" href="m-activite.dc.html" style="align-self: center">Réglages des alertes</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":812}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { ghost: false, kept: false }; }
+  renderVals() {
+    const g = this.state.ghost;
+    return {
+      theme: this.props.theme ?? 'sombre', ghost: g, ghostClass: g ? 'toggle-on' : '', ghostAria: g ? 'true' : 'false',
+      flip: () => this.setState({ ghost: !g }),
+      keepLabel: this.state.kept ? 'Gardé !' : 'Je garde, c’est drôle',
+      keep: () => this.setState({ kept: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

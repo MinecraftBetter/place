@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Connexion perdue · desktop</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp void" data-theme="{{theme}}" style="width: 1440px; height: 900px">
+<div class="clip" style="position: absolute; inset: 0"><img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Canvas figé pendant la coupure" style="position: absolute; width: 2560px; height: 1920px; left: -380px; top: -500px; filter: grayscale(.75) brightness(.7)"></div>
+<header class="glass" style="position: absolute; top: 16px; left: 16px; right: 16px; height: 60px; border-radius: 18px; display: flex; align-items: center; gap: 12px; padding: 0 12px 0 16px; z-index: 10">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 28px; height: 28px"><span class="pixel" style="font-size: 20px; font-weight: 600">BetterPlace</span>
+<div style="flex-grow: 1"></div>
+<span class="pill st-refuse" style="height: 30px; padding: 0 12px; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M2 8a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0M12 19h.01M3 3l18 18"></path></svg>Hors ligne</span>
+<img class="av av-40" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="Mon profil" style="box-shadow: 0 0 0 2px #ff63aa">
+</header>
+<div class="toast" style="position: absolute; top: 96px; left: 50%; width: 560px; margin-left: -280px; z-index: 11; border-color: color-mix(in srgb, var(--danger) 45%, transparent)">
+<span style="color: var(--danger-text)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M2 8a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0M12 19h.01M3 3l18 18"></path></svg></span>
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Connexion perdue</span><span class="fs-cap t3">Nouvel essai 2 / 3 dans 3 s · tes 2 pixels en attente seront envoyés au retour</span></div>
+<button class="btn btn-sm">Réessayer maintenant</button>
+</div>
+<div style="position: absolute; left: 792px; top: 247px; width: 8px; height: 8px; outline: 2px dashed #fff; box-shadow: 0 0 0 3px #000"></div>
+<div style="position: absolute; left: 802px; top: 247px; width: 8px; height: 8px; outline: 2px dashed #fff; box-shadow: 0 0 0 3px #000"></div>
+<div class="glass" style="position: absolute; left: 16px; bottom: 16px; border-radius: 14px; padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; z-index: 10"><span class="fs-small b">Le canvas est figé</span><span class="fs-cap t3">Les changements des autres reprendront dès la reconnexion.</span></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'sombre' }; }
+}
+</script>
+</body>
+</html>

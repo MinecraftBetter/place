@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Admin · revendication (mobile)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 375px; height: 1500px; display: flex; flex-direction: column; position: relative">
+<header style="display: flex; align-items: center; gap: 10px; padding: 12px 16px 8px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 24px; height: 24px">
+<span class="pixel b" style="font-size: 17px; flex-grow: 1">BetterPlace</span>
+<span class="pill st-neutre">Admin</span>
+<a class="btn btn-sm btn-icon btn-ghost" href="m-canvas.dc.html" aria-label="Retour au site"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 4H4v16h6M14 8l4 4-4 4M8 12h10"></path></svg></a>
+</header>
+<nav class="scroll-x" aria-label="Administration" style="display: flex; gap: 8px; padding: 0 16px 10px; border-bottom: 1px solid var(--line)"><a class="chip" href="am-dashboard.dc.html">Tableau</a><a class="chip chip-on" href="am-claims.dc.html">Revendications · 3</a><a class="chip" href="am-utilisateurs.dc.html">Utilisateurs</a><a class="chip" href="a-zone.dc.html">Zone</a><a class="chip" href="a-moderation.dc.html">Modération · 4</a><a class="chip" href="a-reglages.dc.html">Réglages</a></nav>
+<div style="padding: 14px 16px 120px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: center; gap: 8px">
+<a class="btn btn-icon btn-ghost btn-sm" href="am-dashboard.dc.html" aria-label="Retour"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<span class="fs-small t2" style="flex-grow: 1">Revendication 1 / 3</span>
+<span class="pill st-conflit">À départager</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px"><h1 class="fs-h1">Creeper</h1><span class="fs-small t2">Kaelen et Zozo42 · <span class="coord">x 178 · y 238 · 22×22</span></span></div>
+<div class="clip void" style="position: relative; height: 240px; border-radius: 12px; border: 1px solid var(--line)">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Aperçu de la zone" style="position: absolute; width: 7373px; height: 5530px; left: -1189px; top: -1673px">
+<div style="position: absolute; left: 172px; top: 120px; width: 158px; height: 158px; border: 2px solid var(--gold); box-shadow: 0 0 0 1px #000; transform: translate(-50%, -50%)"></div>
+<div style="position: absolute; left: 172px; top: 127px; width: 216px; height: 230px; border: 2px dashed var(--warn); box-shadow: 0 0 0 1px #000; transform: translate(-50%, -50%)"></div>
+<span class="pill" style="position: absolute; left: 8px; bottom: 8px; background: rgba(10,9,8,.85); color: #f5a524">pointillés : zone de Zozo42</span>
+</div>
+
+<section class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; gap: 8px"><span class="fs-h3" style="flex-grow: 1">Analyse des sauvegardes</span><span class="pill st-valide">auto</span></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px">
+<div style="display: flex; flex-direction: column"><span class="fs-cap t3">Apparition</span><span class="mono b">10/09/2022</span><span class="fs-cap t3">1re sauvegarde</span></div>
+<div style="display: flex; flex-direction: column"><span class="fs-cap t3">Terminée</span><span class="mono b">12/12/2022</span></div>
+<div style="display: flex; flex-direction: column"><span class="fs-cap t3">Pixels posés (est.)</span><span class="mono b">124</span></div>
+<div style="display: flex; flex-direction: column"><span class="fs-cap t3">Stabilité 12 mois</span><span class="mono b">92 %</span></div>
+</div>
+<div class="scroll-x" style="margin: 0 -16px; padding: 0 16px"><img class="px" src="/_blob/cfa916864a6f0909d31804ab0afac104" alt="Mini-timelapse de la zone" style="height: 96px; width: 604px; max-width: none"></div>
+<div class="mono t3" style="font-size: 10px">10/09/22 → 11/09 → 13/09 → 20/09 → 12/12/22 → 28/03/24</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<span class="fs-h3">Les deux demandes</span>
+<sc-for list="{{claimants}}" as="p" hint-placeholder-count="2">
+<button onClick="{{p.pick}}" aria-pressed="{{p.aria}}" class="card" style="font: inherit; color: var(--text); text-align: left; cursor: pointer; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; border-color: {{p.border}}">
+<span style="display: flex; align-items: center; gap: 10px"><img class="av av-32" src="{{p.av}}" alt=""><span class="fs-small b" style="flex-grow: 1">{{p.name}}</span><span class="fs-cap tac b">+{{p.votes}}</span><span class="fs-cap t3">{{p.doutes}} doutes</span></span>
+<span class="fs-small pretty">« {{p.msg}} »</span>
+<span class="fs-cap t3">{{p.zone}}</span>
+</button>
+</sc-for>
+</section>
+
+<section class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<span class="fs-h3">Badges proposés</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{badges}}" as="b" hint-placeholder-count="3"><button onClick="{{b.pick}}" aria-pressed="{{b.aria}}" class="chip" style="cursor: pointer; padding-left: 6px; opacity: {{b.op}}; border-color: {{b.border}}"><img class="px" src="{{b.src}}" alt="" style="width: 20px; height: 20px">{{b.label}}</button></sc-for>
+</div>
+</section>
+</div>
+
+<div class="glass" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 16px 20px; display: flex; flex-direction: column; gap: 8px; border-radius: 0; border-width: 1px 0 0">
+<sc-if value="{{open}}" hint-placeholder-val="{{true}}">
+<button class="btn btn-primary btn-px btn-block" onClick="{{valider}}">Valider pour {{main}}</button>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px"><button class="btn btn-sm" onClick="{{fusionner}}">Co-auteurs</button><button class="btn btn-sm">Attribuer…</button><button class="btn btn-sm btn-outline-danger" onClick="{{refuser}}">Refuser…</button></div>
+</sc-if>
+<sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; align-items: center; gap: 12px"><span class="stamp anim-stamp" style="font-size: 16px">{{stamp}}</span><span class="fs-cap t2 pretty" style="flex-grow: 1">{{doneMsg}}</span><button class="btn btn-sm btn-ghost" onClick="{{annuler}}">Annuler</button></div>
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { who: 0, off: {}, done: null }; }
+  renderVals() {
+    const st = this.state;
+    const P = [{ name: 'Kaelen', av: '/_blob/5d9a3101799969b7e8ff499c137dc669', votes: 12, doutes: 3, msg: 'Mon tout premier dessin, le soir de l’ouverture.', zone: 'Zone 22 × 22, pile sur l’œuvre' }, { name: 'Zozo42', av: '/_blob/e869fcd7638341e8f44d1dfa79b9fc20', votes: 2, doutes: 5, msg: 'On l’a fait à deux avec mon cousin, je l’ai fini en décembre.', zone: 'Zone 30 × 32, déborde sur les voisins' }];
+    const B = [['pionnier', 'Pionnier', '/_blob/23e3f1976500fb6db719239b82a9b6d3'], ['veteran', 'Vétéran 2022', '/_blob/8e59643dedb0d006275198ee3f7e2152'], ['indemodable', 'Indémodable', '/_blob/45a6c6c32ac65feaffcc41a8d7170e4c']];
+    const on = B.filter(b => !st.off[b[0]]).map(b => b[1]).join(', ') || 'aucun';
+    const main = P[st.who].name;
+    return {
+      theme: this.props.theme ?? 'sombre', main,
+      claimants: P.map((p, i) => ({ ...p, aria: i === st.who ? 'true' : 'false', border: i === st.who ? 'var(--accent)' : 'var(--line)', pick: () => this.setState({ who: i }) })),
+      badges: B.map(([id, label, src]) => ({ label, src, aria: st.off[id] ? 'false' : 'true', op: st.off[id] ? '.45' : '1', border: st.off[id] ? 'var(--line)' : 'var(--gold)', pick: () => this.setState({ off: { ...st.off, [id]: !st.off[id] } }) })),
+      open: !st.done, done: !!st.done, stamp: st.done ? st.done[0] : '', doneMsg: st.done ? st.done[1] : '',
+      valider: () => this.setState({ done: ['VALIDÉ', 'Attribuée à ' + main + ' · badges : ' + on + '.'] }),
+      fusionner: () => this.setState({ done: ['FUSIONNÉ', 'Kaelen et Zozo42 co-auteurs · badges : ' + on + '.'] }),
+      refuser: () => this.setState({ done: ['REFUSÉ', 'Les deux joueurs reçoivent le motif.'] }),
+      annuler: () => this.setState({ done: null })
+    };
+  }
+}
+</script>
+</body>
+</html>

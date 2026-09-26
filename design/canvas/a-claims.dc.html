@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Admin · revendications</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 1440px; height: 1100px; display: flex">
+<aside style="width: 248px; flex-shrink: 0; border-right: 1px solid var(--line); background: var(--bg-2); display: flex; flex-direction: column; padding: 18px 14px; gap: 18px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 6px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 26px; height: 26px">
+<span class="pixel b" style="font-size: 18px">BetterPlace</span>
+<span class="pill st-neutre">Admin</span>
+</div>
+<nav class="sidenav" style="display: flex; flex-direction: column; gap: 2px" aria-label="Administration">
+<a href="a-dashboard.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>Tableau de bord</a>
+<a href="a-claims.dc.html" class="on"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M5 21V4h11l-2 4 2 4H5"></path></svg>Revendications<span class="count" style="margin-left: auto; background: var(--gold); color: #241604">3</span></a>
+<a href="a-utilisateurs.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="6" y="3" width="7" height="7"></rect><path d="M2 21v-3a4 4 0 0 1 4-4h7a4 4 0 0 1 4 4v3M17 3a4 4 0 0 1 0 8M22 21v-3a4 4 0 0 0-3-3.8"></path></svg>Utilisateurs</a>
+<a href="a-zone.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 3"></rect><path d="M4 12h4M16 12h4"></path></svg>Outil zone</a>
+<a href="a-moderation.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Modération<span class="count" style="margin-left: auto; background: var(--gold); color: #241604">4</span></a>
+<a href="a-journal.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="5" y="3" width="14" height="18"></rect><path d="M9 8h6M9 12h6M9 16h4"></path></svg>Journal</a>
+<a href="a-reglages.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><rect x="14" y="5" width="4" height="4"></rect><rect x="8" y="15" width="4" height="4"></rect></svg>Réglages</a>
+</nav>
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px">
+<div class="card-2" style="padding: 10px 12px; display: flex; flex-direction: column; gap: 4px">
+<span class="fs-cap t2" style="display: flex; align-items: center; gap: 6px"><span class="live"></span>Serveur en ligne</span>
+<span class="fs-cap t3 mono">27 / 64 connexions · sauvegarde il y a 12 s</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 6px">
+<img class="av av-32" src="/_blob/7e0fc904fd2815638f5d4d965a1ab50a" alt="">
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Tiago</span><span class="fs-cap t3">admin</span></span>
+<a class="btn btn-sm btn-icon btn-ghost" href="d-canvas.dc.html" aria-label="Retour au site"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 4H4v16h6M14 8l4 4-4 4M8 12h10"></path></svg></a>
+</div>
+</div>
+</aside>
+<section style="width: 380px; flex-shrink: 0; border-right: 1px solid var(--line); padding: 26px 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px"><h1 class="fs-h2" style="flex-grow: 1">Revendications</h1></div>
+<div class="seg" role="group" aria-label="Filtre" style="width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+<button class="on">À traiter · 3</button><button>Validées · 12</button><button>Refusées · 2</button>
+</div>
+<sc-for list="{{queue}}" as="q" hint-placeholder-count="3">
+<button onClick="{{q.pick}}" aria-pressed="{{q.aria}}" class="card" style="font: inherit; color: var(--text); text-align: left; cursor: pointer; padding: 12px; display: flex; gap: 12px; background: {{q.bg}}; border-color: {{q.border}}">
+<span class="clip" style="position: relative; width: 60px; height: 60px; border-radius: 8px; background: #fff; flex-shrink: 0"><img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: {{q.t.w}}px; height: {{q.t.h}}px; left: {{q.t.l}}px; top: {{q.t.t}}px"></span>
+<span style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
+<span style="display: flex; align-items: center; gap: 6px"><span class="fs-small b ellip" style="flex-grow: 1">{{q.title}}</span><span class="pill {{q.pillCls}}">{{q.pill}}</span></span>
+<span class="fs-cap t2 ellip">{{q.who}}</span>
+<span class="fs-cap t3">+{{q.votes}} confirmations · {{q.doutes}} doutes · {{q.age}}</span>
+</span>
+</button>
+</sc-for>
+<div class="card-2" style="margin-top: auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+<span class="fs-small b">Pas de demande ?</span>
+<span class="fs-cap t3 pretty">Tu peux attribuer une zone à un compte directement, par exemple pour une œuvre dont tout le monde connaît l'auteur.</span>
+<a class="btn btn-sm" href="a-zone.dc.html" style="align-self: flex-start">Attribuer une zone</a>
+</div>
+</section>
+
+<main style="flex-grow: 1; min-width: 0; padding: 26px 32px; display: flex; flex-direction: column; gap: 18px">
+<header style="display: flex; align-items: center; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1">
+<div style="display: flex; align-items: center; gap: 10px"><h2 class="fs-h1" style="font-size: 30px">{{c.title}}</h2><span class="pill {{c.pillCls}}">{{c.pill}}</span></div>
+<span class="fs-small t2">{{c.who}} · <span class="coord">x {{c.z0}} · y {{c.z1}} · {{c.z2}}×{{c.z3}}</span></span>
+</div>
+<a class="btn btn-sm" href="d-canvas.dc.html">Voir sur le canvas</a>
+</header>
+
+<section style="display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 20px">
+<div class="clip void" style="position: relative; width: 260px; height: 260px; border-radius: 12px; border: 1px solid var(--line)">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="Aperçu de la zone" style="position: absolute; width: {{c.p.w}}px; height: {{c.p.h}}px; left: {{c.p.l}}px; top: {{c.p.t}}px">
+<div style="position: absolute; left: {{c.box.x}}px; top: {{c.box.y}}px; width: {{c.box.w}}px; height: {{c.box.h}}px; border: 2px solid var(--gold); box-shadow: 0 0 0 1px #000"></div>
+<sc-if value="{{c.hasRival}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; left: {{c.rb.x}}px; top: {{c.rb.y}}px; width: {{c.rb.w}}px; height: {{c.rb.h}}px; border: 2px dashed var(--warn); box-shadow: 0 0 0 1px #000"></div>
+<span class="pill" style="position: absolute; left: 8px; bottom: 8px; background: rgba(10,9,8,.85); color: #f5a524">pointillés : zone de {{c.rival}}</span>
+</sc-if>
+</div>
+<div class="card" style="padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: baseline; gap: 10px"><span class="fs-h3" style="flex-grow: 1">Analyse des sauvegardes</span><span class="pill st-valide">calculée automatiquement</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px">
+<sc-for list="{{c.facts}}" as="f" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; gap: 1px"><span class="fs-cap t3">{{f.k}}</span><span class="mono b">{{f.v}}</span><span class="fs-cap t3">{{f.s}}</span></div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section class="card" style="padding: 14px 16px; display: flex; align-items: center; gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 4px; width: 120px; flex-shrink: 0"><span class="fs-h3">Mini-timelapse</span><span class="fs-cap t3 pretty">6 sauvegardes choisies autour des changements</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div class="clip" style="position: relative; height: {{c.strip.h}}px; width: {{c.strip.w}}px"><img class="px" src="{{c.strip.src}}" alt="Évolution de la zone sur 6 sauvegardes" style="height: {{c.strip.h}}px; width: {{c.strip.w}}px"></div>
+<div style="display: flex; gap: {{c.strip.gap}}px">
+<sc-for list="{{c.strip.dates}}" as="d" hint-placeholder-count="6"><span class="mono t3" style="font-size: 10px; width: {{c.strip.fw}}px; text-align: center">{{d}}</span></sc-for>
+</div>
+</div>
+</section>
+
+<sc-if value="{{c.hasRival}}" hint-placeholder-val="{{false}}">
+<section style="display: flex; flex-direction: column; gap: 10px">
+<span class="fs-h3">Deux joueurs revendiquent la même œuvre</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{c.claimants}}" as="p" hint-placeholder-count="2">
+<div class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; border-color: {{p.border}}">
+<div style="display: flex; align-items: center; gap: 10px"><img class="av av-32" src="{{p.av}}" alt=""><span class="fs-body b" style="flex-grow: 1">{{p.name}}</span><span class="fs-cap t3">{{p.age}}</span></div>
+<p class="fs-small pretty">« {{p.msg}} »</p>
+<span class="fs-cap t3">{{p.zone}}</span>
+<div style="display: flex; gap: 12px" class="fs-cap"><span class="tac b">+{{p.votes}} « je l'ai vu la faire »</span><span class="t3">{{p.doutes}} doutes</span></div>
+</div>
+</sc-for>
+</div>
+</section>
+</sc-if>
+
+<section style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px">
+<div class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<span class="fs-h3">La communauté</span>
+<div style="display: flex; align-items: center; gap: 10px">
+<div class="av-stack"><img class="av av-24" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt=""><img class="av av-24" src="/_blob/c266e1d407907a93a6dc2fbd5560c5ab" alt=""><img class="av av-24" src="/_blob/ae4dfc14c12f74add0a65a59f762ca51" alt=""><img class="av av-24" src="/_blob/bc30bd15326365cf8bb885bc739e1c59" alt=""></div>
+<span class="fs-small"><b class="tac">+{{c.votes}}</b> <span class="t2">confirmations</span> · <b>{{c.doutes}}</b> <span class="t2">doutes</span></span>
+</div>
+<div class="card-2" style="padding: 10px 12px; display: flex; gap: 10px">
+<img class="av av-24" src="{{c.doute.av}}" alt="">
+<span style="display: flex; flex-direction: column"><span class="fs-cap b">{{c.doute.who}} émet un doute</span><span class="fs-cap t2 pretty">« {{c.doute.msg}} »</span></span>
+</div>
+</div>
+<div class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<span class="fs-h3">Badges proposés</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{c.badges}}" as="b" hint-placeholder-count="3">
+<button onClick="{{b.pick}}" aria-pressed="{{b.aria}}" class="chip" style="cursor: pointer; padding-left: 6px; opacity: {{b.op}}; border-color: {{b.border}}"><img class="px" src="{{b.src}}" alt="" style="width: 20px; height: 20px">{{b.label}}</button>
+</sc-for>
+</div>
+<span class="fs-cap t3 pretty">Pixels pionniers : ≈ {{c.px}} px, ajoutés au profil de l'auteur (répartis entre co-auteurs). Noctambule demande les sauvegardes minute par minute.</span>
+</div>
+</section>
+
+<section class="card" style="padding: 14px 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<sc-if value="{{open}}" hint-placeholder-val="{{true}}">
+<button class="btn btn-primary btn-px" onClick="{{valider}}">Valider pour {{c.main}}</button>
+<sc-if value="{{c.hasRival}}" hint-placeholder-val="{{false}}"><button class="btn" onClick="{{fusionner}}">Fusionner en co-auteurs</button></sc-if>
+<div class="search" style="width: 230px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16 16l5 5"></path></svg><input class="input" aria-label="Attribuer à un autre compte" placeholder="Attribuer à un autre compte…" style="height: 44px"></div>
+<div style="flex-grow: 1"></div>
+<button class="btn btn-outline-danger" onClick="{{refuser}}">Refuser…</button>
+</sc-if>
+<sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+<span class="stamp anim-stamp" style="font-size: 18px">{{stampLabel}}</span>
+<span class="fs-small t2 pretty" style="flex-grow: 1">{{doneMsg}}</span>
+<button class="btn btn-sm btn-ghost" onClick="{{annuler}}">Annuler</button>
+</sc-if>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { sel: 0, off: {}, done: null }; }
+  renderVals() {
+    const st = this.state;
+    const crop = (z, W, H, pad) => { const s = Math.min(W * pad / z[2], H * pad / z[3]); return { s, w: Math.round(1024 * s), h: Math.round(768 * s), l: Math.round(-z[0] * s + (W - z[2] * s) / 2), t: Math.round(-z[1] * s + (H - z[3] * s) / 2) }; };
+    const AV = { kaelen: '/_blob/5d9a3101799969b7e8ff499c137dc669', zozo: '/_blob/e869fcd7638341e8f44d1dfa79b9fc20', brin: '/_blob/f341ef9fb793c7257cb54f723280da10', mamie: '/_blob/ae4dfc14c12f74add0a65a59f762ca51', evan: '/_blob/c266e1d407907a93a6dc2fbd5560c5ab', poulpe: '/_blob/87121a75678f7bfaed28ff98e79fc01f', lucie: '/_blob/0877ddccb171e78f5bfa6672ce2eb035' };
+    const BD = { pionnier: ['Pionnier', '/_blob/23e3f1976500fb6db719239b82a9b6d3'], veteran: ['Vétéran 2022', '/_blob/8e59643dedb0d006275198ee3f7e2152'], batisseur: ['Bâtisseur', '/_blob/3855c10f72c916de01abc66e49e813ca'], indemodable: ['Indémodable', '/_blob/45a6c6c32ac65feaffcc41a8d7170e4c'] };
+    const C = [
+      { id: 'creeper', title: 'Creeper', pill: 'À départager', pillCls: 'st-conflit', who: 'Kaelen et Zozo42', main: 'Kaelen', rival: 'Zozo42', z: [178, 238, 22, 22], rz: [174, 234, 30, 32], votes: 12, doutes: 3, age: 'il y a 2 h', px: '124',
+        claimants: [{ name: 'Kaelen', av: AV.kaelen, age: 'il y a 2 h', msg: 'Mon tout premier dessin, le soir de l’ouverture.', zone: 'Zone : 22 × 22, pile sur l’œuvre', votes: 12, doutes: 3 }, { name: 'Zozo42', av: AV.zozo, age: 'il y a 40 min', msg: 'On l’a fait à deux avec mon cousin, je l’ai fini en décembre.', zone: 'Zone : 30 × 32, déborde sur les voisins', votes: 2, doutes: 5 }],
+        facts: [['Apparition', '10/09/2022', 'déjà là à la 1re sauvegarde'], ['Terminée', '12/12/2022', ''], ['Pixels posés (est.)', '124', 'sur 241 px d’œuvre'], ['Jours de dessin', '3', '13/09, 20/09, 12/12/2022'], ['Stabilité 12 mois', '92 %', 'jamais vraiment retouchée'], ['Aujourd’hui', '100 %', 'intacte']],
+        badges: ['pionnier', 'veteran', 'indemodable'], doute: { av: AV.lucie, who: 'Lucie_px', msg: 'Je me souviens que Zozo42 avait repris les couleurs en décembre.' },
+        strip: { src: '/_blob/cfa916864a6f0909d31804ab0afac104', W: 856, H: 136, fw: 136, dates: ['10/09/22', '11/09/22', '13/09/22', '20/09/22', '12/12/22', '28/03/24'] } },
+      { id: 'laby', title: 'Labyrinthe doré', pill: 'En attente', pillCls: 'st-attente', who: 'Brindille et Nyx', main: 'Brindille et Nyx', z: [257, 505, 64, 88], votes: 4, doutes: 0, age: 'il y a 1 min', px: '5 320',
+        claimants: [], facts: [['Premiers pixels', '20/07/2023', ''], ['Terminée', '02/03/2024', '4 780 px ce jour-là'], ['Pixels posés (est.)', '5 320', 'sur 5 371 px'], ['Jours de dessin', '7', 'dont la grosse soirée du 2 mars'], ['Autres demandes', 'aucune', ''], ['Aujourd’hui', '100 %', 'intacte']],
+        badges: ['pionnier', 'batisseur'], doute: { av: AV.poulpe, who: 'Poulpe', msg: 'Il y avait déjà un bout de labyrinthe en 2022, non ?' },
+        strip: { src: '/_blob/8af728d2373b67af055f367db1817366', W: 904, H: 192, fw: 144, dates: ['28/10/23', '26/02/24', '02/03/24', '03/03/24', '08/03/24', '28/03/24'] } },
+      { id: 'sapin', title: 'Sapin de Noël', pill: 'En attente', pillCls: 'st-attente', who: 'Mamie Pixel', main: 'Mamie Pixel', z: [980, 415, 44, 90], votes: 21, doutes: 0, age: 'hier', px: '3 064',
+        claimants: [], facts: [['Apparition estimée', '15/12/2022', 'forme finale le 27/12'], ['Dernière retouche', '08/03/2024', 'la guirlande 2024'], ['Pixels posés (est.)', '3 064', 'sur 3 040 px d’œuvre'], ['Jours de dessin', '7', 'surtout en décembre'], ['Stabilité 12 mois', '74 %', 'retouché chaque hiver'], ['Aujourd’hui', '100 %', 'intacte']],
+        badges: ['pionnier', 'veteran', 'batisseur'], doute: { av: AV.evan, who: 'Evan', msg: 'Aucun doute pour moi, c’est bien le sien.' },
+        strip: { src: '/_blob/cfc17b958a18fc43eadc3012f1ea4580', W: 568, H: 196, fw: 88, dates: ['13/12/22', '15/12/22', '22/12/22', '27/12/22', '03/03/24', '08/03/24'] } }
+    ];
+    const sel = Math.min(st.sel, C.length - 1), c = C[sel];
+    const p = crop(c.z, 260, 260, 0.62);
+    const bx = (z) => ({ x: Math.round(p.l + z[0] * p.s), y: Math.round(p.t + z[1] * p.s), w: Math.round(z[2] * p.s), h: Math.round(z[3] * p.s) });
+    const k = Math.min(110 / c.strip.H, 560 / c.strip.W);
+    const off = st.off[c.id] || {};
+    const done = st.done && st.done.id === c.id ? st.done : null;
+    const badgesOn = c.badges.filter(b => !off[b]).map(b => BD[b][0]);
+    return {
+      theme: this.props.theme ?? 'sombre',
+      queue: C.map((q, i) => ({ ...q, t: crop(q.z, 60, 60, 0.9), aria: i === sel ? 'true' : 'false', bg: i === sel ? 'var(--surface-2)' : 'var(--surface)', border: i === sel ? 'var(--accent)' : (q.rz ? 'color-mix(in srgb, var(--warn) 45%, transparent)' : 'var(--line)'), pick: () => this.setState({ sel: i }) })),
+      c: { ...c, z0: c.z[0], z1: c.z[1], z2: c.z[2], z3: c.z[3], p, box: bx(c.z), hasRival: !!c.rz, rb: c.rz ? bx(c.rz) : { x: 0, y: 0, w: 0, h: 0 },
+        facts: c.facts.map(([k2, v, s]) => ({ k: k2, v, s })),
+        claimants: c.claimants.map((x, i) => ({ ...x, border: i === 0 ? 'var(--accent)' : 'var(--line)' })),
+        strip: { src: c.strip.src, h: Math.round(c.strip.H * k), w: Math.round(c.strip.W * k), fw: Math.round(c.strip.fw * k), gap: Math.round(8 * k), dates: c.strip.dates },
+        badges: c.badges.map(b => ({ label: BD[b][0], src: BD[b][1], aria: off[b] ? 'false' : 'true', op: off[b] ? '.45' : '1', border: off[b] ? 'var(--line)' : 'var(--gold)', pick: () => this.setState({ off: { ...st.off, [c.id]: { ...off, [b]: !off[b] } } }) })) },
+      open: !done, done: !!done,
+      stampLabel: done ? done.label : '', doneMsg: done ? done.msg : '',
+      valider: () => this.setState({ done: { id: c.id, label: 'VALIDÉ', msg: 'Œuvre attribuée à ' + c.main + '. Badges : ' + (badgesOn.join(', ') || 'aucun') + '. Notification envoyée, entrée ajoutée au journal.' } }),
+      fusionner: () => this.setState({ done: { id: c.id, label: 'FUSIONNÉ', msg: 'Kaelen et Zozo42 deviennent co-auteurs. Badges : ' + (badgesOn.join(', ') || 'aucun') + ' pour les deux. Les pixels pionniers sont partagés.' } }),
+      refuser: () => this.setState({ done: { id: c.id, label: 'REFUSÉ', msg: 'Demande refusée. Le joueur reçoit le motif ; la zone reste « Œuvre d’origine ».' } }),
+      annuler: () => this.setState({ done: null })
+    };
+  }
+}
+</script>
+</body>
+</html>

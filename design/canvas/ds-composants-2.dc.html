@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Composants · 2</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 1440px; height: 1880px; padding: 64px 72px; display: flex; flex-direction: column; gap: 40px">
+
+<div style="display: flex; align-items: baseline; justify-content: space-between"><h1 class="fs-h1">Composants · 2 & animations</h1><span class="fs-small t3">cartes, tiroirs, modales, toasts, tableaux admin</span></div>
+
+<section style="display: grid; grid-template-columns: 836px 1fr; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<h2 class="fs-h2">Cartes d'œuvre</h2>
+<div style="display: grid; grid-template-columns: repeat(3, 260px); gap: 18px">
+<a class="card" href="#" style="overflow: hidden; display: flex; flex-direction: column; color: var(--text)">
+<div class="clip" style="position: relative; width: 258px; height: 160px; background: #fff">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: 1714px; height: 1286px; left: 80px; top: -277px">
+<span class="pill st-attente" style="position: absolute; top: 10px; left: 10px; background: rgba(20,16,8,.8); color: #f5c77a"><img src="/_blob/23e3f1976500fb6db719239b82a9b6d3" alt="" class="px" style="width: 14px; height: 14px">Pionnier</span>
+</div>
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+<span class="fs-h3">Drapeau &amp; baguette</span>
+<div style="display: flex; align-items: center; gap: 8px"><div class="av-stack"><img class="av av-20" src="/_blob/7e0fc904fd2815638f5d4d965a1ab50a" alt=""><img class="av av-20" src="/_blob/c266e1d407907a93a6dc2fbd5560c5ab" alt=""></div><span class="fs-small t2">Tiago, Evan</span></div>
+<div style="display: flex; gap: 8px; align-items: center"><span class="coord">x 0 · y 170</span><span class="fs-cap t3">4 218 px · 10 sept. 2022</span></div>
+</div>
+</a>
+<a class="card" href="#" style="overflow: hidden; display: flex; flex-direction: column; color: var(--text)">
+<div class="clip" style="position: relative; width: 258px; height: 160px; background: #fff">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: 1208px; height: 906px; left: -407px; top: -287px">
+<span class="pill" style="position: absolute; top: 10px; left: 10px; background: rgba(8,24,40,.85); color: #8cc8ff">Retouchée · 38 px</span>
+</div>
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+<span class="fs-h3">Bord de mer</span>
+<div style="display: flex; align-items: center; gap: 8px"><img class="av av-20" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt=""><span class="fs-small t2">Brindille</span></div>
+<div style="display: flex; gap: 8px; align-items: center"><span class="coord">x 397 · y 250</span><span class="fs-cap t3">13 305 px</span></div>
+</div>
+</a>
+<a class="card" href="#" style="overflow: hidden; display: flex; flex-direction: column; color: var(--text)">
+<div class="clip" style="position: relative; width: 258px; height: 160px; background: #fff">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: 6702px; height: 5027px; left: -1108px; top: -1550px">
+<span class="pill st-conflit" style="position: absolute; top: 10px; left: 10px; background: rgba(40,26,4,.85); color: #f5a524">2 revendications</span>
+</div>
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+<span class="fs-h3">Creeper</span>
+<div style="display: flex; align-items: center; gap: 8px"><img class="av av-20" src="/_blob/5d9a3101799969b7e8ff499c137dc669" alt=""><span class="fs-small t2">Kaelen · aussi revendiqué par Zozo42</span></div>
+<div style="display: flex; gap: 8px; align-items: center"><span class="coord">x 178 · y 238</span><span class="fs-cap t3">241 px</span></div>
+</div>
+</a>
+</div>
+<div class="card" style="display: flex; align-items: center; gap: 14px; padding: 12px 14px; width: 375px">
+<div class="clip" style="position: relative; width: 56px; height: 56px; border-radius: 10px; background: #fff; flex-shrink: 0">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: 253px; height: 190px; left: 12px; top: -124px">
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0; flex-grow: 1">
+<span class="fs-body b ellip">Dunes au couchant</span>
+<span class="fs-small t3 ellip">Lucie_px · 24 836 px · Pionnière</span>
+</div>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="color: var(--text-3)"><path d="M9 5l7 7-7 7"></path></svg>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 16px">
+<h2 class="fs-h2">Tiroir (bottom sheet)</h2>
+<div class="bp void" data-theme="{{theme}}" style="width: 100%; height: 392px; border-radius: 16px; border: 1px solid var(--line)">
+<div class="sheet" style="padding: 0 18px 18px; display: flex; flex-direction: column; gap: 14px">
+<div class="grab"></div>
+<div style="display: flex; align-items: center; gap: 12px">
+<div style="width: 40px; height: 40px; border-radius: 8px; background: #ff63aa; box-shadow: inset 0 0 0 1px rgba(255,255,255,.15)"></div>
+<div style="display: flex; flex-direction: column; flex-grow: 1">
+<span class="fs-body b">rose <span class="mono t3" style="font-weight: 400; font-size: 13px">#FF63AA</span></span>
+<span class="coord" style="align-self: flex-start">x 684 · y 655</span>
+</div>
+<button class="btn btn-icon btn-ghost btn-sm" aria-label="Fermer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<div class="card-2" style="display: flex; align-items: center; gap: 12px; padding: 12px">
+<img class="av av-40" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-body b">Brindille</span><span class="fs-small t3">posé il y a 3 min · 14 oct. 2026, 02:41</span></div>
+<a class="btn btn-sm" href="#">Profil</a>
+</div>
+<div style="display: flex; gap: 10px">
+<button class="btn btn-sm" style="flex-grow: 1">Pipette</button>
+<button class="btn btn-sm" style="flex-grow: 1">Partager</button>
+</div>
+</div>
+</div>
+<p class="fs-small t3 pretty">Rayon 24 px en haut, poignée 40×5. Trois hauteurs : aperçu (≈ 180 px), moitié, plein écran. Glisser vers le bas ferme.</p>
+</div>
+</section>
+
+<section style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<h2 class="fs-h2">Toasts</h2>
+<div class="toast anim-feed">
+<div class="anim-pop-loop" style="width: 28px; height: 28px; background: #ff63aa; box-shadow: inset 0 0 0 2px rgba(0,0,0,.2)"></div>
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Pixel posé</span><span class="fs-cap t3 mono">x 684 · y 655 · rose</span></div>
+<span class="mono fs-cap t3">0:05</span>
+</div>
+<div class="toast">
+<img src="/_blob/23e3f1976500fb6db719239b82a9b6d3" alt="" class="px" style="width: 32px; height: 32px">
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Revendication validée</span><span class="fs-cap t3">« Drapeau &amp; baguette » est à toi — badge Pionnier</span></div>
+</div>
+<div class="toast">
+<img src="/_blob/e6c31c8e89df74d7866cbe9e41ad94cb" alt="" class="px anim-bob" style="width: 32px; height: 32px">
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Nouveau badge : Restaurateur</span><span class="fs-cap t3">50 pixels restaurés, merci !</span></div>
+</div>
+<div class="toast">
+<img class="av av-32" src="/_blob/e869fcd7638341e8f44d1dfa79b9fc20" alt="">
+<div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">Ton œuvre a été retouchée</span><span class="fs-cap t3">Zozo42 a ajouté une pizza à « Bord de mer »</span></div>
+<a class="btn btn-sm" href="#">Voir</a>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 16px">
+<h2 class="fs-h2">Modale</h2>
+<div class="modal" style="padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span class="fs-h3">Restaurer cette zone ?</span>
+<span class="fs-small t2 pretty">Les 27 084 pixels de x 290 · y 250 (222×122) reprendront l'état de la sauvegarde du 28 oct. 2023 à 22:23. Les joueurs connectés verront le changement en direct.</span>
+</div>
+<div class="field"><label class="label" for="m-motif">Motif (journal admin)</label><input id="m-motif" class="input" value="Gribouillis accidentel, à la demande de Brindille"></div>
+<div style="display: flex; justify-content: flex-end; gap: 10px">
+<button class="btn btn-ghost">Annuler</button>
+<button class="btn btn-primary">Restaurer</button>
+</div>
+</div>
+<h2 class="fs-h2" style="margin-top: 8px">Bannières</h2>
+<div class="card" style="overflow: hidden; display: flex; flex-direction: column">
+<div class="banner banner-gold">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 10v4h4l8 5V5L7 10zM18 9a4 4 0 0 1 0 6"></path></svg>
+<span style="flex-grow: 1">Nuit de la pixel-rave samedi 22 h : délai réduit à 2 s !</span>
+</div>
+<div class="banner banner-info">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="5" y="11" width="14" height="10"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+<span>Canvas en lecture seule jusqu'à 18 h.</span>
+</div>
+<div class="banner banner-danger">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M2 8a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0M12 19h.01M3 3l18 18"></path></svg>
+<span>Connexion perdue — reconnexion…</span>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 16px">
+<h2 class="fs-h2">Fil d'activité</h2>
+<div class="card" style="padding: 8px; display: flex; flex-direction: column">
+<a href="#" style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; color: var(--text)">
+<img class="av av-32" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">
+<span class="fs-small" style="flex-grow: 1"><b>Brindille</b> <span class="t2">dessine près de</span> <span class="coord">684 · 655</span></span>
+<span class="dot" style="background: #ff63aa"></span><span class="fs-cap t3">3 s</span>
+</a>
+<a href="#" style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; color: var(--text); background: var(--gold-soft)">
+<img src="/_blob/23e3f1976500fb6db719239b82a9b6d3" alt="" class="px" style="width: 32px; height: 32px">
+<span class="fs-small" style="flex-grow: 1"><b>Lucie_px</b> <span class="t2">devient Pionnière avec</span> <b>Dunes au couchant</b></span>
+<span class="fs-cap t3">2 min</span>
+</a>
+<a href="#" style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; color: var(--text)">
+<img class="av av-32" src="/_blob/ae4dfc14c12f74add0a65a59f762ca51" alt="">
+<span class="fs-small" style="flex-grow: 1"><b>Mamie Pixel</b> <span class="t2">expose au musée :</span> <b>Sapin de Noël</b></span>
+<span class="fs-cap t3">6 min</span>
+</a>
+<a href="#" style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; color: var(--text)">
+<img class="av av-32" src="/_blob/5d9a3101799969b7e8ff499c137dc669" alt="">
+<span class="fs-small" style="flex-grow: 1"><b>Kaelen</b> <span class="t2">revendique</span> <b>Creeper</b></span>
+<span class="pill st-attente">+12</span>
+</a>
+</div>
+<p class="fs-small t3 pretty">Chaque ligne est un lien : un clic recentre le canvas sur l'endroit concerné (x, y, zoom). Les événements similaires se regroupent (« Brindille · 24 pixels près de… »).</p>
+</div>
+</section>
+
+<section style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<h2 class="fs-h2">Tableau admin</h2>
+<div class="card" style="overflow: hidden">
+<table class="table">
+<thead><tr><th>Joueur</th><th class="num">Pixels</th><th class="num">Visibles</th><th>Arrivée</th><th>Statut</th><th></th></tr></thead>
+<tbody>
+<tr><td><div style="display: flex; align-items: center; gap: 10px"><img class="av av-32" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt=""><div style="display: flex; flex-direction: column"><span class="b">Brindille</span><span class="fs-cap t3">/u/brindille</span></div></div></td><td class="num">4 812</td><td class="num">3 107</td><td class="t2">3 oct. 2026</td><td><span class="pill st-valide">Actif</span></td><td><button class="btn btn-sm btn-icon btn-ghost" aria-label="Actions"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M5 12h.01M12 12h.01M19 12h.01"></path></svg></button></td></tr>
+<tr class="sel"><td><div style="display: flex; align-items: center; gap: 10px"><img class="av av-32" src="/_blob/56f14b0ba0b26cbc8df201433bc426d6" alt=""><div style="display: flex; flex-direction: column"><span class="b">bot_404</span><span class="fs-cap t3">/u/bot_404 · script de spam</span></div></div></td><td class="num">1 204</td><td class="num">38</td><td class="t2">13 oct. 2026</td><td><span class="pill st-conflit">Suspendu 24 h</span></td><td><button class="btn btn-sm btn-icon btn-ghost" aria-label="Actions"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M5 12h.01M12 12h.01M19 12h.01"></path></svg></button></td></tr>
+<tr><td><div style="display: flex; align-items: center; gap: 10px"><img class="av av-32" src="/_blob/5d9a3101799969b7e8ff499c137dc669" alt=""><div style="display: flex; flex-direction: column"><span class="b">Kaelen</span><span class="fs-cap t3">/u/kaelen</span></div></div></td><td class="num">2 390</td><td class="num">1 877</td><td class="t2">2 oct. 2026</td><td><span class="pill st-valide">Actif</span></td><td><button class="btn btn-sm btn-icon btn-ghost" aria-label="Actions"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M5 12h.01M12 12h.01M19 12h.01"></path></svg></button></td></tr>
+</tbody>
+</table>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+<div class="card kpi"><span class="fs-over">Connectés</span><span class="kpi-v">27<span class="t3" style="font-size: 16px"> / 64</span></span><span class="fs-cap t3" style="display: flex; align-items: center; gap: 6px"><span class="live"></span>en direct</span></div>
+<div class="card kpi"><span class="fs-over">Pixels · 24 h</span><span class="kpi-v">18 406</span><span class="delta-up">▲ 12 % vs hier</span></div>
+<div class="card kpi"><span class="fs-over">Claims en attente</span><span class="kpi-v tgold">7</span><span class="fs-cap t3">dont 2 en conflit</span></div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 16px">
+<h2 class="fs-h2">Micro-animations</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px">
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px; align-items: center">
+<div class="void" style="width: 100%; height: 120px; border-radius: 10px; position: relative; display: flex; align-items: center; justify-content: center">
+<div class="anim-ring-loop" style="position: absolute; width: 24px; height: 24px; border: 2px solid #ff63aa"></div>
+<div class="anim-pop-loop" style="width: 24px; height: 24px; background: #ff63aa"></div>
+</div>
+<span class="fs-small b">Pose de pixel</span>
+<span class="fs-cap t3 mono" style="text-align: center">420 ms · steps(6)<br>+ onde carrée 600 ms</span>
+</div>
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px; align-items: center">
+<div class="void" style="width: 100%; height: 120px; border-radius: 10px; display: flex; align-items: center; justify-content: center">
+<span class="stamp anim-stamp-loop">VALIDÉ</span>
+</div>
+<span class="fs-small b">Claim validé</span>
+<span class="fs-cap t3 mono" style="text-align: center">tampon 500 ms · steps(8)<br>+ badge qui tombe</span>
+</div>
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px; align-items: center">
+<div class="void" style="width: 100%; height: 120px; border-radius: 10px; display: flex; align-items: center; justify-content: center">
+<div class="anim-shine anim-bob" style="width: 64px; height: 64px"><img src="/_blob/23e3f1976500fb6db719239b82a9b6d3" alt="" class="px" style="width: 64px; height: 64px"></div>
+</div>
+<span class="fs-small b">Nouveau badge</span>
+<span class="fs-cap t3 mono" style="text-align: center">reflet 2,2 s · steps(12)<br>rebond 2 paliers</span>
+</div>
+</div>
+<p class="fs-small t3 pretty">Toutes les animations avancent par paliers (<span class="mono">steps()</span>) pour garder un rendu pixel. Elles se coupent avec <span class="mono">prefers-reduced-motion</span> : seul le changement d'état reste.</p>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":1440,"height":1880}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'sombre' }; }
+}
+</script>
+</body>
+</html>

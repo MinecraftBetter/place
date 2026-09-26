@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Musées des joueurs</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp spot" data-theme="{{theme}}" style="width: 375px; height: 1320px; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 8px; padding: 12px 12px 0">
+<a class="btn btn-icon btn-ghost" href="m-musee.dc.html" aria-label="Retour au musée"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<h1 class="fs-h2" style="flex-grow: 1">Musées des joueurs</h1>
+<a class="btn btn-sm btn-gold btn-px" href="m-musee-perso.dc.html" aria-label="Visite surprise : un musée au hasard">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="4" y="4" width="16" height="16"></rect><path d="M9 9h.01M15 15h.01M15 9h.01M9 15h.01M12 12h.01"></path></svg>
+Au hasard</a>
+</header>
+
+<div style="padding: 14px 16px 0; display: flex; flex-direction: column; gap: 12px">
+<p class="fs-small t2 pretty">Chaque joueur peut ouvrir son propre musée : ses œuvres, ses coups de cœur, sa déco, sa musique.</p>
+<div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16 16l5 5"></path></svg><input class="input" aria-label="Chercher un musée" placeholder="Pseudo ou nom de musée…"></div>
+<div class="seg" role="group" aria-label="Trier" style="align-self: flex-start">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4"><button class="{{t.on}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for>
+</div>
+</div>
+
+<section style="padding: 16px 16px 0">
+<a class="card" href="m-musee-editeur.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 12px; color: var(--text); border-style: dashed">
+<img class="av av-40" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">
+<div style="display: flex; flex-direction: column; flex-grow: 1">
+<span class="fs-small b">Mon musée</span>
+<span class="fs-cap t3">Marée · 5 œuvres · 213 visites · 12 mots au livre d'or</span>
+</div>
+<span class="btn btn-sm">Modifier</span>
+</a>
+</section>
+
+<section style="padding: 16px 16px 0; display: flex; flex-direction: column; gap: 14px">
+<sc-for list="{{musees}}" as="m" hint-placeholder-count="5">
+<a href="m-musee-perso.dc.html" class="card" style="overflow: hidden; display: flex; flex-direction: column; color: var(--text)">
+<div class="clip" style="position: relative; height: 150px; background: {{m.wall}}">
+<div style="position: absolute; left: 0; right: 0; bottom: 0; height: 34px; background: {{m.floor}}"></div>
+<div style="position: absolute; left: 50%; top: 0; width: 220px; height: 140px; margin-left: -110px; background: radial-gradient(ellipse 50% 60% at 50% 0%, rgba(255,236,190,.28), transparent 72%)"></div>
+<sc-for list="{{m.parts}}" as="p" hint-placeholder-count="6"><span class="part {{p.cls}}" style="left: {{p.x}}px; top: {{p.y}}px; background: {{p.c}}; animation-delay: {{p.d}}s"></span></sc-for>
+<div class="{{m.cadre}}" style="position: absolute; left: 50%; top: 16px; transform: translateX(-50%) rotate({{m.rot}}deg)">
+<div class="{{m.passe}}"><div class="clip" style="position: relative; width: {{m.W}}px; height: 84px; background: #fff">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="" style="position: absolute; width: {{m.c.w}}px; height: {{m.c.h}}px; left: {{m.c.l}}px; top: {{m.c.t}}px">
+</div></div>
+</div>
+<div class="glass" style="position: absolute; right: 8px; bottom: 8px; border-radius: 999px; padding: 4px 10px; display: flex; align-items: center; gap: 6px; color: #f3efe6">
+<div class="eq" style="color: {{m.accent}}; height: 12px"><span></span><span></span><span></span></div><span class="fs-cap b">{{m.music}}</span>
+</div>
+<sc-if value="{{m.new}}" hint-placeholder-val="{{false}}"><span class="pill st-info" style="position: absolute; left: 8px; top: 8px">Nouveau</span></sc-if>
+</div>
+<div style="padding: 12px 14px; display: flex; align-items: center; gap: 12px">
+<img class="av av-40" src="{{m.av}}" alt="">
+<div style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0">
+<span class="fs-small b ellip">{{m.name}}</span>
+<span class="fs-cap t3 ellip">{{m.by}} · {{m.n}} œuvres · {{m.visits}} visites</span>
+</div>
+<span class="fs-cap t3" style="display: flex; align-items: center; gap: 4px"><img src="/_blob/6803d1100c44fc8a9af2da77d6e517b2" alt="" class="px" style="width: 14px; height: 14px">{{m.likes}}</span>
+</div>
+</a>
+</sc-for>
+</section>
+<div style="height: 32px; flex-shrink: 0"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":1320}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { tab: 0 }; }
+  renderVals() {
+    const crop = (z, W, H, pad) => { const s = Math.min(W * pad / z[2], H * pad / z[3]); return { w: Math.round(1024 * s), h: Math.round(768 * s), l: Math.round(-z[0] * s + (W - z[2] * s) / 2), t: Math.round(-z[1] * s + (H - z[3] * s) / 2) }; };
+    const TH = {
+      maree: { wall: 'linear-gradient(180deg, #0a2340, #1c4f7c)', floor: 'repeating-linear-gradient(0deg, #2a1a0f 0 8px, #3a2616 8px 10px)', accent: '#5eb3ff', pc: '#cfe8ff', pcls: 'part-monte' },
+      saloon: { wall: 'repeating-linear-gradient(90deg, #5a3218 0 14px, #6d3d1e 14px 16px)', floor: 'repeating-linear-gradient(0deg, #2b1a0e 0 8px, #3f2716 8px 10px)', accent: '#f0b75a', pc: '#ffd623', pcls: 'part-scint' },
+      etoiles: { wall: 'linear-gradient(180deg, #120b2a, #26164f)', floor: 'repeating-linear-gradient(0deg, #0d0a18 0 8px, #1a1430 8px 10px)', accent: '#e4abff', pc: '#fff8b8', pcls: 'part-scint' },
+      galerie: { wall: 'linear-gradient(180deg, #f4f1ea, #e6e0d3)', floor: 'repeating-linear-gradient(0deg, #c9bda5 0 8px, #b8ab91 8px 10px)', accent: '#13793a', pc: '#ff63aa', pcls: 'part-tombe' },
+      desert: { wall: 'linear-gradient(180deg, #ff9d5c, #ffd623 70%)', floor: 'repeating-linear-gradient(0deg, #9c451a 0 8px, #6d302f 8px 10px)', accent: '#6d302f', pc: '#fff8b8', pcls: 'part-tombe' }
+    };
+    const M = [
+      { name: 'Le musée de Brindille', by: 'Brindille', av: '/_blob/f341ef9fb793c7257cb54f723280da10', th: 'maree', music: 'Vagues 8-bit', z: [397, 250, 115, 122], W: 84, n: 5, visits: 213, likes: 48, t: [0, 2] },
+      { name: 'Le saloon de Tiago', by: 'Tiago', av: '/_blob/7e0fc904fd2815638f5d4d965a1ab50a', th: 'saloon', music: 'Saloon au piano', z: [0, 170, 58, 86], W: 64, n: 3, visits: 188, likes: 61, t: [0, 2], cadre: 'cadre' },
+      { name: 'Nuit étoilée', by: 'Poulpe', av: '/_blob/87121a75678f7bfaed28ff98e79fc01f', th: 'etoiles', music: 'Berceuse lunaire', z: [928, 512, 28, 46], W: 60, n: 2, visits: 34, likes: 9, t: [1], nouveau: true },
+      { name: 'Le salon de Mamie', by: 'Mamie Pixel', av: '/_blob/ae4dfc14c12f74add0a65a59f762ca51', th: 'galerie', music: 'Valse du dimanche', z: [980, 415, 44, 90], W: 48, n: 4, visits: 97, likes: 30, t: [0, 1, 2] },
+      { name: 'Le musée des blagues', by: 'Zozo42', av: '/_blob/e869fcd7638341e8f44d1dfa79b9fc20', th: 'desert', music: 'Kazoo western', z: [846, 512, 88, 76], W: 96, n: 6, visits: 156, likes: 72, t: [0, 1], cadre: 'px-corners-s', passe: '' },
+      { name: 'Dunes & couchants', by: 'Lucie_px', av: '/_blob/0877ddccb171e78f5bfa6672ce2eb035', th: 'desert', music: 'Désert de nuit', z: [0, 513, 127, 204], W: 56, n: 3, visits: 71, likes: 26, t: [0, 2] }
+    ];
+    const T = ['Populaires', 'Nouveaux', 'Amis'];
+    const tab = this.state.tab;
+    const parts = (th, seed) => Array.from({ length: 7 }, (_, i) => ({ x: 18 + ((i * 53 + seed * 31) % 320), y: 18 + ((i * 37 + seed * 17) % 90), c: TH[th].pc, cls: TH[th].pcls, d: -((i * 0.7 + seed) % 5).toFixed(1) }));
+    let L = M.filter(m => m.t.includes(tab));
+    if (tab === 0) L = L.slice().sort((a, b) => b.likes - a.likes);
+    return {
+      theme: this.props.theme ?? 'sombre',
+      tabs: T.map((label, i) => ({ label, on: i === tab ? 'on' : '', pick: () => this.setState({ tab: i }) })),
+      musees: L.map((m, k) => ({ ...m, ...TH[m.th], new: !!m.nouveau, rot: (k % 2 ? 1 : -1), cadre: m.cadre || 'cadre-or', passe: m.passe === undefined ? 'passe' : m.passe, c: crop(m.z, m.W, 84, 0.95), parts: parts(m.th, k) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

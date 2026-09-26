@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Classement</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp spot" data-theme="{{theme}}" style="width: 375px; height: 900px">
+
+<div style="padding: 16px 16px 0; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px"><h1 class="fs-h1">Classement</h1><p class="fs-small t2">Pour le plaisir : qui a le plus dessiné, et les œuvres qu'on préfère.</p></div>
+<div class="seg" role="group" aria-label="Type de classement" style="align-self: flex-start">
+<sc-for list="{{kinds}}" as="k" hint-placeholder-count="2"><button class="{{k.on}}" onClick="{{k.pick}}">{{k.label}}</button></sc-for>
+</div>
+<div style="display: flex; gap: 8px">
+<sc-for list="{{periods}}" as="p" hint-placeholder-count="3"><button class="chip {{p.on}}" onClick="{{p.pick}}" style="cursor: pointer">{{p.label}}</button></sc-for>
+</div>
+</div>
+
+<div style="padding: 22px 16px 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: 10px">
+<sc-for list="{{podium}}" as="p" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px">
+<img class="{{p.imgCls}}" src="{{p.img}}" alt="" style="width: {{p.sz}}px; height: {{p.sz}}px; box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px {{p.ring}}">
+<span class="fs-small b ellip" style="max-width: 100%">{{p.name}}</span>
+<span class="mono fs-cap t2">{{p.val}}</span>
+<div class="px-corners" style="width: 100%; height: {{p.h}}px; background: repeating-linear-gradient(0deg, #6d302f 0 10px, #9c451a 10px 12px); display: flex; align-items: flex-start; justify-content: center; padding-top: 8px">
+<span class="pixel b" style="font-size: 22px; color: #fff8b8">{{p.rank}}</span>
+</div>
+</div>
+</sc-for>
+</div>
+
+<div style="padding: 14px 16px 0; display: flex; flex-direction: column">
+<sc-for list="{{rest}}" as="r" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 6px; border-bottom: 1px solid var(--line); background: {{r.bg}}; border-radius: 8px">
+<span class="mono fs-small t3" style="width: 22px">{{r.rank}}</span>
+<img class="{{r.imgCls}}" src="{{r.img}}" alt="" style="width: 32px; height: 32px">
+<span class="fs-small b" style="flex-grow: 1">{{r.name}}</span>
+<span class="mono fs-small">{{r.val}}</span>
+</div>
+</sc-for>
+</div>
+
+<nav class="nav-bottom" aria-label="Navigation principale">
+<a class="tab" href="m-canvas.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg>Canvas</a>
+<a class="tab" href="m-musee.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 9l9-6 9 6M5 10v9M9.5 10v9M14.5 10v9M19 10v9M3 21h18"></path></svg>Musée</a>
+<a class="tab tab-on" href="m-activite.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"></path></svg>Activité</a>
+<a class="tab" href="m-profil.dc.html"><img class="av av-24" src="/_blob/f341ef9fb793c7257cb54f723280da10" alt="">Profil</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":900}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { kind: 0, per: 1 }; }
+  renderVals() {
+    const A = { Brindille: '/_blob/f341ef9fb793c7257cb54f723280da10', Zozo42: '/_blob/e869fcd7638341e8f44d1dfa79b9fc20', 'Lucie_px': '/_blob/0877ddccb171e78f5bfa6672ce2eb035', 'Mamie Pixel': '/_blob/ae4dfc14c12f74add0a65a59f762ca51', Kaelen: '/_blob/5d9a3101799969b7e8ff499c137dc669', Evan: '/_blob/c266e1d407907a93a6dc2fbd5560c5ab', Poulpe: '/_blob/87121a75678f7bfaed28ff98e79fc01f', Tiago: '/_blob/7e0fc904fd2815638f5d4d965a1ab50a', Nyx: '/_blob/bc30bd15326365cf8bb885bc739e1c59', 'Le Grand Sam': '/_blob/ca85503a28c18a13d0d9228ef1330261' };
+    const J = [
+      [['Zozo42', 412], ['Kaelen', 377], ['Evan', 290], ['Brindille', 188], ['Poulpe', 140], ['Nyx', 96], ['Tiago', 61], ['Lucie_px', 40]],
+      [['Kaelen', 2390], ['Zozo42', 2104], ['Brindille', 1877], ['Evan', 1502], ['Mamie Pixel', 980], ['Nyx', 744], ['Poulpe', 520], ['Tiago', 310]],
+      [['Tiago', 9120], ['Evan', 8760], ['Lucie_px', 12418], ['Brindille', 11292], ['Kaelen', 6210], ['Mamie Pixel', 4610], ['Zozo42', 3890], ['Nyx', 2686]]
+    ];
+    const O = [['Drapeau & baguette', 112], ['Dunes au couchant', 64], ['Cube JustBetter', 57], ['Bord de mer', 48], ['Pas vraiment', 41], ['Sapin de Noël', 35], ['La torche', 18], ['Labyrinthe doré', 12]];
+    const k = this.state.kind, per = this.state.per;
+    let L = k === 0 ? J[per].slice().sort((a, b) => b[1] - a[1]) : O;
+    const fmt = n => n.toLocaleString('fr-FR').replace(/ | /g, ' ');
+    const unit = k === 0 ? ' px' : ' ❤';
+    const item = ([name, v], i) => ({ name, rank: i + 1, val: fmt(v) + (k === 0 ? ' px' : ''), img: k === 0 ? (A[name] || A.Tiago) : '/_blob/6803d1100c44fc8a9af2da77d6e517b2', imgCls: k === 0 ? 'av' : 'px', bg: name === 'Brindille' ? 'var(--accent-soft)' : 'transparent' });
+    const top = L.slice(0, 3).map(item);
+    const order = [top[1], top[0], top[2]];
+    const H = [70, 100, 52], SZ = [52, 64, 48], RING = ['#d4d7d9', '#ffd623', '#9c451a'];
+    return {
+      theme: this.props.theme ?? 'sombre',
+      kinds: ['Joueurs', 'Œuvres coup de cœur'].map((label, i) => ({ label, on: i === k ? 'on' : '', pick: () => this.setState({ kind: i }) })),
+      periods: ['Aujourd’hui', 'Semaine', 'Tout le temps'].map((label, i) => ({ label, on: i === per ? 'chip-on' : '', pick: () => this.setState({ per: i }) })),
+      podium: order.map((p, j) => ({ ...p, h: H[j], sz: SZ[j], ring: RING[j] })),
+      rest: L.slice(3).map((x, i) => item(x, i + 3))
+    };
+  }
+}
+</script>
+</body>
+</html>

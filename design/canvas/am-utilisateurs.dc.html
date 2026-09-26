@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Admin · utilisateurs (mobile)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 375px; height: 812px; display: flex; flex-direction: column; position: relative">
+<header style="display: flex; align-items: center; gap: 10px; padding: 12px 16px 8px">
+<img src="/_blob/97636cf87922ce258aeeac3e914fff4d" alt="" style="width: 24px; height: 24px">
+<span class="pixel b" style="font-size: 17px; flex-grow: 1">BetterPlace</span>
+<span class="pill st-neutre">Admin</span>
+<a class="btn btn-sm btn-icon btn-ghost" href="m-canvas.dc.html" aria-label="Retour au site"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 4H4v16h6M14 8l4 4-4 4M8 12h10"></path></svg></a>
+</header>
+<nav class="scroll-x" aria-label="Administration" style="display: flex; gap: 8px; padding: 0 16px 10px; border-bottom: 1px solid var(--line)"><a class="chip" href="am-dashboard.dc.html">Tableau</a><a class="chip" href="am-claims.dc.html">Revendications · 3</a><a class="chip chip-on" href="am-utilisateurs.dc.html">Utilisateurs</a><a class="chip" href="a-zone.dc.html">Zone</a><a class="chip" href="a-moderation.dc.html">Modération · 4</a><a class="chip" href="a-reglages.dc.html">Réglages</a></nav>
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 12px">
+<div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16 16l5 5"></path></svg><input class="input" aria-label="Chercher un joueur" placeholder="Chercher un joueur…"></div>
+<div class="card" style="padding: 4px 12px">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="7">
+<button onClick="{{r.pick}}" style="appearance: none; border: 0; background: none; width: 100%; font: inherit; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); text-align: left">
+<img class="av av-32" src="{{r.av}}" alt="">
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-small b">{{r.name}}</span><span class="fs-cap t3">{{r.px}} px · {{r.last}}</span></span>
+<span class="pill {{r.stCls}}">{{r.st}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+<sc-if value="{{open}}" hint-placeholder-val="{{true}}">
+<button class="scrim" onClick="{{close}}" aria-label="Fermer" style="border: 0; padding: 0; cursor: pointer"></button>
+<div class="sheet anim-feed" style="padding: 0 16px 22px; display: flex; flex-direction: column; gap: 12px">
+<div class="grab"></div>
+<div style="display: flex; align-items: center; gap: 12px"><img class="av av-48" src="{{u.av}}" alt=""><div style="display: flex; flex-direction: column; flex-grow: 1"><span class="fs-h3">{{u.name}}</span><span class="fs-cap t3">{{u.px}} px posés · {{u.vis}} visibles</span></div><span class="pill {{u.stCls}}">{{u.st}}</span></div>
+<p class="fs-cap t2 pretty">{{u.note}}</p>
+<span class="label">Suspendre</span>
+<div class="seg" role="group" aria-label="Durée" style="width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))"><button style="justify-content: center">1 h</button><button class="on" style="justify-content: center">24 h</button><button style="justify-content: center">7 j</button></div>
+<button class="btn btn-block" onClick="{{suspend}}">{{suspendLabel}}</button>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><button class="btn btn-sm">Réinitialiser le profil</button><a class="btn btn-sm" href="a-zone.dc.html">Voir ses pixels</a></div>
+<button class="btn btn-outline-danger btn-block">Bannir le compte…</button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":812}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { sel: 6, open: true, sus: {} }; }
+  renderVals() {
+    const U = [['Brindille', '/_blob/f341ef9fb793c7257cb54f723280da10', '4 812', '3 107', 'il y a 3 min', 'Actif', 'st-valide', 'Rien à signaler.'], ['Kaelen', '/_blob/5d9a3101799969b7e8ff499c137dc669', '2 390', '2 102', 'il y a 41 min', 'Actif', 'st-valide', 'Revendication « Creeper » à départager.'], ['Zozo42', '/_blob/e869fcd7638341e8f44d1dfa79b9fc20', '2 104', '1 760', 'il y a 4 min', 'Actif', 'st-valide', 'Auteur de blagues appréciées.'], ['Evan', '/_blob/c266e1d407907a93a6dc2fbd5560c5ab', '1 502', '1 455', 'il y a 4 s', 'Admin', 'st-info', 'Co-créateur du site.'], ['Mamie Pixel', '/_blob/ae4dfc14c12f74add0a65a59f762ca51', '980', '975', 'hier', 'Actif', 'st-valide', 'Revendication « Sapin de Noël » en attente.'], ['Nyx', '/_blob/bc30bd15326365cf8bb885bc739e1c59', '744', '701', 'il y a 2 j', 'Actif', 'st-valide', 'Co-autrice du « Labyrinthe doré ».'], ['bot_404', '/_blob/56f14b0ba0b26cbc8df201433bc426d6', '25 908', '0', 'il y a 2 h', 'Suspendu', 'st-conflit', '25 908 pixels en 7 min : script automatique probable. Zone restaurée.']];
+    const st = this.state, u = U[st.sel], sus = !!st.sus[st.sel];
+    return {
+      theme: this.props.theme ?? 'sombre',
+      rows: U.map((r, i) => ({ name: r[0], av: r[1], px: r[2], last: r[4], st: st.sus[i] ? 'Suspendu' : r[5], stCls: st.sus[i] ? 'st-conflit' : r[6], pick: () => this.setState({ sel: i, open: true }) })),
+      open: st.open, close: () => this.setState({ open: false }),
+      u: { name: u[0], av: u[1], px: u[2], vis: u[3], note: u[7], st: sus ? 'Suspendu' : u[5], stCls: sus ? 'st-conflit' : u[6] },
+      suspendLabel: sus || u[5] === 'Suspendu' ? 'Lever la suspension' : 'Suspendre 24 h',
+      suspend: () => this.setState({ sus: { ...st.sus, [st.sel]: !sus } })
+    };
+  }
+}
+</script>
+</body>
+</html>

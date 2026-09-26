@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Revendiquer · détails</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="bp.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Pixelify+Sans:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="bp" data-theme="{{theme}}" style="width: 375px; height: 1080px; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 8px; padding: 12px 12px 4px">
+<a class="btn btn-icon btn-ghost" href="m-claim-zone.dc.html" aria-label="Retour à la zone"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<h1 class="fs-h2" style="flex-grow: 1">Revendiquer</h1>
+<span class="mono fs-cap t3">2 / 2</span>
+</header>
+
+<div style="padding: 8px 16px 28px; display: flex; flex-direction: column; gap: 20px">
+
+<div class="card" style="overflow: hidden">
+<div class="clip" style="position: relative; height: 120px; background: #fff">
+<img class="px" src="/_blob/e6e62f71b5d85c751836ffeb46aa443e" alt="La zone sélectionnée" style="position: absolute; width: 1257px; height: 942px; left: -183px; top: -614px">
+</div>
+<div style="padding: 10px 14px; display: flex; gap: 8px; align-items: center">
+<span class="coord">x 257 · y 505</span><span class="coord">64 × 88</span>
+<a class="fs-small" href="m-claim-zone.dc.html" style="margin-left: auto">Modifier</a>
+</div>
+</div>
+
+<section class="card-2" style="padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<span class="fs-over" style="color: var(--gold-text)">D'après les sauvegardes</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="display: flex; flex-direction: column"><span class="mono b">02/03/24</span><span class="fs-cap t3">apparition</span></div>
+<div style="display: flex; flex-direction: column"><span class="mono b">1 jour</span><span class="fs-cap t3">de dessin</span></div>
+<div style="display: flex; flex-direction: column"><span class="mono b">≈ 5 371</span><span class="fs-cap t3">pixels posés</span></div>
+</div>
+<div class="rule"></div>
+<span class="fs-small t2">Si l'équipe valide, vous recevrez :</span>
+<div style="display: flex; gap: 12px">
+<div style="display: flex; align-items: center; gap: 6px"><img src="/_blob/23e3f1976500fb6db719239b82a9b6d3" alt="" class="px" style="width: 24px; height: 24px"><span class="fs-cap b tgold">Pionnier</span></div>
+<div style="display: flex; align-items: center; gap: 6px"><img src="/_blob/3855c10f72c916de01abc66e49e813ca" alt="" class="px" style="width: 24px; height: 24px"><span class="fs-cap b">Bâtisseur</span></div>
+</div>
+</section>
+
+<div class="field"><label class="label" for="titre">Titre de l'œuvre</label><input id="titre" class="input" value="Labyrinthe doré"></div>
+
+<div class="field">
+<label class="label" for="preuve">Message ou preuve</label>
+<textarea id="preuve" class="textarea">On l'a dessiné avec Nyx pendant la grosse soirée du 2 mars 2024, à deux sur le même PC. J'ai encore la capture d'écran !</textarea>
+<span class="hint">Un souvenir précis, un lien vers une capture ou un message… Tout aide.</span>
+</div>
+
+<div class="field">
+<span class="label">Co-auteurs</span>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center">
+<span class="chip" style="padding-left: 4px"><img class="av av-24" src="/_blob/bc30bd15326365cf8bb885bc739e1c59" alt="">Nyx<button class="btn-ghost" aria-label="Retirer Nyx" style="appearance: none; border: 0; background: none; color: var(--text-3); padding: 0; display: flex; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></span>
+<button class="chip" style="cursor: pointer; border-style: dashed">+ Ajouter</button>
+</div>
+<span class="hint">Nyx devra confirmer depuis son profil.</span>
+</div>
+
+<div class="field">
+<span class="label">Répartition des pixels pionniers</span>
+<div class="seg" role="group" aria-label="Répartition" style="align-self: flex-start"><button class="on">Parts égales</button><button>Je précise</button></div>
+<span class="hint">≈ 2 686 pixels chacun, ajoutés à vos stats de profil.</span>
+</div>
+
+<p class="fs-cap t3 pretty">Ta demande apparaîtra dans le fil des revendications : les autres joueurs pourront confirmer « je l'ai vue la faire » ou émettre un doute. Un admin tranche ensuite.</p>
+<a class="btn btn-primary btn-lg btn-px btn-block" href="m-revendications.dc.html">Envoyer la demande</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["sombre","clair"],"default":"sombre"},"$preview":{"width":375,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'sombre' }; }
+}
+</script>
+</body>
+</html>
