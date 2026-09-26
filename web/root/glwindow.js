@@ -55,7 +55,7 @@ void main() {
 }
 `;
 
-class GLWindow {
+export class GLWindow {
 	#cvs;
 	#gl;
 	#program;
@@ -106,7 +106,9 @@ class GLWindow {
 		this.#gl.drawArrays(this.#gl.TRIANGLES, 0, 6);
 	}
 
-	setTexture(img) {
+	setTexture(img, keepView = false) {
+		if (this.#tex) this.#gl.deleteTexture(this.#tex);
+		if (this.#texFramebuffer) this.#gl.deleteFramebuffer(this.#texFramebuffer);
 		this.#tex = this.#gl.createTexture();
 		this.#gl.bindTexture(this.#gl.TEXTURE_2D, this.#tex);
 		this.#gl.texParameteri(this.#gl.TEXTURE_2D, this.#gl.TEXTURE_WRAP_S, this.#gl.CLAMP_TO_EDGE);
@@ -119,7 +121,9 @@ class GLWindow {
 		this.#gl.framebufferTexture2D(this.#gl.FRAMEBUFFER, this.#gl.COLOR_ATTACHMENT0, this.#gl.TEXTURE_2D, this.#tex, 0);
 		this.#texScale = {x: img.width, y: img.height};
 		this.#gl.uniform2f(this.#u_tex, this.#texScale.x, this.#texScale.y);
-		if (this.#cvs.width > this.#cvs.height) {
+		if (keepView) {
+			this.setZoom(this.#zoom);
+		} else if (this.#cvs.width > this.#cvs.height) {
 			this.#zoom = this.#cvs.width / this.#texScale.x;
 		} else {
 			this.#zoom = this.#cvs.height / this.#texScale.y;
@@ -135,6 +139,22 @@ class GLWindow {
 			rgba[i] = color[i];
 		}
 		this.#gl.texSubImage2D(this.#gl.TEXTURE_2D, 0, x, y, 1, 1, this.#gl.RGBA, this.#gl.UNSIGNED_BYTE, rgba);
+	}
+
+	/**
+	 * Reads a block of pixels (image coordinates), clamped to the canvas.
+	 * Returns {x, y, w, h, data: Uint8Array RGBA}.
+	 */
+	getColors(x, y, w, h) {
+		const x0 = Math.max(0, Math.floor(x)), y0 = Math.max(0, Math.floor(y));
+		const x1 = Math.min(this.#texScale.x, Math.floor(x) + w), y1 = Math.min(this.#texScale.y, Math.floor(y) + h);
+		const cw = Math.max(0, x1 - x0), ch = Math.max(0, y1 - y0);
+		const data = new Uint8Array(cw * ch * 4);
+		if (cw && ch) {
+			this.#gl.bindFramebuffer(this.#gl.FRAMEBUFFER, this.#texFramebuffer);
+			this.#gl.readPixels(x0, y0, cw, ch, this.#gl.RGBA, this.#gl.UNSIGNED_BYTE, data);
+		}
+		return {x: x0, y: y0, w: cw, h: ch, data};
 	}
 
 	getColor(pos) {
@@ -164,6 +184,66 @@ class GLWindow {
 
 	getZoom() {
 		return this.#zoom;
+	}
+
+	// Camera position, in pixels from the centre of the canvas.
+	getCam() {
+		return {x: this.#camPos.x, y: this.#camPos.y};
+	}
+
+	setCam(x, y) {
+		this.#camPos = {x, y};
+		this.#gl.uniform2f(this.#u_cam, x, y);
+	}
+
+	getTexSize() {
+		return {x: this.#texScale.x, y: this.#texScale.y};
+	}
+
+	getViewSize() {
+		return {x: this.#cvs.width, y: this.#cvs.height};
+	}
+
+	// Centres the view on a pixel of the canvas.
+	centerOn(px, py) {
+		this.setCam(px + 0.5 - this.#texScale.x / 2, py + 0.5 - this.#texScale.y / 2);
+	}
+
+	// Canvas pixel shown at the centre of the screen (fractional).
+	getCenterPixel() {
+		return {x: this.#camPos.x + this.#texScale.x / 2, y: this.#camPos.y + this.#texScale.y / 2};
+	}
+
+	// Zooms by a factor while keeping the point under (sx, sy) in place.
+	zoomAt(factor, sx, sy) {
+		const before = this.screenToCanvas(sx, sy);
+		this.setZoom(this.#zoom * factor);
+		const after = this.screenToCanvas(sx, sy);
+		this.setCam(this.#camPos.x + before.x - after.x, this.#camPos.y + before.y - after.y);
+	}
+
+	// Screen (CSS px, relative to the canvas element) → canvas coordinates (fractional, may be outside).
+	screenToCanvas(sx, sy) {
+		return {
+			x: (sx - this.#cvs.width / 2) / this.#zoom + this.#camPos.x + this.#texScale.x / 2,
+			y: (sy - this.#cvs.height / 2) / this.#zoom + this.#camPos.y + this.#texScale.y / 2,
+		};
+	}
+
+	// Screen → integer pixel, or null outside the canvas.
+	screenToPixel(sx, sy) {
+		const p = this.screenToCanvas(sx, sy);
+		const x = Math.floor(p.x), y = Math.floor(p.y);
+		if (x < 0 || y < 0 || x >= this.#texScale.x || y >= this.#texScale.y) return null;
+		return {x, y};
+	}
+
+	// Top-left corner of a pixel on screen.
+	pixelToScreen(px, py) {
+		return {
+			x: (px - this.#texScale.x / 2 - this.#camPos.x) * this.#zoom + this.#cvs.width / 2,
+			y: (py - this.#texScale.y / 2 - this.#camPos.y) * this.#zoom + this.#cvs.height / 2,
+		};
 	}
 
 	setGrid(enable) {

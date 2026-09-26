@@ -1,41 +1,256 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr" class="bp void app-canvas" data-theme="sombre">
 <head>
+	<meta charset="utf-8">
 	<title>BetterPlace</title>
-	<link rel="stylesheet" href="desktop.css" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<link rel="preload" href="/place.png" as="fetch" crossorigin>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+	<meta name="theme-color" content="#11100e">
 	<link rel="icon" href="/favicon.png">
+	<link rel="preload" href="/place.png" as="fetch" crossorigin>
+	<script>
+		// Theme before first paint: remembered choice, else the system preference.
+		try {
+			var t = JSON.parse(localStorage.getItem("bp-theme"));
+			if (t !== "clair" && t !== "sombre") t = matchMedia("(prefers-color-scheme: light)").matches ? "clair" : "sombre";
+			document.documentElement.dataset.theme = t;
+		} catch (e) {}
+	</script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Pixelify+Sans:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="css/bp.css">
+	<link rel="stylesheet" href="css/app.css">
 </head>
-<body>
-	<canvas id="viewport-canvas" oncontextmenu="return false;"></canvas>
-	<div id="ui-wrapper">
-		<p id="loading-p"></p>
-		<div id="color-wrapper">
-			<div id="color-swatch"></div>
-			<input id="color-field" type="text" placeholder="#000000" value="#000000" />
+<body class="is-guest">
+	<canvas id="viewport-canvas" oncontextmenu="return false;" aria-label="Le canvas BetterPlace"></canvas>
+
+	<!-- Layer above the canvas: hovered pixel, reticle, loupe, pending pixels, animations -->
+	<div id="overlay" aria-hidden="true">
+		<div id="hover-px" class="hover-px" hidden></div>
+		<div id="reticle" hidden>
+			<div class="reticle"></div>
+			<i class="tick tick-t"></i><i class="tick tick-b"></i><i class="tick tick-l"></i><i class="tick tick-r"></i>
 		</div>
-		<div id="color-preset"></div>
-		<div id="zoom-wrapper">
-			<button class="zoom-button" id="zoom-out">
-				-
-			</button>
-			<button class="zoom-button" id="zoom-in">
-				+
-			</button>
-		</div>
-		<div id="grid-wrapper">
-			<button class="zoom-button" id="grid-enable">
-				#
-			</button>
+		<div id="loupe" class="loupe" hidden><canvas width="7" height="7"></canvas><i class="loupe-center"></i></div>
+		<div id="pending-layer"></div>
+		<div id="fx-layer"></div>
+	</div>
+
+	<!-- ================= Desktop ================= -->
+	<header class="glass d-header only-d">
+		<a href="/home" class="brand"><img src="img/cube-logo.png" alt="" width="28" height="28"><span class="pixel">BetterPlace</span></a>
+		<nav class="d-nav" aria-label="Sections">
+			<a class="btn btn-sm btn-ghost on" href="/ace" aria-current="page">Canvas</a>
+			<a class="btn btn-sm btn-ghost" href="/timelapse">Timelapse</a>
+		</nav>
+		<div class="grow"></div>
+		<span class="fs-small t2 online"><span class="live"></span><span class="js-online">–</span> <span class="js-online-word">connectés</span></span>
+		<button class="btn btn-sm btn-icon btn-ghost js-theme" type="button" aria-label="Changer de thème"><span data-icon="moon" data-size="18"></span></button>
+		<a class="btn btn-sm btn-primary guest-only js-login" href="/login">Se connecter</a>
+		<button class="player-only me-button js-me" type="button" aria-label="Mon compte" aria-haspopup="true"></button>
+	</header>
+
+	<div class="card elev d-menu" id="d-menu" hidden>
+		<div class="me-row js-me-row"></div>
+		<div class="rule"></div>
+		<button class="btn btn-sm btn-ghost btn-block js-theme menu-item" type="button"><span data-icon="sun" data-size="18"></span><span class="js-theme-label">Mode clair</span></button>
+		<form method="post" action="/auth/logout" class="js-logout-form">
+			<input type="hidden" name="next" value="/ace">
+			<button class="btn btn-sm btn-ghost btn-block menu-item" type="submit"><span data-icon="logout" data-size="18"></span>Se déconnecter</button>
+		</form>
+	</div>
+
+	<aside class="glass d-palette only-d player-only" aria-label="Palette">
+		<div class="d-swatches js-swatches"></div>
+		<div class="rule"></div>
+		<div class="d-current"><span class="swatch js-cur-swatch"></span><span class="fs-cap b ellip js-cur-name"></span></div>
+		<input class="input input-mono js-hex" aria-label="Couleur hexadécimale" spellcheck="false" autocomplete="off" maxlength="7">
+		<div class="d-cooldown"><div class="cooldown"><div class="js-cooldown-fill"></div></div><span class="fs-cap t3 js-cooldown-label">Prêt à poser</span></div>
+	</aside>
+
+	<div class="glass d-guest only-d guest-only">
+		<img src="img/farwest-x8.png" alt="" class="px anim-bob mascot">
+		<div class="d-guest-text">
+			<span class="fs-body b">Tu regardes en invité</span>
+			<span class="fs-small t2 pretty">Survole un pixel pour voir qui l'a posé. Connecte-toi pour dessiner et signer tes œuvres.</span>
+			<a class="btn btn-sm btn-primary btn-px js-login" href="/login">Se connecter</a>
 		</div>
 	</div>
-	<p id="avec-amour">Fait avec <span style="color: #aa5757;">❤</span> par Evan et Tiago</p>
-	<script src="main.js"></script>
-	<script src="place.js"></script>
-	<script src="glwindow.js"></script>
-	<script>
-		main();
-	</script>
+
+	<div class="glass d-toolbar only-d" role="toolbar" aria-label="Outils du canvas">
+		<span class="mono fs-small d-coords js-coords">–</span>
+		<button class="btn btn-icon btn-sm btn-ghost js-zoom-out" type="button" aria-label="Zoom arrière"><span data-icon="minus" data-size="18"></span></button>
+		<button class="btn btn-icon btn-sm btn-ghost js-zoom-in" type="button" aria-label="Zoom avant"><span data-icon="plus" data-size="18"></span></button>
+		<button class="btn btn-icon btn-sm btn-ghost js-grid" type="button" aria-label="Grille (G)" aria-pressed="false"><span data-icon="grid" data-size="18"></span></button>
+		<button class="btn btn-icon btn-sm btn-ghost js-pipette player-only" type="button" aria-label="Pipette" aria-pressed="false"><span data-icon="pipette" data-size="18"></span></button>
+		<button class="btn btn-icon btn-sm btn-ghost js-copy-link" type="button" aria-label="Copier le lien de cette vue (L)"><span data-icon="link" data-size="18"></span></button>
+		<span class="d-sep"></span>
+		<span class="fs-cap t3 d-hints player-only"><span class="kbd">Clic gauche</span>déplacer <span class="kbd">Molette</span>pipette <span class="kbd">Clic droit</span>poser</span>
+		<span class="fs-cap t3 d-hints guest-only"><span class="kbd">Clic gauche</span>déplacer <span class="kbd">Molette</span>zoomer <span class="kbd">Survol</span>qui l'a posé</span>
+	</div>
+
+	<!-- Inspector card (desktop hover / pinned with I) -->
+	<div class="card elev d-inspector anim-feed" id="d-inspector" hidden></div>
+
+	<!-- ================= Mobile ================= -->
+	<div class="m-top only-m">
+		<a class="glass m-home" href="/home" aria-label="Accueil"><img src="img/cube-logo.png" alt="" width="24" height="24"></a>
+		<div class="glass m-coords"><span class="mono fs-small js-coords">–</span><span class="mono fs-cap t3 js-zoom">×1</span></div>
+		<div class="grow"></div>
+		<a class="btn btn-sm btn-primary guest-only m-login js-login" href="/login">Se connecter</a>
+		<button class="glass m-avatar player-only js-me" type="button" aria-label="Mon compte"></button>
+	</div>
+
+	<div class="m-side only-m">
+		<div class="glass m-online"><span class="live"></span><span class="fs-cap b js-online">–</span></div>
+		<button class="btn btn-icon glass js-grid" type="button" aria-label="Afficher la grille" aria-pressed="false"><span data-icon="grid"></span></button>
+		<button class="btn btn-icon glass player-only js-inspect-aim" type="button" aria-label="Inspecter le pixel visé"><span data-icon="search"></span></button>
+		<button class="btn btn-icon glass player-only js-pick-aim" type="button" aria-label="Pipette : prendre la couleur visée"><span data-icon="pipette"></span></button>
+		<button class="btn btn-icon glass js-share" type="button" aria-label="Partager la position"><span data-icon="link"></span></button>
+	</div>
+
+	<div class="glass m-hint only-m guest-only js-guest-hint">
+		<span data-icon="target" data-size="16"></span><span class="fs-cap b">Touche un pixel pour voir qui l'a posé</span>
+	</div>
+
+	<div class="glass m-guest only-m guest-only">
+		<img src="img/farwest-x8.png" alt="" class="px mascot">
+		<div class="m-guest-text">
+			<span class="fs-body b">Tu regardes en invité</span>
+			<span class="fs-small t2 pretty">Connecte-toi pour poser des pixels et signer tes œuvres.</span>
+		</div>
+		<a class="btn btn-primary btn-px js-login" href="/login">Entrer</a>
+	</div>
+
+	<div class="glass m-panel only-m player-only">
+		<div class="m-panel-row">
+			<button class="m-current js-open-palette" type="button" aria-label="Ouvrir la palette">
+				<span class="swatch js-cur-swatch"></span>
+				<span class="m-current-text"><span class="fs-body b js-cur-name"></span><span class="mono fs-cap t3 js-cur-hex"></span></span>
+			</button>
+			<button class="btn btn-primary btn-px m-place js-place" type="button">
+				<span class="js-place-icon" data-icon="pixel" data-size="18" data-stroke="2.4"></span><span class="js-place-label">Poser</span>
+			</button>
+		</div>
+		<div class="cooldown js-m-cooldown" hidden><div class="js-cooldown-fill"></div></div>
+		<div class="m-recent">
+			<div class="m-recent-list js-recent"></div>
+			<button class="btn btn-sm js-open-palette" type="button">Palette</button>
+		</div>
+	</div>
+
+	<nav class="nav-bottom m-nav only-m" aria-label="Navigation principale">
+		<a class="tab tab-on" href="/ace" aria-current="page"><span data-icon="canvas" data-size="22"></span>Canvas</a>
+		<a class="tab" href="/timelapse"><span data-icon="film" data-size="22"></span>Timelapse</a>
+		<a class="tab" href="/home"><span data-icon="home" data-size="22"></span>Accueil</a>
+		<a class="tab guest-only js-login" href="/login"><span data-icon="user" data-size="22"></span>Connexion</a>
+		<button class="tab player-only js-me" type="button"><span class="js-tab-avatar"></span>Moi</button>
+	</nav>
+
+	<!-- ================= Sheets (mobile) ================= -->
+	<div class="scrim" id="scrim" hidden></div>
+
+	<div class="sheet" id="sheet-palette" role="dialog" aria-label="Palette" hidden>
+		<div class="grab"></div>
+		<div class="sheet-head">
+			<span class="swatch swatch-lg js-cur-swatch"></span>
+			<div class="sheet-title"><span class="fs-h3 js-cur-name"></span><span class="fs-cap t3">30 couleurs · ou un hex libre</span></div>
+			<button class="btn btn-icon btn-ghost js-close-sheet" type="button" aria-label="Fermer"><span data-icon="close"></span></button>
+		</div>
+		<div class="m-swatches js-swatches"></div>
+		<div class="m-hex">
+			<label class="label" for="hex-m">Hex</label>
+			<input id="hex-m" class="input input-mono js-hex" spellcheck="false" autocomplete="off" maxlength="7">
+			<button class="btn btn-icon js-pick-aim" type="button" aria-label="Pipette : prendre la couleur visée"><span data-icon="pipette"></span></button>
+		</div>
+	</div>
+
+	<div class="sheet" id="sheet-inspector" role="dialog" aria-label="Inspecteur de pixel" hidden></div>
+
+	<div class="sheet" id="sheet-share" role="dialog" aria-label="Partager cette vue" hidden>
+		<div class="grab"></div>
+		<div class="sheet-head">
+			<h2 class="fs-h2 grow">Partager cette vue</h2>
+			<button class="btn btn-icon btn-ghost js-close-sheet" type="button" aria-label="Fermer"><span data-icon="close"></span></button>
+		</div>
+		<div class="card-2 share-preview">
+			<div class="share-img"><canvas class="px js-share-canvas"></canvas><div class="reticle js-share-reticle"></div></div>
+			<div class="share-caption"><img src="img/cube-logo.png" alt="" width="20" height="20"><span class="fs-small b grow">BetterPlace</span><span class="coord js-share-coord"></span></div>
+		</div>
+		<div class="field">
+			<label class="label" for="share-link">Lien</label>
+			<div class="share-row">
+				<input id="share-link" class="input input-mono js-share-link" readonly>
+				<button class="btn btn-primary btn-icon js-share-copy" type="button" aria-label="Copier le lien"><span data-icon="copy"></span></button>
+			</div>
+			<span class="hint js-share-hint">Les URL existantes restent valables : /ace sans paramètre ouvre la vue d'ensemble.</span>
+		</div>
+		<div class="share-toggle">
+			<div class="share-toggle-text"><label class="fs-body" for="share-zoom">Inclure le zoom</label><span class="fs-cap t3">sinon le lien ouvre à la vue par défaut</span></div>
+			<button id="share-zoom" class="toggle toggle-on js-share-zoom" type="button" aria-pressed="true" aria-label="Inclure le zoom"></button>
+		</div>
+		<button class="btn btn-block js-share-native" type="button" hidden><span data-icon="share" data-size="18"></span>Partager via…</button>
+	</div>
+
+	<div class="sheet" id="sheet-me" role="dialog" aria-label="Mon compte" hidden>
+		<div class="grab"></div>
+		<div class="sheet-head">
+			<div class="me-row grow js-me-row"></div>
+			<button class="btn btn-icon btn-ghost js-close-sheet" type="button" aria-label="Fermer"><span data-icon="close"></span></button>
+		</div>
+		<div class="seg theme-seg" role="group" aria-label="Thème">
+			<button type="button" class="js-set-theme" data-theme="sombre"><span data-icon="moon" data-size="16"></span>Sombre</button>
+			<button type="button" class="js-set-theme" data-theme="clair"><span data-icon="sun" data-size="16"></span>Clair</button>
+		</div>
+		<form method="post" action="/auth/logout">
+			<input type="hidden" name="next" value="/ace">
+			<button class="btn btn-block btn-outline-danger" type="submit"><span data-icon="logout" data-size="18"></span>Se déconnecter</button>
+		</form>
+		<p class="fs-cap t3 credit">Fait avec <span class="heart">❤</span> par Evan et Tiago</p>
+	</div>
+
+	<!-- ================= Connection state ================= -->
+	<div class="conn-banner" id="conn-banner" role="status" hidden>
+		<span data-icon="offline" data-size="18"></span>
+		<span class="grow js-conn-text">Connexion perdue</span>
+		<span class="mono fs-cap js-conn-attempt"></span>
+		<button class="btn btn-sm js-conn-retry only-d" type="button">Réessayer maintenant</button>
+	</div>
+	<div class="glass conn-frozen only-d" id="conn-frozen" hidden><span class="fs-small b">Le canvas est figé</span><span class="fs-cap t3">Les changements des autres reprendront dès la reconnexion.</span></div>
+	<div class="scrim conn-scrim" id="conn-scrim" hidden></div>
+	<div class="modal conn-modal anim-feed" id="conn-modal" role="alertdialog" aria-labelledby="conn-modal-title" hidden>
+		<img class="px" src="img/farwest-x8.png" alt="" width="42" height="72">
+		<span class="fs-h2" id="conn-modal-title">Le cheval s'est échappé</span>
+		<span class="fs-small t2 pretty js-conn-modal-text">Impossible de rejoindre le serveur après 3 essais.</span>
+		<button class="btn btn-primary btn-block js-conn-retry" type="button">Réessayer</button>
+		<button class="btn btn-ghost btn-block js-reload" type="button">Recharger la page</button>
+	</div>
+
+	<!-- ================= Loading ================= -->
+	<div id="loading" class="void">
+		<div class="loading-bg"></div>
+		<div class="loading-box">
+			<div class="brand loading-brand only-d"><img src="img/cube-logo.png" alt="" width="36" height="36"><span class="pixel b">BetterPlace</span></div>
+			<div class="loading-mascot"><i class="loading-ground"></i><img src="img/farwest-x8.png" alt="" class="px anim-bob"></div>
+			<div class="loading-title">
+				<h1 class="fs-h2 js-load-title">Téléchargement du canvas</h1>
+				<p class="fs-small t2 js-load-sub">Le cowboy récupère les pixels…</p>
+			</div>
+			<div class="loading-progress">
+				<div class="pbar"><div class="pfill js-load-fill" style="width: 0%"></div></div>
+				<div class="loading-numbers mono fs-small"><span class="t3 js-load-ko">0 Ko</span><span class="js-load-pct">0 %</span></div>
+			</div>
+			<div class="card loading-steps">
+				<div class="step js-step-ws"><span class="step-ico"></span><span>Connexion au serveur</span><span class="t3 mono step-meta"></span></div>
+				<div class="step js-step-img"><span class="step-ico"></span><span>Téléchargement du canvas</span><span class="t3 mono step-meta"></span></div>
+				<div class="step js-step-owners"><span class="step-ico"></span><span>Qui a posé quoi (chargé après)</span><span class="t3 mono step-meta"></span></div>
+			</div>
+			<p class="fs-cap t3 pretty loading-tip"><span class="only-m">Astuce : touche un pixel pour savoir qui l'a posé.</span><span class="only-d">Astuce : survole un pixel pour voir qui l'a posé · <span class="kbd">G</span> affiche la grille</span></p>
+			<p class="fs-cap t3 credit">Fait avec <span class="heart">❤</span> par Evan et Tiago</p>
+		</div>
+	</div>
+
+	<noscript><p class="noscript">BetterPlace a besoin de JavaScript et de WebGL pour afficher le canvas.</p></noscript>
+	<script type="module" src="js/app.js"></script>
 </body>
 </html>
