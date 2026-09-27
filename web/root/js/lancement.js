@@ -42,9 +42,6 @@ async function main() {
     $(".js-date").innerHTML = `Ouverture <b></b>`;
     $(".js-date b").textContent = launch.label;
     $(".js-clock").hidden = false;
-    const ics = $(".js-ics");
-    ics.hidden = false;
-    ics.href = icsURL(launch.at);
     tick();
     setInterval(tick, 200);
 }
@@ -115,20 +112,10 @@ function opened() {
     $(".js-date").textContent = "Le nouveau place de JustBetter t'attend.";
     $(".js-bulle").textContent = "Allez, à tes pixels !";
     $(".js-clock").hidden = true;
-    $(".js-ics").hidden = true;
     $(".js-sound").hidden = true;
     $(".js-open").hidden = false;
     $(".js-replay").hidden = !launch.video;
     $(".js-replay-label").textContent = "Revoir la bande-annonce";
-}
-
-function icsURL(at) {
-    const d = new Date(at), z = x => x.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-    const end = new Date(at + 3600e3);
-    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//JustBetter//BetterPlace//FR", "BEGIN:VEVENT", `UID:lancement-${at}@place.justbetter.fr`,
-        `DTSTAMP:${z(new Date())}`, `DTSTART:${z(d)}`, `DTEND:${z(end)}`, "SUMMARY:Sortie du nouveau BetterPlace",
-        `DESCRIPTION:Le nouveau place de JustBetter ouvre ! ${location.origin}/lancement`, `URL:${location.origin}/lancement`, "END:VEVENT", "END:VCALENDAR"].join("\r\n");
-    return "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
 }
 
 $(".js-sound").addEventListener("click", e => {

@@ -12,12 +12,17 @@ export class Connection extends EventTarget {
     #pingTimer = null;
     #lastPing = 0;
     #wasOpen = false;
+    #leaving = false;
     status = "idle"; // idle | connecting | open | retrying | failed
     latency = null;  // ms of the first handshake
 
     constructor(url) {
         super();
         this.#url = url;
+        // following a link closes the socket: that is not a lost connection
+        addEventListener("pagehide", () => { this.#leaving = true; });
+        addEventListener("beforeunload", () => { this.#leaving = true; });
+        addEventListener("pageshow", ev => { if (ev.persisted) { this.#leaving = false; if (!this.#socket) this.retryNow(); } });
     }
 
     get open() {
@@ -49,6 +54,7 @@ export class Connection extends EventTarget {
             if (this.#socket !== socket) return;
             this.#socket = null;
             clearInterval(this.#pingTimer);
+            if (this.#leaving) return;
             this.#scheduleRetry();
         });
         // "error" is always followed by "close": nothing to do here.
