@@ -36,6 +36,7 @@ type Settings struct {
 	LaunchAt      string `json:"launch_at"`      // release, Paris time "2006-01-02T15:04" (launch.go)
 	LaunchGate    string `json:"launch_gate"`    // off | tout (site closed until then) | accueil (home page only)
 	LaunchTrailer bool   `json:"launch_trailer"` // play the trailer at zero
+	Guests        bool   `json:"guests"`         // visitors without an account may look around (read-only)
 }
 
 var defaultSettings = Settings{
@@ -122,7 +123,7 @@ func (api *API) handlePublicStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	st := api.Settings()
-	writeJSON(w, map[string]any{"mode": st.modeInfo(), "announce": st.announce(api.store.now()), "contact": st.Contact, "launch": api.launchStatus(st), "now": api.store.now().UnixMilli()})
+	writeJSON(w, map[string]any{"mode": st.modeInfo(), "announce": st.announce(api.store.now()), "contact": st.Contact, "launch": api.launchStatus(st), "guests": st.Guests, "now": api.store.now().UnixMilli()})
 }
 
 // GET/PUT /api/admin/settings
@@ -205,6 +206,13 @@ func settingsDiff(a, b Settings) string {
 			out = append(out, "lancement "+frenchLaunchDate(t))
 		} else {
 			out = append(out, "compte à rebours coupé")
+		}
+	}
+	if a.Guests != b.Guests {
+		if b.Guests {
+			out = append(out, "visiteurs sans compte autorisés")
+		} else {
+			out = append(out, "connexion obligatoire")
 		}
 	}
 	if a.MaxConns != b.MaxConns {

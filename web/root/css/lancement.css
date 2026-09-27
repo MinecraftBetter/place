@@ -15,7 +15,7 @@
 .cd { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; padding: 24px 16px; text-align: center; }
 .cd-bg { position: absolute; inset: -40px; background-size: cover; background-position: center; image-rendering: pixelated; filter: blur(6px) brightness(.28) saturate(1.2); transform: scale(1.05); }
 .cd-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 55% at 50% 100%, rgba(240, 183, 90, .16), transparent 70%); }
-.cd > *:not(.cd-bg):not(.cd-glow) { position: relative; }
+.cd > *:not(.cd-bg):not(.cd-glow):not(.cd-admin) { position: relative; }
 .cd-brand { display: flex; align-items: center; gap: 12px; font-size: 26px; }
 .cd-scene { display: flex; align-items: flex-end; gap: 16px; }
 .cd-scene img { width: 90px; height: 155px; }
@@ -49,6 +49,6 @@
 .bp .cd a.btn, .bp .ba a.btn { color: #f3efe6; text-decoration: none; }
 .bp .cd a.btn-primary, .bp .ba a.btn-primary { color: var(--accent-ink, #0b1a10); }
 .cd-actions .btn svg, .ba .btn svg { flex-shrink: 0; }
-.cd-admin { position: absolute; right: 14px; bottom: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #8f8778; opacity: .7; }
+.cd-admin { position: absolute; top: calc(8px + env(safe-area-inset-top)); right: 10px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 6px; font-size: 11px; line-height: 1; color: #8f8778; opacity: .45; z-index: 2; }
 .bp a.cd-admin { color: #8f8778; text-decoration: none; }
-.cd-admin:hover { opacity: 1; }
+.cd-admin:hover, .cd-admin:focus-visible { opacity: 1; }

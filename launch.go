@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"html"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -89,16 +90,40 @@ func (api *API) launchStatus(st Settings) map[string]any {
 // pages always reachable during the countdown
 var launchOpen = []string{"/lancement", "/bande-annonce", "/login", "/auth/", "/api/", "/ws", "/media/", "/stat"}
 
-// LaunchGate sends visitors to the countdown until the release.
+// pages a visitor without an account still sees when guests are not allowed
+var guestPages = []string{"/", "/home", "/lancement", "/bande-annonce", "/login"}
+
+// LaunchGate sends visitors to the countdown until the release, and — without guest
+// mode — visitors who are not logged in to the login page.
 func (api *API) LaunchGate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		st := api.Settings()
-		if (r.Method == http.MethodGet || r.Method == http.MethodHead) && st.countdown(api.store.now()) && api.gated(st, r) {
-			http.Redirect(w, r, "/lancement", http.StatusFound)
-			return
+		if r.Method == http.MethodGet || r.Method == http.MethodHead {
+			st := api.Settings()
+			if st.countdown(api.store.now()) && api.gated(st, r) {
+				http.Redirect(w, r, "/lancement", http.StatusFound)
+				return
+			}
+			if !st.Guests && api.needsAccount(r) {
+				http.Redirect(w, r, "/login?next="+url.QueryEscape(r.URL.RequestURI()), http.StatusFound)
+				return
+			}
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+// needsAccount: a page (not a file, not the API) asked by a visitor who is not logged in.
+func (api *API) needsAccount(r *http.Request) bool {
+	p := r.URL.Path
+	for _, o := range append(guestPages, launchOpen...) {
+		if p == o || p == o+"/" && o != "/" || strings.HasSuffix(o, "/") && o != "/" && strings.HasPrefix(p, o) {
+			return false
+		}
+	}
+	if path.Ext(p) != "" {
+		return false
+	}
+	return api.auth.User(r) == nil
 }
 
 func (api *API) gated(st Settings, r *http.Request) bool {

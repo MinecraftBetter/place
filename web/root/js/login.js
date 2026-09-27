@@ -50,8 +50,14 @@ try {
         $("#jb-pass").focus();
     }
     $(".js-dev").hidden = !auth.includes("dev");
+    // no guest mode: an account is needed, the close button goes back home
+    if (me.guests === false) {
+        $(".js-guest").hidden = true;
+        $(".login-close").href = "/home";
+        $(".login-close").classList.remove("js-next");
+    }
     if (!auth.length) {
-        $(".js-justbetter-note").textContent = "La connexion n'est pas encore ouverte. En attendant, tu peux regarder le canvas en invité.";
+        $(".js-justbetter-note").textContent = me.guests === false ? "La connexion n'est pas encore ouverte." : "La connexion n'est pas encore ouverte. En attendant, tu peux regarder le canvas en invité.";
     }
     if (me.user) {
         const u = me.user;

@@ -6,7 +6,7 @@ import {formatNumber} from "./view.js";
 
 const MODES = [["normal", "Normal"], ["readonly", "Lecture seule"], ["maintenance", "Maintenance"]];
 const MODE_HINT = {
-    normal: "Tout le monde peut dessiner (les invités regardent).",
+    normal: "Tout le monde peut dessiner.",
     readonly: "Le canvas est figé : on regarde, on admire. Le bouton Poser explique pourquoi. Les admins peuvent encore dessiner.",
     maintenance: "Le canvas affiche l'écran de maintenance ; le timelapse et le musée restent ouverts.",
 };
@@ -46,6 +46,8 @@ function render() {
             <section class="card adm-card"><span class="fs-h3">Mode du canvas</span>
                 <div class="seg" role="group" aria-label="Mode">${MODES.map(([id, l]) => `<button type="button" class="${id === st.mode ? "on" : ""}" data-mode="${id}">${l}</button>`).join("")}</div>
                 <span class="fs-small t2 pretty">${MODE_HINT[st.mode]}</span>
+                <div class="edit-toggle"><span class="grow"><span class="fs-small b">Visiteurs sans compte</span><br><span class="fs-cap t3">${st.guests ? "Ils peuvent regarder le canvas et le site sans se connecter." : "Connexion JustBetter obligatoire : sans compte, on ne voit que l'accueil et le compte à rebours."}</span></span>
+                    <button class="toggle${st.guests ? " toggle-on" : ""}" type="button" data-bool="guests" aria-pressed="${!!st.guests}" aria-label="Autoriser les visiteurs sans compte"></button></div>
                 ${st.mode !== "normal" ? `<div class="field"><label class="label" for="mmsg">Message affiché</label><input id="mmsg" class="input" data-text="mode_msg" value="${escapeHTML(st.mode_msg)}" placeholder="Vernissage du musée à 18 h : canvas figé jusque-là."></div>
                     <div class="field"><label class="label" for="mfin">Fin prévue</label><input id="mfin" class="input input-mono" data-text="mode_until" value="${escapeHTML(st.mode_until)}" placeholder="18:00"></div>` : ""}
             </section>

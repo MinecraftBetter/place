@@ -125,3 +125,44 @@ func TestLaunchTrailerVideo(t *testing.T) {
 		t.Fatalf("og:video %s", page)
 	}
 }
+
+func TestNoGuestMode(t *testing.T) {
+	e := newEnv(t, 8)
+	e.auth.SetAdmins([]string{"tiago"})
+	admin, lucie := e.login(t, "Tiago"), e.login(t, "Lucie")
+	gate := e.api.LaunchGate(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) }))
+	get := func(path string, ck *http.Cookie) (int, string) {
+		req := httptest.NewRequest("GET", path, nil)
+		if ck != nil {
+			req.AddCookie(ck)
+		}
+		rec := httptest.NewRecorder()
+		gate.ServeHTTP(rec, req)
+		return rec.Code, rec.Header().Get("Location")
+	}
+	// default: an account is needed
+	if code, loc := get("/ace?x=10&y=20", nil); code != http.StatusFound || loc != "/login?next=%2Face%3Fx%3D10%26y%3D20" {
+		t.Fatalf("guest on the canvas: %d %s", code, loc)
+	}
+	for _, p := range []string{"/", "/home", "/lancement", "/bande-annonce", "/login", "/place.png", "/api/status", "/js/app.js", "/auth/justbetter"} {
+		if code, _ := get(p, nil); code != 200 {
+			t.Fatalf("%s should stay public: %d", p, code)
+		}
+	}
+	for _, p := range []string{"/timelapse", "/musee", "/u/lucie"} {
+		if code, _ := get(p, nil); code != http.StatusFound {
+			t.Fatalf("%s open to guests: %d", p, code)
+		}
+	}
+	if code, _ := get("/ace", lucie); code != 200 {
+		t.Fatal("players get in")
+	}
+	if e.getJSON(t, "/api/status", nil)["guests"] != false {
+		t.Fatal("status says guests are allowed")
+	}
+	// guest mode switched on in the settings
+	e.put(t, "/api/admin/settings", admin, `{"guests":true}`)
+	if code, _ := get("/ace", nil); code != 200 {
+		t.Fatal("guest mode on, canvas still closed")
+	}
+}
