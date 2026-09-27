@@ -171,7 +171,7 @@ func TestRestoreReplaysEventsAfterCrash(t *testing.T) {
 	c := NewBlankCanvas(4, 4)
 	place := func(x, y int, col color.NRGBA) {
 		prev, prevOwner, ts, _ := c.Set(x, y, col, u.ID)
-		if err := st.RecordPixel(PixelEvent{X: x, Y: y, Color: nrgbaToRGB(col), UserID: u.ID, PrevColor: nrgbaToRGB(prev), PrevUserID: prevOwner, TS: ts}); err != nil {
+		if _, err := st.RecordPixel(PixelEvent{X: x, Y: y, Color: nrgbaToRGB(col), UserID: u.ID, PrevColor: nrgbaToRGB(prev), PrevUserID: prevOwner, TS: ts}); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -201,8 +201,8 @@ func TestRestoreReplaysEventsAfterCrash(t *testing.T) {
 func TestRestoreReconcilesWithAnotherImage(t *testing.T) {
 	st := newTestStore(t)
 	u := mustUser(t, st, "Kaelen")
-	st.RecordPixel(PixelEvent{X: 0, Y: 0, Color: 0x5eb3ff, UserID: u.ID, PrevColor: 0xffffff, TS: 10})
-	st.RecordPixel(PixelEvent{X: 1, Y: 0, Color: 0x000000, UserID: u.ID, PrevColor: 0xffffff, TS: 11})
+	mustRecord(t, st, PixelEvent{X: 0, Y: 0, Color: 0x5eb3ff, UserID: u.ID, PrevColor: 0xffffff, TS: 10})
+	mustRecord(t, st, PixelEvent{X: 1, Y: 0, Color: 0x000000, UserID: u.ID, PrevColor: 0xffffff, TS: 11})
 
 	// An operator loads an image where (0,0) still shows Kaelen's colour but (1,0) was rolled back.
 	c := NewBlankCanvas(2, 1)

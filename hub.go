@@ -72,10 +72,11 @@ type Hub struct {
 	maxConns int
 	now      func() time.Time
 
-	mu        sync.Mutex
-	clients   map[*client]struct{}
-	nextAt    map[uint32]time.Time
-	statTimer *time.Timer
+	mu         sync.Mutex
+	clients    map[*client]struct{}
+	nextAt     map[uint32]time.Time
+	statTimer  *time.Timer
+	pixelHooks []func(u *User, e PixelEvent)
 }
 
 type client struct {
@@ -240,17 +241,54 @@ func (h *Hub) handlePixel(c *client, p PixelColor) {
 
 	p.Color.A = 255
 	prev, prevOwner, ts, _ := h.canvas.Set(p.X, p.Y, p.Color, uid)
-	err := h.store.RecordPixel(PixelEvent{
+	ev := PixelEvent{
 		X: p.X, Y: p.Y, Color: nrgbaToRGB(p.Color), UserID: uid,
 		PrevColor: nrgbaToRGB(prev), PrevUserID: prevOwner, TS: ts,
-	})
+	}
+	earned, err := h.store.RecordPixel(ev)
 	if err != nil {
 		log.WithField("endpoint", "Socket").Error("Recording pixel: ", err)
 	}
 	log.WithField("ip", c.ip).WithField("endpoint", "Socket").WithField("action", "Read").
 		Debugf("Pixel (%d, %d) changed to %s by %s", p.X, p.Y, toHex(p.Color), c.user.Pseudo)
 	h.broadcast(mustJSON(pixelMsg{p.X, p.Y, p.Color, uid, ts}))
+	for _, b := range earned {
+		if badge := BadgeByID(b); badge != nil {
+			h.SendToUser(uid, mustJSON(badgeMsg{"badge", badge.ID, badge.Name, badge.Sprite}))
+		}
+	}
+	for _, f := range h.pixelHooks {
+		f(c.user, ev)
+	}
 }
+
+type badgeMsg struct {
+	Type   string `json:"type"`
+	Badge  string `json:"badge"`
+	Name   string `json:"name"`
+	Sprite string `json:"sprite"`
+}
+
+// OnPixel registers a function called after each accepted pixel (activity, alerts…).
+// Hooks run on the placing client's goroutine: keep them quick.
+func (h *Hub) OnPixel(f func(u *User, e PixelEvent)) { h.pixelHooks = append(h.pixelHooks, f) }
+
+// SendToUser queues a message for every socket of a player.
+func (h *Hub) SendToUser(uid uint32, msg []byte) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	for c := range h.clients {
+		if c.user != nil && c.user.ID == uid && !c.closed {
+			select {
+			case c.send <- msg:
+			default:
+			}
+		}
+	}
+}
+
+// Broadcast queues a message for every client.
+func (h *Hub) Broadcast(msg []byte) { h.broadcast(msg) }
 
 // broadcast queues a message for every client; a client whose queue is full is dropped
 // instead of blocking everyone else.

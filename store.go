@@ -60,6 +60,22 @@ var schema = []string{
 	CREATE INDEX pixel_events_xy   ON pixel_events (x, y, id);
 	CREATE INDEX pixel_events_user ON pixel_events (user_id, id);
 	CREATE INDEX pixel_events_ts   ON pixel_events (ts);`,
+
+	// version 2 — phase 2: profiles and badges
+	`ALTER TABLE users ADD COLUMN pixels_restaures INTEGER NOT NULL DEFAULT 0;
+	ALTER TABLE users ADD COLUMN pixels_nuit INTEGER NOT NULL DEFAULT 0;
+	ALTER TABLE users ADD COLUMN pixels_pionniers INTEGER NOT NULL DEFAULT 0;
+	ALTER TABLE users ADD COLUMN badges_epingles TEXT NOT NULL DEFAULT '';
+	ALTER TABLE users ADD COLUMN carte_publique INTEGER NOT NULL DEFAULT 1;
+	ALTER TABLE users ADD COLUMN alertes_retouche INTEGER NOT NULL DEFAULT 1;
+	CREATE TABLE user_badges (
+		user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		badge   TEXT NOT NULL,
+		source  TEXT NOT NULL DEFAULT 'auto',
+		detail  TEXT NOT NULL DEFAULT '',
+		ts      INTEGER NOT NULL,
+		PRIMARY KEY (user_id, badge)
+	);`,
 }
 
 // OpenStore opens (and creates or migrates) the database. Use ":memory:" in tests.
@@ -133,6 +149,15 @@ type User struct {
 	PixelsPlaced   int64
 	PixelsVisible  int64
 	CreatedAt      int64
+	Bio            string
+	Banner         string // desert | nuit | uni
+	FavColor       string // a palette colour, "#RRGGBB"
+	PixelsRestored int64  // pixels put back to their previous colour (badge Restaurateur)
+	PixelsNight    int64  // pixels placed between 2 and 5 am, Paris time (badge Noctambule)
+	PixelsPioneer  int64  // pixels of validated pre-account artworks (claims)
+	PinnedBadges   []string
+	MapPublic      bool
+	RetouchAlerts  bool
 }
 
 // PublicUser is what other players can see.
@@ -164,16 +189,22 @@ func (u *User) WriteBlock(now time.Time) string {
 
 // userCols selects a user from "users u".
 const userCols = `u.id, u.fournisseur, u.id_externe, u.pseudo, u.slug, u.avatar_url, u.accent, u.role, u.statut,
-	COALESCE(u.suspendu_jusqua, 0), u.pixels_poses, u.pixels_visibles, u.cree_le`
+	COALESCE(u.suspendu_jusqua, 0), u.pixels_poses, u.pixels_visibles, u.cree_le, u.bio, u.banner, u.couleur_pref,
+	u.pixels_restaures, u.pixels_nuit, u.pixels_pionniers, u.badges_epingles, u.carte_publique, u.alertes_retouche`
 
 type scanner interface{ Scan(dest ...any) error }
 
 func scanUser(row scanner) (*User, error) {
 	u := &User{}
+	var pinned string
 	err := row.Scan(&u.ID, &u.Provider, &u.ExternalID, &u.Pseudo, &u.Slug, &u.AvatarURL, &u.Accent, &u.Role,
-		&u.Status, &u.SuspendedUntil, &u.PixelsPlaced, &u.PixelsVisible, &u.CreatedAt)
+		&u.Status, &u.SuspendedUntil, &u.PixelsPlaced, &u.PixelsVisible, &u.CreatedAt, &u.Bio, &u.Banner, &u.FavColor,
+		&u.PixelsRestored, &u.PixelsNight, &u.PixelsPioneer, &pinned, &u.MapPublic, &u.RetouchAlerts)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
+	}
+	if pinned != "" {
+		u.PinnedBadges = strings.Split(pinned, ",")
 	}
 	return u, err
 }
@@ -326,30 +357,52 @@ type PixelEvent struct {
 	TS         int64 // ms
 }
 
-// RecordPixel appends to the journal and updates the players' counters.
-func (s *Store) RecordPixel(e PixelEvent) error {
+// RecordPixel appends to the journal, updates the players' counters and returns the
+// badges the player has just earned.
+func (s *Store) RecordPixel(e PixelEvent) ([]string, error) {
 	tx, err := s.db.Begin()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer tx.Rollback()
+
+	// Restoring: putting back the colour a pixel had before someone else changed it.
+	restored := 0
+	var lastColor, lastPrev, lastUser int64
+	err = tx.QueryRow(`SELECT color, prev_color, user_id FROM pixel_events WHERE x = ? AND y = ? ORDER BY id DESC LIMIT 1`, e.X, e.Y).
+		Scan(&lastColor, &lastPrev, &lastUser)
+	if err == nil && uint32(lastUser) != e.UserID && int64(e.Color) == lastPrev && int64(e.Color) != lastColor {
+		restored = 1
+	} else if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, err
+	}
+	night := 0
+	if h := time.UnixMilli(e.TS).In(Paris).Hour(); h >= 2 && h < 5 {
+		night = 1
+	}
+
 	if _, err := tx.Exec(`INSERT INTO pixel_events (x, y, color, user_id, prev_color, prev_user_id, ts) VALUES (?, ?, ?, ?, ?, ?, ?)`,
 		e.X, e.Y, e.Color, e.UserID, e.PrevColor, e.PrevUserID, e.TS); err != nil {
-		return err
+		return nil, err
 	}
 	visible := 0
 	if e.PrevUserID != e.UserID {
 		visible = 1
 		if e.PrevUserID != 0 {
 			if _, err := tx.Exec(`UPDATE users SET pixels_visibles = MAX(pixels_visibles - 1, 0) WHERE id = ?`, e.PrevUserID); err != nil {
-				return err
+				return nil, err
 			}
 		}
 	}
-	if _, err := tx.Exec(`UPDATE users SET pixels_poses = pixels_poses + 1, pixels_visibles = pixels_visibles + ? WHERE id = ?`, visible, e.UserID); err != nil {
-		return err
+	if _, err := tx.Exec(`UPDATE users SET pixels_poses = pixels_poses + 1, pixels_visibles = pixels_visibles + ?,
+		pixels_restaures = pixels_restaures + ?, pixels_nuit = pixels_nuit + ? WHERE id = ?`, visible, restored, night, e.UserID); err != nil {
+		return nil, err
 	}
-	return tx.Commit()
+	earned, err := awardCounterBadges(tx, e.UserID, e.TS)
+	if err != nil {
+		return nil, err
+	}
+	return earned, tx.Commit()
 }
 
 const eventCols = `id, x, y, color, user_id, prev_color, prev_user_id, ts`

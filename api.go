@@ -12,11 +12,12 @@ import (
 
 // API serves the JSON endpoints under /api/.
 type API struct {
-	canvas *Canvas
-	store  *Store
-	auth   *Auth
-	hub    *Hub
-	mux    *http.ServeMux
+	canvas   *Canvas
+	store    *Store
+	auth     *Auth
+	hub      *Hub
+	mux      *http.ServeMux
+	mediaDir string // uploads (avatars…); empty disables them
 }
 
 func NewAPI(c *Canvas, st *Store, a *Auth, h *Hub) *API {
@@ -25,16 +26,34 @@ func NewAPI(c *Canvas, st *Store, a *Auth, h *Hub) *API {
 	api.mux.HandleFunc("/api/pixel", api.handlePixel)
 	api.mux.HandleFunc("/api/owners", api.handleOwners)
 	api.mux.HandleFunc("/api/users", api.handleUsers)
+	api.mux.HandleFunc("/api/users/", api.handleUserProfile)
+	api.mux.HandleFunc("/api/me/profile", api.handleMeProfile)
+	api.mux.HandleFunc("/api/me/avatar", api.handleMeAvatar)
 	return api
 }
 
+// SetMediaDir enables uploads, stored under dir and served at /media/.
+func (api *API) SetMediaDir(dir string) { api.mediaDir = dir }
+
+// Handle registers extra API routes (later phases).
+func (api *API) Handle(pattern string, h http.HandlerFunc) { api.mux.HandleFunc(pattern, h) }
+
 func (api *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet && r.Method != http.MethodHead {
-		writeError(w, http.StatusMethodNotAllowed, "Méthode non autorisée.")
+	if r.Method != http.MethodGet && r.Method != http.MethodHead && !sameOrigin(r) {
+		writeError(w, http.StatusForbidden, "Origine refusée.")
 		return
 	}
 	w.Header().Set("Cache-Control", "no-store")
 	api.mux.ServeHTTP(w, r)
+}
+
+// getOnly answers 405 to anything but GET/HEAD.
+func getOnly(w http.ResponseWriter, r *http.Request) bool {
+	if r.Method != http.MethodGet && r.Method != http.MethodHead {
+		writeError(w, http.StatusMethodNotAllowed, "Méthode non autorisée.")
+		return false
+	}
+	return true
 }
 
 func writeJSON(w http.ResponseWriter, v any) {
@@ -56,6 +75,9 @@ type meUser struct {
 }
 
 func (api *API) handleMe(w http.ResponseWriter, r *http.Request) {
+	if !getOnly(w, r) {
+		return
+	}
 	width, height := api.canvas.Size()
 	res := map[string]any{
 		"user":     nil,
@@ -85,6 +107,9 @@ type historyEntry struct {
 func hexColor(rgb uint32) string { return fmt.Sprintf("#%06X", rgb&0xffffff) }
 
 func (api *API) handlePixel(w http.ResponseWriter, r *http.Request) {
+	if !getOnly(w, r) {
+		return
+	}
 	x, errX := strconv.Atoi(r.URL.Query().Get("x"))
 	y, errY := strconv.Atoi(r.URL.Query().Get("y"))
 	if errX != nil || errY != nil {
@@ -141,6 +166,9 @@ func (api *API) handlePixel(w http.ResponseWriter, r *http.Request) {
 }
 
 func (api *API) handleOwners(w http.ResponseWriter, r *http.Request) {
+	if !getOnly(w, r) {
+		return
+	}
 	b := api.canvas.OwnersPNG()
 	w.Header().Set("Content-Type", "image/png")
 	w.Header().Set("Content-Length", strconv.Itoa(len(b)))
@@ -150,6 +178,9 @@ func (api *API) handleOwners(w http.ResponseWriter, r *http.Request) {
 const maxUsersPerRequest = 100
 
 func (api *API) handleUsers(w http.ResponseWriter, r *http.Request) {
+	if !getOnly(w, r) {
+		return
+	}
 	var ids []uint32
 	for _, s := range strings.Split(r.URL.Query().Get("ids"), ",") {
 		if s = strings.TrimSpace(s); s == "" {

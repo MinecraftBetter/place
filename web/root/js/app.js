@@ -556,11 +556,13 @@ function renderMe() {
     for (const el of $$(".js-tab-avatar")) el.innerHTML = avatarHTML(u, "av av-24");
     for (const row of $$(".js-me-row")) {
         row.innerHTML = `${avatarHTML(u, "av av-40", `box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px ${escapeHTML(ring)}`)}
-            <div class="me-text"><span class="fs-body b ellip">${escapeHTML(u.pseudo)}</span><span class="fs-cap t3">${u.role === "admin" ? "Équipe BetterPlace" : "Joueur"}</span></div>`;
+            <div class="me-text"><span class="fs-body b ellip">${escapeHTML(u.pseudo)}</span><span class="fs-cap t3">Voir mon profil</span></div>`;
     }
+    for (const a of $$(".js-profile-link")) a.href = "/u/" + encodeURIComponent(u.slug);
+    for (const a of $$(".js-admin-link")) a.hidden = u.role !== "admin";
 }
 
-for (const b of $$(".js-me")) b.addEventListener("click", ev => {
+for (const b of $$("button.js-me")) b.addEventListener("click", ev => {
     ev.stopPropagation();
     if (mobileMQ.matches) {
         showSheet($("#sheet-me"));
@@ -653,6 +655,12 @@ function wireConnection(conn) {
         $("#conn-scrim").hidden = false;
     });
     conn.addEventListener("pixel", ev => onPixel(ev.detail));
+    conn.addEventListener("badge", ev => {
+        const b = ev.detail;
+        toast(`<span class="badge-toast anim-shine"><img class="px anim-bob" src="${escapeHTML(b.sprite)}" alt="" width="36" height="36"></span>
+            <span class="toast-text"><span class="fs-small b">Nouveau badge : ${escapeHTML(b.name)}</span><span class="fs-cap t3">Il apparaît sur ton profil.</span></span>
+            <a class="btn btn-sm" href="/u/${encodeURIComponent(app.me?.slug ?? "")}">Voir</a>`, {timeout: 6000});
+    });
     conn.addEventListener("error", ev => onServerError(ev.detail));
     conn.addEventListener("stat", ev => {
         const n = ev.detail.online;

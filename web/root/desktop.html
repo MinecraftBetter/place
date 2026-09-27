@@ -41,6 +41,9 @@
 		<a href="/home" class="brand"><img src="img/cube-logo.png" alt="" width="28" height="28"><span class="pixel">BetterPlace</span></a>
 		<nav class="d-nav" aria-label="Sections">
 			<a class="btn btn-sm btn-ghost on" href="/ace" aria-current="page">Canvas</a>
+			<a class="btn btn-sm btn-ghost" href="/musee">Musée</a>
+			<a class="btn btn-sm btn-ghost" href="/activite">Activité</a>
+			<a class="btn btn-sm btn-ghost" href="/classement">Classement</a>
 			<a class="btn btn-sm btn-ghost" href="/timelapse">Timelapse</a>
 		</nav>
 		<div class="grow"></div>
@@ -51,8 +54,10 @@
 	</header>
 
 	<div class="card elev d-menu" id="d-menu" hidden>
-		<div class="me-row js-me-row"></div>
+		<a class="me-row js-me-row js-profile-link" href="/moi/profil"></a>
 		<div class="rule"></div>
+		<a class="btn btn-sm btn-ghost btn-block menu-item" href="/moi/profil"><span data-icon="edit" data-size="18"></span>Modifier mon profil</a>
+		<a class="btn btn-sm btn-ghost btn-block menu-item js-admin-link" href="/admin" hidden><span data-icon="shield" data-size="18"></span>Administration</a>
 		<button class="btn btn-sm btn-ghost btn-block js-theme menu-item" type="button"><span data-icon="sun" data-size="18"></span><span class="js-theme-label">Mode clair</span></button>
 		<form method="post" action="/auth/logout" class="js-logout-form">
 			<input type="hidden" name="next" value="/ace">
@@ -141,10 +146,10 @@
 
 	<nav class="nav-bottom m-nav only-m" aria-label="Navigation principale">
 		<a class="tab tab-on" href="/ace" aria-current="page"><span data-icon="canvas" data-size="22"></span>Canvas</a>
-		<a class="tab" href="/timelapse"><span data-icon="film" data-size="22"></span>Timelapse</a>
-		<a class="tab" href="/home"><span data-icon="home" data-size="22"></span>Accueil</a>
+		<a class="tab" href="/musee"><span data-icon="museum" data-size="22"></span>Musée</a>
+		<a class="tab" href="/activite"><span data-icon="activity" data-size="22"></span>Activité<span class="count js-alert-count" hidden></span></a>
 		<a class="tab guest-only js-login" href="/login"><span data-icon="user" data-size="22"></span>Connexion</a>
-		<button class="tab player-only js-me" type="button"><span class="js-tab-avatar"></span>Moi</button>
+		<a class="tab player-only js-profile-link" href="/moi/profil"><span class="js-tab-avatar"></span>Profil</a>
 	</nav>
 
 	<!-- ================= Sheets (mobile) ================= -->
@@ -195,8 +200,14 @@
 	<div class="sheet" id="sheet-me" role="dialog" aria-label="Mon compte" hidden>
 		<div class="grab"></div>
 		<div class="sheet-head">
-			<div class="me-row grow js-me-row"></div>
+			<a class="me-row grow js-me-row js-profile-link" href="/moi/profil"></a>
 			<button class="btn btn-icon btn-ghost js-close-sheet" type="button" aria-label="Fermer"><span data-icon="close"></span></button>
+		</div>
+		<div class="me-links">
+			<a class="btn btn-block js-profile-link" href="/moi/profil"><span data-icon="user" data-size="18"></span>Mon profil</a>
+			<a class="btn btn-block" href="/moi/profil"><span data-icon="edit" data-size="18"></span>Modifier</a>
+			<a class="btn btn-block" href="/timelapse"><span data-icon="film" data-size="18"></span>Timelapse</a>
+			<a class="btn btn-block js-admin-link" href="/admin" hidden><span data-icon="shield" data-size="18"></span>Administration</a>
 		</div>
 		<div class="seg theme-seg" role="group" aria-label="Thème">
 			<button type="button" class="js-set-theme" data-theme="sombre"><span data-icon="moon" data-size="16"></span>Sombre</button>

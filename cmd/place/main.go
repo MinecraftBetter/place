@@ -28,6 +28,7 @@ var loadPath string
 var savePath string
 var ownersPath string
 var dbPath string
+var dataDir string
 var width int
 var height int
 var count int
@@ -42,6 +43,7 @@ func init() {
 	flag.StringVar(&savePath, "save", "./place.png", "The path to save the canvas.")
 	flag.StringVar(&ownersPath, "owners", "", "The path to save who placed each pixel. (default: owners.bin next to -save)")
 	flag.StringVar(&dbPath, "db", "./betterplace.db", "The SQLite database (accounts, sessions, pixel journal).")
+	flag.StringVar(&dataDir, "data", "./data", "The directory for uploaded files (avatars…), served at /media/.")
 	flag.IntVar(&width, "width", 1024, "The width to create the canvas.")
 	flag.IntVar(&height, "height", 1024, "The height to create the canvas.")
 	flag.IntVar(&count, "count", 64, "The maximum number of connections.")
@@ -70,6 +72,11 @@ func main() {
 	}
 	if err := store.DeleteExpiredSessions(); err != nil {
 		log.Warning("Cleaning sessions: ", err)
+	}
+	if n, err := store.BackfillBadges(); err != nil {
+		log.Warning("Badges: ", err)
+	} else if n > 0 {
+		log.Info("Gave ", n, " badges earned before they existed")
 	}
 
 	// Load image
@@ -126,9 +133,34 @@ func main() {
 			placeSv.ServeHTTP(w, req)
 		},
 	})
+	api := place.NewAPI(canvas, store, auth, hub)
+	mediaDir := filepath.Join(dataDir, "media")
+	if err := os.MkdirAll(mediaDir, 0755); err != nil {
+		log.Warning("Uploads disabled: ", err)
+	} else {
+		api.SetMediaDir(mediaDir)
+	}
+
+	// Weekly badges (Top 10): at startup, then every hour.
+	go func() {
+		for {
+			if n, err := store.AwardWeeklyTop10(time.Now()); err != nil {
+				log.Error("Top 10 badges: ", err)
+			} else if n > 0 {
+				log.Info("Top 10 badge given to ", n, " players")
+			}
+			time.Sleep(time.Hour)
+		}
+	}()
+
 	mux := http.NewServeMux()
-	mux.Handle("/api/", place.NewAPI(canvas, store, auth, hub))
+	mux.Handle("/api/", api)
 	mux.Handle("/auth/", auth)
+	mux.Handle("/media/", place.MediaHandler(mediaDir))
+	pages := place.PagesHandler{Root: root}
+	for _, p := range pages.Paths() {
+		mux.Handle(p, pages)
+	}
 	mux.Handle("/", fs)
 
 	xffmw, _ := xff.Default()

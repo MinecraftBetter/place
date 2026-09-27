@@ -313,3 +313,6 @@ html.bp.page body { min-height: 100vh; min-height: 100dvh; }
 }
 .home-page body { background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(255, 236, 190, .08), transparent 70%); }
 .home-page[data-theme="clair"] body { background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(201, 138, 43, .12), transparent 70%); }
+
+.me-links { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.badge-toast { position: relative; display: inline-flex; flex-shrink: 0; }

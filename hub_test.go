@@ -42,6 +42,7 @@ type testEnv struct {
 	canvas *Canvas
 	auth   *Auth
 	hub    *Hub
+	api    *API
 	clock  *fakeClock
 	srv    *httptest.Server
 }
@@ -54,13 +55,14 @@ func newEnv(t *testing.T, maxConns int) *testEnv {
 	h := NewHub(c, st, a, maxConns, 5*time.Second)
 	clock := &fakeClock{t: time.UnixMilli(1_700_000_000_000)}
 	h.now = clock.Now
+	api := NewAPI(c, st, a, h)
 	mux := http.NewServeMux()
-	mux.Handle("/api/", NewAPI(c, st, a, h))
+	mux.Handle("/api/", api)
 	mux.Handle("/auth/", a)
 	mux.Handle("/", NewServer(c, h))
 	srv := httptest.NewServer(mux)
 	t.Cleanup(srv.Close)
-	return &testEnv{st, c, a, h, clock, srv}
+	return &testEnv{st, c, a, h, api, clock, srv}
 }
 
 func (e *testEnv) login(t *testing.T, pseudo string) *http.Cookie {

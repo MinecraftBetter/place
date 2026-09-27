@@ -24,6 +24,15 @@ func mustUser(t *testing.T, st *Store, pseudo string) *User {
 	return u
 }
 
+func mustRecord(t *testing.T, st *Store, e PixelEvent) []string {
+	t.Helper()
+	b, err := st.RecordPixel(e)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return b
+}
+
 func TestStoreFileMigratesOnce(t *testing.T) {
 	path := t.TempDir() + "/bp.db"
 	st, err := OpenStore(path)
@@ -129,7 +138,7 @@ func TestRecordPixelCounters(t *testing.T) {
 	a, b := mustUser(t, st, "Brindille"), mustUser(t, st, "Zozo42")
 	rec := func(e PixelEvent) {
 		t.Helper()
-		if err := st.RecordPixel(e); err != nil {
+		if _, err := st.RecordPixel(e); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -174,5 +183,17 @@ func TestWriteBlock(t *testing.T) {
 		if got := c.u.WriteBlock(now); got != c.want {
 			t.Errorf("%+v: %q, want %q", c.u, got, c.want)
 		}
+	}
+}
+
+func TestBackfillBadges(t *testing.T) {
+	st := newTestStore(t)
+	u := mustUser(t, st, "Ancien")
+	st.db.Exec(`UPDATE users SET pixels_poses = 1200 WHERE id = ?`, u.ID)
+	if n, err := st.BackfillBadges(); err != nil || n != 2 {
+		t.Fatalf("backfill = %d, %v; want premier-pixel + millier", n, err)
+	}
+	if n, _ := st.BackfillBadges(); n != 0 {
+		t.Fatal("backfill not idempotent")
 	}
 }

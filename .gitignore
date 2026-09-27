@@ -5,3 +5,5 @@ bak/
 owners.bin
 betterplace.db*
 place-dev
+data/
+place-dev.new
