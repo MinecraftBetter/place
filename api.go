@@ -18,10 +18,12 @@ type API struct {
 	hub      *Hub
 	mux      *http.ServeMux
 	mediaDir string // uploads (avatars…); empty disables them
+	backups  *Backups
+	oeuvres  *OeuvreIndex
 }
 
 func NewAPI(c *Canvas, st *Store, a *Auth, h *Hub) *API {
-	api := &API{canvas: c, store: st, auth: a, hub: h, mux: http.NewServeMux()}
+	api := &API{canvas: c, store: st, auth: a, hub: h, mux: http.NewServeMux(), oeuvres: &OeuvreIndex{}}
 	api.mux.HandleFunc("/api/me", api.handleMe)
 	api.mux.HandleFunc("/api/pixel", api.handlePixel)
 	api.mux.HandleFunc("/api/owners", api.handleOwners)
@@ -30,6 +32,8 @@ func NewAPI(c *Canvas, st *Store, a *Auth, h *Hub) *API {
 	api.mux.HandleFunc("/api/me/profile", api.handleMeProfile)
 	api.mux.HandleFunc("/api/me/avatar", api.handleMeAvatar)
 	api.mux.HandleFunc("/api/me/banner", api.handleMeBanner)
+	api.mountClaims()
+	api.RefreshOeuvres()
 	return api
 }
 
@@ -162,6 +166,19 @@ func (api *API) handlePixel(w http.ResponseWriter, r *http.Request) {
 	}
 	if owner != 0 && len(events) > 0 && events[0].UserID == owner {
 		res["placed_at"] = events[0].TS
+	}
+	cw, _ := api.canvas.Size()
+	if oid := api.oeuvres.At(x, y, cw); oid != 0 {
+		if o, err := api.store.Oeuvre(oid); err == nil && o != nil {
+			var confirms int
+			api.store.db.QueryRow(`SELECT COUNT(*) FROM claim_votes WHERE claim_id = ? AND type = 'confirme'`, o.ClaimID).Scan(&confirms)
+			var decided int64
+			api.store.db.QueryRow(`SELECT COALESCE(decide_le, 0) FROM claims WHERE id = ?`, o.ClaimID).Scan(&decided)
+			res["oeuvre"] = map[string]any{
+				"id": o.ID, "titre": o.Titre, "origine": o.Origine, "auteurs": o.Auteurs, "apparue_le": o.Apparue,
+				"revendiquee_le": decided, "confirmations": confirms, "x": o.X, "y": o.Y, "w": o.W, "h": o.H,
+			}
+		}
 	}
 	writeJSON(w, res)
 }

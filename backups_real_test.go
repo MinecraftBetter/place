@@ -8,7 +8,8 @@ import (
 )
 
 // Indexes the real archives when BP_ARCHIVES points to them (slow: every capture).
-//   BP_ARCHIVES=~/BetterPlace/archives go test -run TestRealArchives -v
+//
+//	BP_ARCHIVES=~/BetterPlace/archives go test -run TestRealArchives -v
 func TestRealArchives(t *testing.T) {
 	dir := os.Getenv("BP_ARCHIVES")
 	if dir == "" {

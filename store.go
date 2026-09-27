@@ -79,6 +79,78 @@ var schema = []string{
 
 	// version 3 — banners drawn pixel by pixel
 	`ALTER TABLE users ADD COLUMN banniere_url TEXT NOT NULL DEFAULT '';`,
+
+	// version 4 — claims, artworks, admin journal, settings
+	`CREATE TABLE oeuvres (
+		id           INTEGER PRIMARY KEY,
+		titre        TEXT NOT NULL,
+		description  TEXT NOT NULL DEFAULT '',
+		masque       TEXT NOT NULL,
+		x INTEGER NOT NULL, y INTEGER NOT NULL, w INTEGER NOT NULL, h INTEGER NOT NULL,
+		pixels       INTEGER NOT NULL,
+		origine      TEXT NOT NULL,
+		statut       TEXT NOT NULL DEFAULT 'active',
+		apparue_le   INTEGER,
+		terminee_le  INTEGER,
+		analyse_json TEXT NOT NULL DEFAULT '',
+		claim_id     INTEGER,
+		creee_le     INTEGER NOT NULL
+	);
+	CREATE TABLE oeuvre_auteurs (
+		oeuvre_id        INTEGER NOT NULL REFERENCES oeuvres(id) ON DELETE CASCADE,
+		user_id          INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		role             TEXT NOT NULL,
+		pixels_pionniers INTEGER NOT NULL DEFAULT 0,
+		PRIMARY KEY (oeuvre_id, user_id)
+	);
+	CREATE TABLE claims (
+		id              INTEGER PRIMARY KEY,
+		demandeur_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		masque          TEXT NOT NULL,
+		x INTEGER NOT NULL, y INTEGER NOT NULL, w INTEGER NOT NULL, h INTEGER NOT NULL,
+		pixels          INTEGER NOT NULL,
+		titre           TEXT NOT NULL,
+		message         TEXT NOT NULL DEFAULT '',
+		repartition     TEXT NOT NULL DEFAULT 'egale',
+		poids_demandeur REAL NOT NULL DEFAULT 1,
+		statut          TEXT NOT NULL DEFAULT 'attente',
+		analyse_json    TEXT NOT NULL DEFAULT '',
+		badges          TEXT NOT NULL DEFAULT '',
+		motif           TEXT NOT NULL DEFAULT '',
+		oeuvre_id       INTEGER,
+		decide_par      INTEGER,
+		decide_le       INTEGER,
+		cree_le         INTEGER NOT NULL
+	);
+	CREATE INDEX claims_statut ON claims (statut, id);
+	CREATE TABLE claim_coauteurs (
+		claim_id INTEGER NOT NULL REFERENCES claims(id) ON DELETE CASCADE,
+		user_id  INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		poids    REAL NOT NULL DEFAULT 1,
+		confirme INTEGER NOT NULL DEFAULT 0,
+		PRIMARY KEY (claim_id, user_id)
+	);
+	CREATE TABLE claim_votes (
+		claim_id    INTEGER NOT NULL REFERENCES claims(id) ON DELETE CASCADE,
+		user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		type        TEXT NOT NULL,
+		commentaire TEXT NOT NULL DEFAULT '',
+		ts          INTEGER NOT NULL,
+		PRIMARY KEY (claim_id, user_id)
+	);
+	CREATE TABLE admin_actions (
+		id         INTEGER PRIMARY KEY,
+		admin_id   INTEGER NOT NULL,
+		type       TEXT NOT NULL,
+		cible      TEXT NOT NULL,
+		avant_json TEXT NOT NULL DEFAULT '',
+		apres_json TEXT NOT NULL DEFAULT '',
+		motif      TEXT NOT NULL DEFAULT '',
+		ts         INTEGER NOT NULL,
+		annulee    INTEGER NOT NULL DEFAULT 0
+	);
+	CREATE INDEX admin_actions_ts ON admin_actions (ts);
+	CREATE TABLE settings (cle TEXT PRIMARY KEY, valeur TEXT NOT NULL);`,
 }
 
 // OpenStore opens (and creates or migrates) the database. Use ":memory:" in tests.
@@ -245,6 +317,11 @@ func (s *Store) LoginUser(n NewUser) (*User, error) {
 		}
 	}
 	return scanUser(s.db.QueryRow(`SELECT `+userCols+` FROM users u WHERE fournisseur = ? AND id_externe = ?`, n.Provider, n.ExternalID))
+}
+
+func (s *Store) SetRole(uid uint32, role string) error {
+	_, err := s.db.Exec(`UPDATE users SET role = ? WHERE id = ?`, role, uid)
+	return err
 }
 
 func (s *Store) UserByID(id uint32) (*User, error) {

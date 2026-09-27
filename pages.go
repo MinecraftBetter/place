@@ -26,6 +26,11 @@ func AddPage(path, file string) {
 func init() {
 	AddPage("/u/", "profil.html")
 	AddPage("/moi/profil", "profil-edition.html")
+	AddPage("/revendiquer", "revendiquer.html")
+	AddPage("/revendications", "revendications.html")
+	AddPage("/oeuvre/", "oeuvre.html")
+	AddPage("/admin", "admin.html")
+	AddPage("/admin/", "admin.html")
 }
 
 // PagesHandler serves the page registered for a request path.

@@ -30,6 +30,17 @@ type Auth struct {
 	store     *Store
 	providers []Provider
 	mux       *http.ServeMux
+	admins    map[string]bool // slugs that get the admin role when they log in
+}
+
+// SetAdmins lists the players (slugs) who are admins, e.g. -admins tiago,evan.
+func (a *Auth) SetAdmins(slugs []string) {
+	a.admins = map[string]bool{}
+	for _, s := range slugs {
+		if s = strings.TrimSpace(strings.ToLower(s)); s != "" {
+			a.admins[s] = true
+		}
+	}
 }
 
 func NewAuth(st *Store, providers ...Provider) *Auth {
@@ -73,6 +84,11 @@ func (a *Auth) Login(w http.ResponseWriter, r *http.Request, n NewUser, next str
 		log.WithField("endpoint", "Auth").Error("Login: ", err)
 		http.Error(w, "Connexion impossible.", http.StatusInternalServerError)
 		return
+	}
+	if a.admins[u.Slug] && u.Role != "admin" {
+		if err := a.store.SetRole(u.ID, "admin"); err == nil {
+			u.Role = "admin"
+		}
 	}
 	token, err := a.store.CreateSession(u.ID, sessionTTL)
 	if err != nil {

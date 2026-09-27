@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -36,6 +37,9 @@ var saveInterval int
 var cooldown time.Duration
 var maxRate float64
 var devAuth bool
+var admins string
+var backupSources string
+var backupIndex string
 
 func init() {
 	flag.StringVar(&port, "port", ":8080", "The address and port the fileserver listens at.")
@@ -51,6 +55,9 @@ func init() {
 	flag.IntVar(&saveInterval, "saveInterval", 180, "Save interval in seconds.")
 	flag.DurationVar(&cooldown, "cooldown", 0, "Delay between two pixels of the same player (0 = none).")
 	flag.Float64Var(&maxRate, "maxRate", 30, "Anti-flood: maximum pixels per second per player (0 = unlimited).")
+	flag.StringVar(&admins, "admins", "", "Comma-separated slugs of the players who are admins (e.g. tiago,evan).")
+	flag.StringVar(&backupSources, "backups", "./bak,./web/root/archives", "Comma-separated backup sources: directories of captures and/or archive zips.")
+	flag.StringVar(&backupIndex, "backupIndex", "", "Where to keep the backup index. (default: backups.idx in -data)")
 	flag.BoolVar(&devAuth, "devAuth", false, "Enable the \"dev\" login provider (fake accounts, no password). Never in production.")
 }
 
@@ -105,6 +112,7 @@ func main() {
 		providers = append(providers, place.DevProvider{})
 	}
 	auth := place.NewAuth(store, providers...)
+	auth.SetAdmins(strings.Split(admins, ","))
 	hub := place.NewHub(canvas, store, auth, count, cooldown)
 	hub.SetMaxRate(maxRate)
 	placeSv := place.NewServer(canvas, hub)
@@ -137,6 +145,13 @@ func main() {
 		},
 	})
 	api := place.NewAPI(canvas, store, auth, hub)
+	if backupIndex == "" {
+		backupIndex = filepath.Join(dataDir, "backups.idx")
+	}
+	os.MkdirAll(filepath.Dir(backupIndex), 0755)
+	backups := place.NewBackups(strings.Split(backupSources, ","), backupIndex)
+	api.SetBackups(backups)
+	go backups.Run(10 * time.Minute)
 	mediaDir := filepath.Join(dataDir, "media")
 	if err := os.MkdirAll(mediaDir, 0755); err != nil {
 		log.Warning("Uploads disabled: ", err)
