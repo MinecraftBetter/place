@@ -29,6 +29,11 @@ func init() {
 	AddPage("/revendiquer", "revendiquer.html")
 	AddPage("/revendications", "revendications.html")
 	AddPage("/oeuvre/", "oeuvre.html")
+	AddPage("/activite", "activite.html")
+	AddPage("/classement", "classement.html")
+	AddPage("/musee", "musee.html")
+	AddPage("/musee/exposer", "exposer.html")
+	AddPage("/musee/visite", "visite.html")
 	AddPage("/admin", "admin.html")
 	AddPage("/admin/", "admin.html")
 }

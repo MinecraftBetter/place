@@ -12,14 +12,15 @@ import (
 
 // API serves the JSON endpoints under /api/.
 type API struct {
-	canvas   *Canvas
-	store    *Store
-	auth     *Auth
-	hub      *Hub
-	mux      *http.ServeMux
-	mediaDir string // uploads (avatars…); empty disables them
-	backups  *Backups
-	oeuvres  *OeuvreIndex
+	canvas    *Canvas
+	store     *Store
+	auth      *Auth
+	hub       *Hub
+	mux       *http.ServeMux
+	mediaDir  string // uploads (avatars…); empty disables them
+	backups   *Backups
+	oeuvres   *OeuvreIndex
+	community *Community
 }
 
 func NewAPI(c *Canvas, st *Store, a *Auth, h *Hub) *API {
@@ -33,6 +34,8 @@ func NewAPI(c *Canvas, st *Store, a *Auth, h *Hub) *API {
 	api.mux.HandleFunc("/api/me/avatar", api.handleMeAvatar)
 	api.mux.HandleFunc("/api/me/banner", api.handleMeBanner)
 	api.mountClaims()
+	api.mountCommunity()
+	api.mountSnapshots()
 	api.mountAdmin()
 	api.RefreshOeuvres()
 	return api
@@ -99,6 +102,7 @@ func (api *API) handleMe(w http.ResponseWriter, r *http.Request) {
 		if block := u.WriteBlock(api.hub.now()); block != "" {
 			res["blocked"] = block
 		}
+		res["alerts"] = api.store.UnreadAlerts(u.ID)
 	}
 	writeJSON(w, res)
 }

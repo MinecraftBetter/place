@@ -635,6 +635,9 @@ func (api *API) RefreshOeuvres() {
 	}
 	cw, ch := api.canvas.Size()
 	api.oeuvres.Rebuild(os, cw, ch)
+	if api.community != nil {
+		api.community.refreshAuthors(os)
+	}
 }
 
 // ------------------------------------------------------------------
@@ -698,7 +701,9 @@ func (api *API) handleOeuvre(w http.ResponseWriter, r *http.Request) {
 		for _, f := range OeuvreDecorators {
 			f(api, []*Oeuvre{o}, viewer)
 		}
-		writeJSON(w, map[string]any{"oeuvre": o, "analyse": o.Analysis()})
+		contrib, hist := api.oeuvreStory(o)
+		writeJSON(w, map[string]any{"oeuvre": o, "analyse": o.Analysis(), "contributeurs": contrib, "histoire": hist,
+			"auteur": isAuthor(o, viewer), "sauvegardes": api.index() != nil})
 		return
 	}
 	if h, ok := OeuvreRoutes[sub]; ok {

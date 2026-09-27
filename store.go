@@ -151,6 +151,49 @@ var schema = []string{
 	);
 	CREATE INDEX admin_actions_ts ON admin_actions (ts);
 	CREATE TABLE settings (cle TEXT PRIMARY KEY, valeur TEXT NOT NULL);`,
+
+	// version 5 — community: activity, alerts, likes, exhibitions, artwork references
+	`CREATE TABLE activity (
+		id      INTEGER PRIMARY KEY,
+		kind    TEXT NOT NULL,
+		user_id INTEGER,
+		x       INTEGER,
+		y       INTEGER,
+		n       INTEGER NOT NULL DEFAULT 1,
+		ref     TEXT NOT NULL DEFAULT '',
+		texte   TEXT NOT NULL DEFAULT '',
+		ts      INTEGER NOT NULL
+	);
+	CREATE INDEX activity_ts ON activity (ts);
+	CREATE TABLE alerts (
+		id      INTEGER PRIMARY KEY,
+		user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		kind    TEXT NOT NULL,
+		payload TEXT NOT NULL DEFAULT '{}',
+		lu      INTEGER NOT NULL DEFAULT 0,
+		ts      INTEGER NOT NULL
+	);
+	CREATE INDEX alerts_user ON alerts (user_id, id);
+	CREATE TABLE likes (
+		user_id   INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		oeuvre_id INTEGER NOT NULL REFERENCES oeuvres(id) ON DELETE CASCADE,
+		ts        INTEGER NOT NULL,
+		PRIMARY KEY (user_id, oeuvre_id)
+	);
+	CREATE TABLE expositions (
+		oeuvre_id INTEGER PRIMARY KEY REFERENCES oeuvres(id) ON DELETE CASCADE,
+		salle     TEXT NOT NULL,
+		marge     INTEGER NOT NULL DEFAULT 75,
+		cadre     TEXT NOT NULL DEFAULT 'bois',
+		mot       TEXT NOT NULL DEFAULT '',
+		timelapse INTEGER NOT NULL DEFAULT 1,
+		visite    INTEGER NOT NULL DEFAULT 1,
+		par       INTEGER NOT NULL,
+		ts        INTEGER NOT NULL
+	);
+	ALTER TABLE oeuvres ADD COLUMN reference BLOB;
+	ALTER TABLE oeuvres ADD COLUMN reference_le INTEGER;
+	ALTER TABLE users ADD COLUMN alertes_musee INTEGER NOT NULL DEFAULT 1;`,
 }
 
 // OpenStore opens (and creates or migrates) the database. Use ":memory:" in tests.

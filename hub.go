@@ -79,6 +79,7 @@ type Hub struct {
 	buckets    map[uint32]*bucket
 	statTimer  *time.Timer
 	pixelHooks []func(u *User, e PixelEvent)
+	badgeHooks []func(u *User, badge string)
 }
 
 type client struct {
@@ -308,6 +309,9 @@ func (h *Hub) handlePixel(c *client, p PixelColor) {
 		if badge := BadgeByID(b); badge != nil {
 			h.SendToUser(uid, mustJSON(badgeMsg{"badge", badge.ID, badge.Name, badge.Sprite}))
 		}
+		for _, f := range h.badgeHooks {
+			f(c.user, b)
+		}
 	}
 	for _, f := range h.pixelHooks {
 		f(c.user, ev)
@@ -324,6 +328,9 @@ type badgeMsg struct {
 // OnPixel registers a function called after each accepted pixel (activity, alerts…).
 // Hooks run on the placing client's goroutine: keep them quick.
 func (h *Hub) OnPixel(f func(u *User, e PixelEvent)) { h.pixelHooks = append(h.pixelHooks, f) }
+
+// OnBadge registers a function called when a player earns a badge while drawing.
+func (h *Hub) OnBadge(f func(u *User, badge string)) { h.badgeHooks = append(h.badgeHooks, f) }
 
 // SendToUser queues a message for every socket of a player.
 func (h *Hub) SendToUser(uid uint32, msg []byte) {

@@ -530,9 +530,11 @@ func ZoneStrip(idx *BackupIndex, pos []int32, frames []int, height int) ([]byte,
 
 // ZoneImage renders the zone (with its margin) at frame k, or from the live canvas when k < 0.
 func ZoneImage(idx *BackupIndex, live *Canvas, pos []int32, k int, scale int) []byte {
-	cw, ch := live.Size()
+	var cw, ch int
 	if idx != nil && k >= 0 {
 		cw, ch = idx.W, idx.H
+	} else {
+		cw, ch = live.Size()
 	}
 	box := cropBox(pos, cw, ch)
 	img := image.NewNRGBA(image.Rect(0, 0, box.Dx()*scale, box.Dy()*scale))
