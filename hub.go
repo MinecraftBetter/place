@@ -72,14 +72,16 @@ type Hub struct {
 	maxConns int
 	now      func() time.Time
 
-	maxRate    float64 // anti-flood: pixels per second per player (0 = unlimited)
-	mu         sync.Mutex
-	clients    map[*client]struct{}
-	nextAt     map[uint32]time.Time
-	buckets    map[uint32]*bucket
-	statTimer  *time.Timer
-	pixelHooks []func(u *User, e PixelEvent)
-	badgeHooks []func(u *User, badge string)
+	maxRate     float64       // anti-flood: pixels per second per player (0 = unlimited)
+	cooldownNew time.Duration // cooldown for accounts of less than an hour
+	mode        string        // normal | readonly | maintenance
+	mu          sync.Mutex
+	clients     map[*client]struct{}
+	nextAt      map[uint32]time.Time
+	buckets     map[uint32]*bucket
+	statTimer   *time.Timer
+	pixelHooks  []func(u *User, e PixelEvent)
+	badgeHooks  []func(u *User, badge string)
 }
 
 type client struct {
@@ -147,6 +149,31 @@ func (h *Hub) Cooldown() time.Duration {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	return h.cooldown
+}
+
+// CooldownFor returns the delay that applies to a player (new accounts may wait longer).
+func (h *Hub) CooldownFor(u *User) time.Duration {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	return h.cooldownForLocked(u, h.now())
+}
+
+func (h *Hub) cooldownForLocked(u *User, now time.Time) time.Duration {
+	if u != nil && h.cooldownNew > h.cooldown && now.UnixMilli()-u.CreatedAt < int64(time.Hour/time.Millisecond) {
+		return h.cooldownNew
+	}
+	return h.cooldown
+}
+
+// UpdateUser refreshes the player attached to open sockets (suspension, role…).
+func (h *Hub) UpdateUser(u *User) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	for c := range h.clients {
+		if c.user != nil && c.user.ID == u.ID {
+			c.user = u
+		}
+	}
 }
 
 // ReadyIn returns how long the player must still wait before drawing.
@@ -277,6 +304,12 @@ func (h *Hub) handlePixel(c *client, p PixelColor) {
 	}
 	uid := c.user.ID
 	h.mu.Lock()
+	if (h.mode == "readonly" || h.mode == "maintenance") && c.user.Role != "admin" {
+		mode := h.mode
+		h.mu.Unlock()
+		fail(mode, 0)
+		return
+	}
 	if next := h.nextAt[uid]; now.Before(next) {
 		h.mu.Unlock()
 		fail("cooldown", math.Ceil(next.Sub(now).Seconds()*10)/10)
@@ -287,8 +320,8 @@ func (h *Hub) handlePixel(c *client, p PixelColor) {
 		fail("flood", math.Ceil(wait*10)/10)
 		return
 	}
-	if h.cooldown > 0 {
-		h.nextAt[uid] = now.Add(h.cooldown)
+	if cd := h.cooldownForLocked(c.user, now); cd > 0 {
+		h.nextAt[uid] = now.Add(cd)
 	}
 	h.mu.Unlock()
 

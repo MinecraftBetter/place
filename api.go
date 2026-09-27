@@ -6,22 +6,29 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync/atomic"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
 
 // API serves the JSON endpoints under /api/.
 type API struct {
-	canvas    *Canvas
-	store     *Store
-	auth      *Auth
-	hub       *Hub
-	mux       *http.ServeMux
-	mediaDir  string // uploads (avatars…); empty disables them
-	backups   *Backups
-	oeuvres   *OeuvreIndex
-	community *Community
+	canvas       *Canvas
+	store        *Store
+	auth         *Auth
+	hub          *Hub
+	mux          *http.ServeMux
+	mediaDir     string // uploads (avatars…); empty disables them
+	backups      *Backups
+	oeuvres      *OeuvreIndex
+	community    *Community
+	settings     atomic.Pointer[Settings]
+	saveInterval int
 }
+
+// SetSaveInterval tells the admin page how often place.png is written.
+func (api *API) SetSaveInterval(s int) { api.saveInterval = s }
 
 func NewAPI(c *Canvas, st *Store, a *Auth, h *Hub) *API {
 	api := &API{canvas: c, store: st, auth: a, hub: h, mux: http.NewServeMux(), oeuvres: &OeuvreIndex{}}
@@ -37,6 +44,20 @@ func NewAPI(c *Canvas, st *Store, a *Auth, h *Hub) *API {
 	api.mountCommunity()
 	api.mountSnapshots()
 	api.mountAdmin()
+	api.mountSettings()
+	api.mountAdminUsers()
+	api.mountJournal()
+	api.mountZone()
+	api.mountModeration()
+	api.mountStats()
+	settings := st.LoadSettings()
+	if st.Setting("reglages", "") == "" {
+		// Nothing saved yet: the command-line options are the starting values.
+		settings.Cooldown = int(h.cooldown / time.Second)
+		settings.MaxConns = h.maxConns
+		settings.MaxRate = int(h.maxRate)
+	}
+	api.applySettings(settings)
 	api.RefreshOeuvres()
 	return api
 }
@@ -88,7 +109,10 @@ func (api *API) handleMe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	width, height := api.canvas.Size()
+	settings := api.Settings()
 	res := map[string]any{
+		"mode":     settings.modeInfo(),
+		"announce": settings.announce(api.store.now()),
 		"user":     nil,
 		"cooldown": api.hub.Cooldown().Seconds(),
 		"ready_in": 0.0,
@@ -99,8 +123,10 @@ func (api *API) handleMe(w http.ResponseWriter, r *http.Request) {
 	if u := api.auth.User(r); u != nil {
 		res["user"] = meUser{u.Public(), u.Role}
 		res["ready_in"] = api.hub.ReadyIn(u.ID).Seconds()
+		res["cooldown"] = api.hub.CooldownFor(u).Seconds()
 		if block := u.WriteBlock(api.hub.now()); block != "" {
 			res["blocked"] = block
+			res["sanction"] = map[string]any{"until": u.SuspendedUntil, "motif": u.SanctionReason, "contact": settings.Contact}
 		}
 		res["alerts"] = api.store.UnreadAlerts(u.ID)
 	}

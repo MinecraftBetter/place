@@ -147,6 +147,7 @@ func main() {
 		},
 	})
 	api := place.NewAPI(canvas, store, auth, hub)
+	api.SetSaveInterval(saveInterval)
 	if backupIndex == "" {
 		backupIndex = filepath.Join(dataDir, "backups.idx")
 	}

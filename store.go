@@ -194,6 +194,25 @@ var schema = []string{
 	ALTER TABLE oeuvres ADD COLUMN reference BLOB;
 	ALTER TABLE oeuvres ADD COLUMN reference_le INTEGER;
 	ALTER TABLE users ADD COLUMN alertes_musee INTEGER NOT NULL DEFAULT 1;`,
+
+	// version 6 — admin: sanctions, notes, moderation reports
+	`ALTER TABLE users ADD COLUMN motif_sanction TEXT NOT NULL DEFAULT '';
+	ALTER TABLE users ADD COLUMN note_admin TEXT NOT NULL DEFAULT '';
+	CREATE TABLE reports (
+		id         INTEGER PRIMARY KEY,
+		type       TEXT NOT NULL,
+		cible      TEXT NOT NULL,
+		user_id    INTEGER,
+		auteur_id  INTEGER NOT NULL DEFAULT 0,
+		source     TEXT NOT NULL DEFAULT 'joueur',
+		raison     TEXT NOT NULL DEFAULT '',
+		contenu    TEXT NOT NULL DEFAULT '',
+		statut     TEXT NOT NULL DEFAULT 'attente',
+		decide_par INTEGER,
+		decide_le  INTEGER,
+		ts         INTEGER NOT NULL
+	);
+	CREATE INDEX reports_statut ON reports (statut, id);`,
 }
 
 // OpenStore opens (and creates or migrates) the database. Use ":memory:" in tests.
@@ -270,6 +289,8 @@ type User struct {
 	Bio            string
 	Banner         string // desert | nuit | uni | custom
 	BannerURL      string // the drawn banner when Banner == "custom"
+	SanctionReason string // why the account is suspended or banned
+	AdminNote      string // private note of the team
 	FavColor       string // a palette colour, "#RRGGBB"
 	PixelsRestored int64  // pixels put back to their previous colour (badge Restaurateur)
 	PixelsNight    int64  // pixels placed between 2 and 5 am, Paris time (badge Noctambule)
@@ -310,7 +331,7 @@ func (u *User) WriteBlock(now time.Time) string {
 const userCols = `u.id, u.fournisseur, u.id_externe, u.pseudo, u.slug, u.avatar_url, u.accent, u.role, u.statut,
 	COALESCE(u.suspendu_jusqua, 0), u.pixels_poses, u.pixels_visibles, u.cree_le, u.bio, u.banner, u.couleur_pref,
 	u.pixels_restaures, u.pixels_nuit, u.pixels_pionniers, u.badges_epingles, u.carte_publique, u.alertes_retouche,
-	u.banniere_url`
+	u.banniere_url, u.motif_sanction, u.note_admin`
 
 type scanner interface{ Scan(dest ...any) error }
 
@@ -319,7 +340,7 @@ func scanUser(row scanner) (*User, error) {
 	var pinned string
 	err := row.Scan(&u.ID, &u.Provider, &u.ExternalID, &u.Pseudo, &u.Slug, &u.AvatarURL, &u.Accent, &u.Role,
 		&u.Status, &u.SuspendedUntil, &u.PixelsPlaced, &u.PixelsVisible, &u.CreatedAt, &u.Bio, &u.Banner, &u.FavColor,
-		&u.PixelsRestored, &u.PixelsNight, &u.PixelsPioneer, &pinned, &u.MapPublic, &u.RetouchAlerts, &u.BannerURL)
+		&u.PixelsRestored, &u.PixelsNight, &u.PixelsPioneer, &pinned, &u.MapPublic, &u.RetouchAlerts, &u.BannerURL, &u.SanctionReason, &u.AdminNote)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}

@@ -941,6 +941,15 @@ func (s *Store) UndoDecision(actionID int64) error {
 	if err := json.Unmarshal([]byte(raw), &rec); err != nil {
 		return err
 	}
+	if err := s.undoRecord(rec); err != nil {
+		return err
+	}
+	_, err := s.db.Exec(`UPDATE admin_actions SET annulee = 1 WHERE id = ?`, actionID)
+	return err
+}
+
+// undoRecord takes back an artwork, its pioneer pixels and badges, and reopens its claims.
+func (s *Store) undoRecord(rec decisionRecord) error {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err
@@ -967,9 +976,6 @@ func (s *Store) UndoDecision(actionID int64) error {
 		if _, err := tx.Exec(`UPDATE claims SET statut = ?, badges = '', motif = '', oeuvre_id = NULL, decide_par = NULL, decide_le = NULL WHERE id = ?`, st, id); err != nil {
 			return err
 		}
-	}
-	if _, err := tx.Exec(`UPDATE admin_actions SET annulee = 1 WHERE id = ?`, actionID); err != nil {
-		return err
 	}
 	return tx.Commit()
 }
