@@ -183,7 +183,7 @@ html.bp .sheet { position: fixed; padding: 0 16px calc(24px + env(safe-area-inse
 }
 .conn-frozen { position: absolute; left: 16px; bottom: 16px; border-radius: 14px; padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; z-index: 12; }
 .conn-scrim { z-index: 45; }
-.conn-modal { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(420px, calc(100vw - 32px)); padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; z-index: 46; }
+.conn-modal { position: fixed; inset: 0; margin: auto; height: fit-content; width: min(420px, calc(100vw - 32px)); padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; z-index: 46; }
 
 /* ----- loading ----- */
 #loading { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 0 32px; transition: opacity .35s steps(5); }

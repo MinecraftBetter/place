@@ -114,7 +114,7 @@ function showLoupeFor(ms) {
 
 function renderLoupe(reticleShown) {
     const loupe = $("#loupe");
-    if (!reticleShown || !mobileMQ.matches || performance.now() > loupeUntil) {
+    if (!reticleShown || !mobileMQ.matches || sheetOpen() || performance.now() > loupeUntil) {
         loupe.hidden = true;
         return;
     }
