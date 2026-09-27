@@ -225,3 +225,91 @@ html.bp.page body { min-height: 100vh; min-height: 100dvh; }
 .bp a.btn-ghost:hover, .bp .d-nav a.on { color: var(--text); }
 .bp a.tab { color: var(--text-3); }
 .bp a.tab-on { color: var(--text); }
+
+/* ----- /login : « Mets ton chapeau » (m-connexion, d-connexion) ----- */
+.login-page body { display: flex; flex-direction: column; }
+.login-card { position: relative; display: flex; flex-direction: column; flex-grow: 1; background: var(--bg); }
+.login-banner { position: relative; height: 250px; flex-shrink: 0; }
+.login-desert { position: absolute; left: 50%; top: 0; width: 768px; height: 256px; margin-left: -384px; max-width: none; }
+.login-close { position: absolute; top: calc(12px + env(safe-area-inset-top)); left: 12px; border-radius: 14px; }
+.login-mascot { position: absolute; left: 50%; bottom: -34px; margin-left: -40px; width: 80px; height: 138px; }
+.login-desert-clip { position: absolute; inset: 0; overflow: hidden; }
+.login-body { padding: 52px 20px calc(28px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 22px; flex-grow: 1; }
+.login-intro { display: flex; flex-direction: column; gap: 8px; text-align: center; align-items: center; }
+.login-perks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.login-perks li { display: flex; align-items: center; gap: 12px; }
+.perk-ico { width: 40px; height: 40px; display: flex !important; align-items: center; justify-content: center; flex-shrink: 0; color: var(--accent-text); }
+.login-actions { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+.login-already { padding: 16px; display: flex; flex-direction: column; gap: 14px; margin-top: auto; }
+.login-dev { padding: 14px; display: flex; flex-direction: column; gap: 12px; margin: 6px 0; }
+.login-dev-head { display: flex; align-items: center; gap: 10px; }
+.login-dev-accounts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.login-dev-account { appearance: none; width: 100%; border: 1px solid transparent; background: transparent; color: var(--text); font: inherit; border-radius: var(--r); padding: 6px 2px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; min-width: 0; }
+.login-dev-account:hover, .login-dev-account:focus-visible { background: var(--surface-2); border-color: var(--line-2); }
+.login-dev-account .ellip { max-width: 100%; }
+.login-dev-form { display: flex; flex-direction: column; gap: 6px; }
+.login-dev-row { display: flex; gap: 8px; }
+.login-bg { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.login-bg img { width: 1024px; height: 768px; max-width: none; filter: blur(2px) saturate(.8); }
+.login-scrim { position: fixed; }
+@media not all and (max-width: 767px) {
+  @media not all and (pointer: coarse) {
+    .login-page body { align-items: center; padding: 32px 16px; background: var(--void); }
+    .login-card { width: 460px; flex-grow: 0; margin: auto 0; z-index: 30; border-radius: var(--r-xl); border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow); overflow: hidden; }
+    .login-banner { height: 150px; }
+    .login-desert { width: 500px; height: 167px; margin-left: -250px; }
+    .login-close { left: auto; right: 12px; top: 12px; }
+    .login-mascot { bottom: -26px; margin-left: -32px; width: 64px; height: 110px; }
+    .login-body { padding: 40px 32px 28px; gap: 18px; }
+    .login-intro { gap: 18px; }
+  }
+}
+
+/* ----- /home : accueil (m-accueil, d-accueil) ----- */
+.home-page body { display: flex; flex-direction: column; }
+.home-header { display: flex; align-items: center; gap: 12px; padding: calc(14px + env(safe-area-inset-top)) 16px 14px; }
+.home-header .brand .pixel { font-size: 20px; }
+.home-nav { display: flex; gap: 4px; margin-left: 20px; }
+.home-me { display: flex; border-radius: 10px; }
+.home-me .av { box-shadow: 0 0 0 2px var(--ring, var(--accent)); }
+.home-hero { display: flex; flex-direction: column-reverse; gap: 20px; padding: 8px 16px 0; }
+.home-text { display: flex; flex-direction: column; gap: 20px; }
+.home-live { display: inline-flex; align-items: center; gap: 8px; }
+.home-title { font-size: 48px; }
+.home-lead { font-size: 15px; font-weight: 400; line-height: 1.5; }
+.home-actions { display: flex; flex-direction: column; gap: 10px; }
+.home-actions .btn { width: 100%; }
+.home-free { padding: 16px; display: flex; gap: 14px; background: var(--gold-soft); border-color: color-mix(in srgb, var(--gold) 40%, transparent); }
+.home-free img { flex-shrink: 0; margin-top: 2px; }
+.home-free-text { display: flex; flex-direction: column; gap: 6px; }
+.home-controls { display: flex; gap: 18px; flex-wrap: wrap; }
+.home-controls > span { display: flex; align-items: center; gap: 6px; }
+.home-visual { position: relative; height: 262px; }
+.home-frame { position: absolute; left: 0; top: 12px; width: 300px; height: 225px; overflow: hidden; background: #fff; transform: rotate(-2deg); display: block; }
+.home-frame img { width: 100%; height: 100%; }
+.home-live-m { position: absolute; left: 12px; top: 22px; border-radius: 999px; padding: 6px 12px; display: flex; align-items: center; gap: 8px; transform: rotate(-2deg); }
+.home-mascot { position: absolute; right: 4px; bottom: -10px; width: 84px; height: 145px; }
+.home-more { padding: 28px 16px 0; }
+.home-controls-m { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.home-controls-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.home-controls-grid .card-2 { padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.home-controls-grid [data-icon] { color: var(--accent-text); }
+.home-footer { margin-top: auto; padding: 24px 16px calc(28px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; align-items: center; gap: 10px; }
+@media not all and (max-width: 767px) {
+  @media not all and (pointer: coarse) {
+    .home-header { padding: 20px 48px; }
+    .home-header .brand .pixel { font-size: 22px; }
+    .home-hero { display: grid; grid-template-columns: minmax(380px, 520px) 1fr; flex-direction: row; gap: 56px; padding: 36px 48px 0; align-items: center; }
+    .home-text { gap: 22px; }
+    .home-title { font-size: 72px; }
+    .home-lead { font-size: 18px; font-weight: 500; line-height: 1.3; }
+    .home-actions { flex-direction: row; gap: 12px; }
+    .home-actions .btn { width: auto; }
+    .home-visual { height: min(560px, 42vw); }
+    .home-frame { left: auto; right: 40px; top: 0; width: min(720px, calc(100% - 40px)); height: auto; aspect-ratio: 4 / 3; transform: rotate(-1.5deg); }
+    .home-mascot { right: 0; bottom: -20px; width: 108px; height: 186px; }
+    .home-footer { flex-direction: row; justify-content: flex-end; padding: 24px 48px; }
+  }
+}
+.home-page body { background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(255, 236, 190, .08), transparent 70%); }
+.home-page[data-theme="clair"] body { background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(201, 138, 43, .12), transparent 70%); }

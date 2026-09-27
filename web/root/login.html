@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr" class="bp page login-page" data-theme="sombre">
+<head>
+	<meta charset="utf-8">
+	<title>Connexion · BetterPlace</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+	<meta name="theme-color" content="#11100e">
+	<link rel="icon" href="/favicon.png">
+	<script>
+		try {
+			var t = JSON.parse(localStorage.getItem("bp-theme"));
+			if (t !== "clair" && t !== "sombre") t = matchMedia("(prefers-color-scheme: light)").matches ? "clair" : "sombre";
+			document.documentElement.dataset.theme = t;
+		} catch (e) {}
+	</script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Pixelify+Sans:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="css/bp.css">
+	<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+	<div class="login-bg only-d" aria-hidden="true"><img class="px" src="/place.png" alt=""></div>
+	<div class="scrim login-scrim only-d"></div>
+
+	<main class="login-card">
+		<div class="login-banner">
+			<div class="login-desert-clip"><img class="px login-desert" src="img/desert.png" alt=""></div>
+			<a class="btn btn-icon glass login-close js-next" href="/ace" aria-label="Fermer"><span data-icon="close"></span></a>
+			<img src="img/farwest-x8.png" alt="" class="px anim-bob login-mascot">
+		</div>
+
+		<div class="login-body">
+			<div class="login-intro">
+				<h1 class="fs-h1">Mets ton chapeau</h1>
+				<p class="fs-body t2 pretty">Connecte-toi pour dessiner : tes pixels porteront ton pseudo, et tu pourras revendiquer tes dessins d'avant les comptes.</p>
+			</div>
+
+			<ul class="login-perks only-m">
+				<li><span class="card-2 perk-ico" data-icon="pixel"></span><span class="fs-small">Chaque pixel posé est signé à ton nom</span></li>
+				<li><span class="card-2 perk-ico" data-icon="user"></span><span class="fs-small">Un profil public, tes badges, ton classement</span></li>
+				<li><span class="card-2 perk-ico"><img src="img/badges/pionnier.png" alt="" class="px" width="24" height="24"></span><span class="fs-small">Revendique tes dessins d'avant les comptes</span></li>
+			</ul>
+
+			<!-- Already logged in -->
+			<div class="login-already card-2" hidden>
+				<div class="me-row js-me-row"></div>
+				<a class="btn btn-primary btn-block btn-px js-next" href="/ace">Continuer</a>
+				<form method="post" action="/auth/logout" class="js-logout">
+					<input type="hidden" name="next" value="/login">
+					<button class="btn btn-ghost btn-block" type="submit">Changer de compte</button>
+				</form>
+			</div>
+
+			<div class="login-actions js-actions">
+				<a class="btn btn-primary btn-lg btn-px btn-block js-justbetter" href="/auth/justbetter" hidden><img src="img/cube-logo.png" alt="" width="22" height="22">Se connecter avec JustBetter</a>
+				<button class="btn btn-primary btn-lg btn-px btn-block js-justbetter-off" type="button" disabled><img src="img/cube-logo.png" alt="" width="22" height="22">Se connecter avec JustBetter</button>
+				<p class="fs-cap t3 pretty js-justbetter-note" style="text-align: center">La connexion avec ton compte JustBetter n'est pas encore branchée.</p>
+
+				<!-- Dev provider (-devAuth): fake accounts, no password -->
+				<section class="card login-dev js-dev" hidden>
+					<div class="login-dev-head">
+						<span class="pill st-info">Mode dev</span>
+						<span class="fs-cap t3">Faux comptes, sans mot de passe</span>
+					</div>
+					<div class="login-dev-accounts js-dev-accounts"></div>
+					<form method="post" action="/auth/dev" class="login-dev-form js-dev-form">
+						<input type="hidden" name="next" value="/ace">
+						<label class="label" for="dev-pseudo">Ou un autre pseudo</label>
+						<div class="login-dev-row">
+							<input id="dev-pseudo" name="pseudo" class="input" minlength="2" maxlength="24" required placeholder="Ton pseudo" autocomplete="off">
+							<button class="btn btn-primary btn-px" type="submit">Entrer</button>
+						</div>
+					</form>
+				</section>
+
+				<a class="btn btn-ghost btn-block js-next" href="/ace">Continuer en invité</a>
+				<p class="fs-cap t3 pretty" style="text-align: center">Ton pseudo et tes pixels sont publics. Tu peux modifier ton profil à tout moment.</p>
+			</div>
+		</div>
+	</main>
+
+	<script type="module" src="js/login.js"></script>
+</body>
+</html>

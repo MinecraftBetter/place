@@ -576,11 +576,12 @@ function renderTheme() {
     const t = currentTheme();
     for (const el of $$(".js-theme-label")) el.textContent = t === "clair" ? "Mode sombre" : "Mode clair";
     for (const b of $$(".js-theme")) b.setAttribute("aria-label", t === "clair" ? "Passer en mode sombre" : "Passer en mode clair");
-    for (const el of $$(".d-header .js-theme [data-icon]")) {
+    for (const el of $$(".js-theme [data-icon]")) {
         el.dataset.icon = t === "clair" ? "moon" : "sun";
     }
     for (const b of $$(".js-set-theme")) b.classList.toggle("on", b.dataset.theme === t);
     fillIcons($(".d-header"));
+    fillIcons($("#d-menu"));
     document.querySelector("meta[name=theme-color]").content = t === "clair" ? "#f3eee3" : "#11100e";
     app.render();
 }

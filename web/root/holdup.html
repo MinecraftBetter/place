@@ -1,38 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr" class="bp page home-page" data-theme="sombre">
 <head>
+    <meta charset="utf-8">
     <title>BetterPlace</title>
-    <link rel="stylesheet" href="desktop.css"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+    <meta name="theme-color" content="#11100e">
+    <meta name="description" content="Le canvas collaboratif de JustBetter : des pixels à partager entre amis.">
     <link rel="icon" href="/favicon.png">
-    <style>
-        #content-wrapper {
-            text-align: center;
-            color: white;
-            max-height: 100vh;
-            overflow: auto;
-        }
-    </style>
+    <script>
+        try {
+            var t = JSON.parse(localStorage.getItem("bp-theme"));
+            if (t !== "clair" && t !== "sombre") t = matchMedia("(prefers-color-scheme: light)").matches ? "clair" : "sombre";
+            document.documentElement.dataset.theme = t;
+        } catch (e) {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Pixelify+Sans:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="css/bp.css">
+    <link rel="stylesheet" href="css/app.css">
 </head>
-<body style="font-family:sans-serif;" class="center-content">
-<div id="content-wrapper">
-    <img src="farwest.png" alt="cowboy" style="width:80px;image-rendering:pixelated;margin:32px;"/>
-    <h1>BetterPlace</h1>
-    <br/>
-    <p>Attention, ce canvas est en accès libre, vos créations peuvent être endommagées par d'autres utilisateurs.</p>
-    <p>Merci de respecter les créations des autres personnes, il n'y a rien de drôle à faire du vandalisme.</p>
-    <br/>
-    <br/>
-    <h3>Contrôles :</h3>
-    <p>Clic gauche : se déplacer</p>
-    <p>Clic molette : récupérer la couleur du pixel visé</p>
-    <p>Clic droit: placer un pixel</p>
-    <br/>
-    <br/>
-    <a href="/ace" style="color: wheat; font-size: 1.1em;">Continuer</a>
-    <br/>
-    <br/>
-    <a href="/timelapse" style="color: wheat; font-size: 1.1em;">Accéder à la timelapse</a>
-</div>
+<body class="is-guest">
+<header class="home-header">
+    <a href="/home" class="brand"><img src="img/cube-logo.png" alt="" width="32" height="32"><span class="pixel">BetterPlace</span></a>
+    <nav class="home-nav only-d" aria-label="Sections">
+        <a class="btn btn-sm btn-ghost" href="/ace">Canvas</a>
+        <a class="btn btn-sm btn-ghost" href="/timelapse">Timelapse</a>
+    </nav>
+    <div class="grow"></div>
+    <button class="btn btn-sm btn-icon btn-ghost js-theme" type="button" aria-label="Changer de thème"><span data-icon="sun" data-size="18"></span></button>
+    <a class="btn btn-sm btn-primary guest-only" href="/login?next=%2Face">Se connecter</a>
+    <a class="player-only home-me js-me" href="/ace" aria-label="Mon compte"></a>
+</header>
+
+<main class="home-hero">
+    <div class="home-text">
+        <span class="fs-small t2 home-live only-d"><span class="live"></span><span class="js-online-text">Le canvas est ouvert</span></span>
+        <h1 class="fs-display home-title">BetterPlace</h1>
+        <p class="fs-h3 t2 pretty home-lead">Le canvas collaboratif de JustBetter : <span class="js-dims">1024 × 768</span> pixels à partager entre amis. Pose ton pixel et signe tes œuvres.</p>
+        <div class="home-actions">
+            <a class="btn btn-primary btn-lg btn-px" href="/ace">Entrer dans le canvas</a>
+            <a class="btn btn-lg" href="/timelapse"><span data-icon="play" data-size="18"></span>La timelapse</a>
+        </div>
+        <div class="card home-free">
+            <img src="img/badges/coeur.png" alt="" class="px" width="26" height="26">
+            <div class="home-free-text">
+                <span class="fs-body b tgold">Canvas en accès libre, entre amis</span>
+                <span class="fs-small t2 pretty">Tout le monde peut dessiner partout, même par-dessus les autres : les blagues sont les bienvenues. Le but, c'est le plus beau place possible. Si tu retouches une œuvre, fais-le avec le sourire.</span>
+            </div>
+        </div>
+        <div class="home-controls fs-small t2 only-d">
+            <span><span class="kbd">Clic gauche</span>se déplacer</span>
+            <span><span class="kbd">Clic molette</span>pipette</span>
+            <span><span class="kbd">Clic droit</span>poser un pixel</span>
+        </div>
+    </div>
+
+    <div class="home-visual">
+        <a class="home-frame frame-px" href="/ace" aria-label="Entrer dans le canvas"><img class="px js-preview" src="/place.png" alt="Le canvas actuel"></a>
+        <span class="glass home-live-m only-m"><span class="live"></span><span class="fs-cap b js-online-short">en direct</span></span>
+        <img src="img/farwest-x8.png" alt="La mascotte cowboy de BetterPlace" class="px anim-bob home-mascot">
+    </div>
+</main>
+
+<section class="home-more only-m">
+    <div class="card home-controls-m">
+        <span class="fs-over">Contrôles</span>
+        <div class="home-controls-grid">
+            <div class="card-2"><span data-icon="target" data-size="22"></span><span class="fs-small b">Toucher</span><span class="fs-cap t3">viser un pixel, la loupe s'ouvre</span></div>
+            <div class="card-2"><span data-icon="check" data-size="22"></span><span class="fs-small b">Poser</span><span class="fs-cap t3">confirmer avec le bouton</span></div>
+            <div class="card-2"><span data-icon="pinch" data-size="22"></span><span class="fs-small b">Pincer</span><span class="fs-cap t3">zoomer et dézoomer</span></div>
+            <div class="card-2"><span data-icon="move" data-size="22"></span><span class="fs-small b">Deux doigts</span><span class="fs-cap t3">se déplacer</span></div>
+        </div>
+        <span class="fs-cap t3">Appui long sur un pixel : voir qui l'a posé.</span>
+    </div>
+</section>
+
+<footer class="home-footer">
+    <div class="rule-px only-m"></div>
+    <span class="fs-small t3">Fait avec <span class="heart">❤</span> par Evan et Tiago</span>
+</footer>
+
+<script type="module">
+    import {$, $$, avatarHTML, fillIcons, toggleTheme, currentTheme} from "./js/ui.js";
+    import {formatNumber} from "./js/view.js";
+
+    const renderTheme = () => {
+        const t = currentTheme();
+        const b = $(".js-theme");
+        b.setAttribute("aria-label", t === "clair" ? "Passer en mode sombre" : "Passer en mode clair");
+        $("[data-icon]", b).dataset.icon = t === "clair" ? "moon" : "sun";
+        fillIcons(b);
+    };
+    fillIcons();
+    renderTheme();
+    $(".js-theme").addEventListener("click", toggleTheme);
+    document.addEventListener("bp-theme", renderTheme);
+
+    const img = $(".js-preview");
+    const dims = () => { if (img.naturalWidth) $(".js-dims").textContent = `${img.naturalWidth} × ${img.naturalHeight}`; };
+    img.complete ? dims() : img.addEventListener("load", dims);
+
+    fetch("/stat").then(r => r.json()).then(s => {
+        const n = s.connections;
+        $(".js-online-text").textContent = n ? `${formatNumber(n)} ${n > 1 ? "connectés" : "connecté"} en ce moment` : "Le canvas est ouvert";
+        $(".js-online-short").textContent = n ? `${formatNumber(n)} ${n > 1 ? "connectés" : "connecté"}` : "en direct";
+    }).catch(() => {});
+
+    fetch("/api/me").then(r => r.json()).then(me => {
+        if (!me.user) return;
+        document.body.classList.replace("is-guest", "is-player");
+        const me_ = $(".js-me");
+        me_.innerHTML = avatarHTML(me.user, "av av-40");
+        me_.style.setProperty("--ring", me.user.accent || "var(--accent)");
+    }).catch(() => {});
+</script>
 </body>
 </html>

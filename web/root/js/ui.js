@@ -28,6 +28,9 @@ const PATHS = {
     sun: '<rect x="8" y="8" width="8" height="8"></rect><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"></path>',
     moon: '<path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10z"></path>',
     logout: '<path d="M10 4H4v16h6M14 8l4 4-4 4M8 12h10"></path>',
+    play: '<path d="M7 4l13 8-13 8z"></path>',
+    pinch: '<path d="M4 10V4h6M20 14v6h-6M4 4l6 6M20 20l-6-6"></path>',
+    move: '<path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"></path>',
 };
 
 export function icon(name, size = 20, strokeWidth = 2) {
