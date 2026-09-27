@@ -15,7 +15,7 @@ mkdir -p "$TMP/src"
 git archive HEAD | tar -x -C "$TMP/src"
 rm -rf "$TMP/src/design"                    # maquettes : inutiles sur le serveur
 sed "s/__LAUNCH_AT__/$AT/" deploy/justbetter/docker-compose.yml > "$TMP/docker-compose.yml"
-cp deploy/justbetter/switch.sh deploy/justbetter/rollback.sh "$TMP/"
+cp deploy/justbetter/switch.sh deploy/justbetter/finish.sh deploy/justbetter/rollback.sh "$TMP/"
 # the trailer and its picture (the last second: logo and mascot)
 mkdir -p "$TMP/media"
 cp "$VIDEO" "$TMP/media/bande-annonce.mp4"

@@ -26,6 +26,7 @@ sudo bash ~/place-deploy/switch.sh
 - La v1 est sauvegardée dans `~/backups/place-v1-<date>` : code, compose et canvas.
 - Le nouveau code remplace `src/`. `src/place.png` (le canvas) et `src/.git` restent en place.
 - L'image est construite pendant que l'ancien place tourne encore, puis le conteneur est remplacé. La coupure dure quelques secondes.
+- Si l'ancien conteneur porte un autre nom (erreur « port is already allocated »), `finish.sh` l'arrête après confirmation, le garde sans redémarrage automatique, puis démarre le nouveau. On peut le relancer seul : `sudo bash ~/place-deploy/finish.sh`.
 - La bande-annonce est installée dans `data/media`. Elle passe à zéro sur le compte à rebours, et on la retrouve sur `/bande-annonce`.
 - Au premier démarrage :
   - les sauvegardes (`bak/` et `archives/`) sont indexées en quelques minutes ;

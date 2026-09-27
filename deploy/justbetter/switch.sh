@@ -36,6 +36,11 @@ cd "$PLACE"
 echo "== Construction de l'image (quelques minutes, l'ancien place tourne encore)"
 $COMPOSE build
 echo "== Bascule"
+# the v1 may run in a container this compose project does not know (other name): finish.sh
+# stops it (after asking) and starts the new one
+if [ -z "${REHEARSAL:-}" ] && docker ps --filter publish=20003 --format '{{.Names}}' | grep -qvx "$(basename "$PLACE" | tr '[:upper:]' '[:lower:]')-place-1"; then
+	exec bash "$STAGE/finish.sh"
+fi
 $COMPOSE up -d
 for i in $(seq 1 60); do
 	if curl -fs "$HEALTH" >/dev/null; then
