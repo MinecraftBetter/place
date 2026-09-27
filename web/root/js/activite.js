@@ -57,6 +57,22 @@ function alertHTML(a) {
             sub = relativeTime(a.ts);
             href = p.href || "/musee";
             break;
+        case "livre_or":
+            title = `${escapeHTML(p.by?.pseudo ?? "Quelqu'un")} a signé ton livre d'or`;
+            sub = `« ${escapeHTML(p.texte ?? "")} » · ${relativeTime(a.ts)}`;
+            href = p.href || "/moi/musee";
+            img = avatarHTML(p.by, "av av-40");
+            break;
+        case "moderation":
+            title = "L'équipe a masqué un contenu";
+            sub = `${escapeHTML(p.texte ?? "")} · ${relativeTime(a.ts)}`;
+            href = "/moi/profil";
+            break;
+        case "message_equipe":
+            title = `Message de l'équipe${p.par ? ` (${escapeHTML(p.par.pseudo)})` : ""}`;
+            sub = `${escapeHTML(p.texte ?? "")} · ${relativeTime(a.ts)}`;
+            img = `<img class="px" src="/img/cube-logo.png" alt="" width="32" height="32">`;
+            break;
         default:
             title = escapeHTML(a.kind);
             sub = relativeTime(a.ts);

@@ -265,10 +265,13 @@ func (api *API) hideContent(rep *Report) (moderationRecord, error) {
 	return rec, nil
 }
 
-// HideHandlers hide other contents (museums…) and UnhideHandlers put them back.
+// HideHandlers hide other contents (museums…) and UnhideHandlers put them back
+// (by record field). KeepHandlers act on « garder » (a sound gets accepted) and
+// return the field and value an undo gives to UnhideHandlers.
 var (
 	HideHandlers   = map[string]func(api *API, rep *Report, rec moderationRecord) (moderationRecord, error){}
 	UnhideHandlers = map[string]func(api *API, rec moderationRecord, cible string) error{}
+	KeepHandlers   = map[string]func(api *API, rep *Report) (field, value string){}
 )
 
 // POST /api/admin/reports/:id/{garder,masquer,message}
@@ -311,7 +314,11 @@ func (api *API) handleReportDecision(w http.ResponseWriter, r *http.Request, adm
 	switch sub {
 	case "garder":
 		api.store.db.Exec(`UPDATE reports SET statut = 'garde', decide_par = ?, decide_le = ? WHERE id = ?`, admin.ID, now, id)
-		rj, _ := json.Marshal(moderationRecord{Report: id, Statut: rep.Statut})
+		keep := moderationRecord{Report: id, Statut: rep.Statut}
+		if h, ok := KeepHandlers[rep.Type]; ok {
+			keep.Field, keep.Value = h(api, rep)
+		}
+		rj, _ := json.Marshal(keep)
 		api.logAction(admin, "moderation.garder", fmt.Sprintf("report:%d", id), string(rj), "", fmt.Sprintf("%s de %s gardé", label, who))
 	case "masquer":
 		rec, err := api.hideContent(rep)

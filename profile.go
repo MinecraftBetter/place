@@ -623,7 +623,8 @@ func MediaHandler(dir string) http.Handler {
 			http.NotFound(w, r)
 			return
 		}
-		if (strings.HasPrefix(clean, "/avatars/") || strings.HasPrefix(clean, "/banners/")) && !avatarNameRE.MatchString(filepath.Base(clean)) {
+		if (strings.HasPrefix(clean, "/avatars/") || strings.HasPrefix(clean, "/banners/")) && !avatarNameRE.MatchString(filepath.Base(clean)) ||
+			strings.HasPrefix(clean, "/sons/") && !sonNameRE.MatchString(filepath.Base(clean)) {
 			http.NotFound(w, r)
 			return
 		}

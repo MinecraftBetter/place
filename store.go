@@ -213,6 +213,42 @@ var schema = []string{
 		ts         INTEGER NOT NULL
 	);
 	CREATE INDEX reports_statut ON reports (statut, id);`,
+
+	// version 7 — players' museums (bonus)
+	`CREATE TABLE musees (
+		user_id   INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+		config    TEXT NOT NULL,
+		publie    INTEGER NOT NULL DEFAULT 0,
+		visites   INTEGER NOT NULL DEFAULT 0,
+		cree_le   INTEGER NOT NULL,
+		maj_le    INTEGER NOT NULL,
+		publie_le INTEGER
+	);
+	CREATE TABLE musee_likes (
+		user_id  INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		musee_id INTEGER NOT NULL REFERENCES musees(user_id) ON DELETE CASCADE,
+		ts       INTEGER NOT NULL,
+		PRIMARY KEY (user_id, musee_id)
+	);
+	CREATE TABLE livre_or (
+		id        INTEGER PRIMARY KEY,
+		musee_id  INTEGER NOT NULL REFERENCES musees(user_id) ON DELETE CASCADE,
+		auteur_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		texte     TEXT NOT NULL,
+		masque    INTEGER NOT NULL DEFAULT 0,
+		ts        INTEGER NOT NULL
+	);
+	CREATE INDEX livre_or_musee ON livre_or (musee_id, id);
+	CREATE TABLE sons (
+		id      INTEGER PRIMARY KEY,
+		user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		url     TEXT NOT NULL,
+		nom     TEXT NOT NULL,
+		type    TEXT NOT NULL,
+		duree   REAL NOT NULL DEFAULT 0,
+		statut  TEXT NOT NULL DEFAULT 'ok',
+		ts      INTEGER NOT NULL
+	);`,
 }
 
 // OpenStore opens (and creates or migrates) the database. Use ":memory:" in tests.

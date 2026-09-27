@@ -34,6 +34,9 @@ func init() {
 	AddPage("/musee", "musee.html")
 	AddPage("/musee/exposer", "exposer.html")
 	AddPage("/musee/visite", "visite.html")
+	AddPage("/musees", "musees.html")
+	AddPage("/moi/musee", "musee-editeur.html")
+	AddPage("/moi/musee/", "musee-editeur.html")
 	AddPage("/admin", "admin.html")
 	AddPage("/admin/", "admin.html")
 }
@@ -44,6 +47,12 @@ type PagesHandler struct {
 }
 
 func (p PagesHandler) match(path string) string {
+	// /u/<pseudo>/musee: the player's museum, under the profile prefix
+	if rest, ok := strings.CutPrefix(path, "/u/"); ok {
+		if _, sub, _ := strings.Cut(strings.TrimSuffix(rest, "/"), "/"); sub == "musee" {
+			return "musee-perso.html"
+		}
+	}
 	best := ""
 	file := ""
 	for _, r := range pageRoutes {

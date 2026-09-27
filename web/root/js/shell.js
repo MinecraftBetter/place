@@ -51,6 +51,7 @@ export async function mountShell({active = "", overlay = false} = {}) {
             <a class="me-row" href="/u/${escapeHTML(u.slug)}">${avatarHTML(u, "av av-40")}<div class="me-text"><span class="fs-body b ellip">${escapeHTML(u.pseudo)}</span><span class="fs-cap t3">Voir mon profil</span></div></a>
             <div class="rule"></div>
             <a class="btn btn-sm btn-ghost btn-block menu-item" href="/moi/profil">${icon("user", 18)}Modifier mon profil</a>
+            <a class="btn btn-sm btn-ghost btn-block menu-item" href="/moi/musee">${icon("museum", 18)}Mon musée</a>
             ${u.role === "admin" ? `<a class="btn btn-sm btn-ghost btn-block menu-item" href="/admin">${icon("shield", 18)}Administration</a>` : ""}
             <button class="btn btn-sm btn-ghost btn-block menu-item js-shell-theme" type="button">${icon(currentTheme() === "clair" ? "moon" : "sun", 18)}<span>${currentTheme() === "clair" ? "Mode sombre" : "Mode clair"}</span></button>
             <form method="post" action="/auth/logout"><input type="hidden" name="next" value="${escapeHTML(location.pathname)}">

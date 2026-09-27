@@ -25,6 +25,7 @@ type API struct {
 	community    *Community
 	settings     atomic.Pointer[Settings]
 	saveInterval int
+	museums      *museumAPI
 }
 
 // SetSaveInterval tells the admin page how often place.png is written.
@@ -50,6 +51,7 @@ func NewAPI(c *Canvas, st *Store, a *Auth, h *Hub) *API {
 	api.mountZone()
 	api.mountModeration()
 	api.mountStats()
+	api.mountMuseums()
 	settings := st.LoadSettings()
 	if st.Setting("reglages", "") == "" {
 		// Nothing saved yet: the command-line options are the starting values.

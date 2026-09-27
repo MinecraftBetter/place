@@ -68,6 +68,8 @@ export function setupCommunity(app) {
                     <button class="btn btn-sm" type="button" data-open-alert="${a.id}">Voir</button>`, {timeout: 8000});
             } else if (a.kind === "claim_validee") {
                 toast(`<img class="px anim-bob" src="/img/badges/pionnier.png" alt="" width="28" height="28"><span class="toast-text"><span class="fs-small b">« ${escapeHTML(a.titre)} » est validée !</span><span class="fs-cap t3">Ton œuvre a son cartel.</span></span><a class="btn btn-sm" href="/oeuvre/${a.oeuvre}">Voir</a>`, {timeout: 8000});
+            } else if (a.kind === "livre_or") {
+                toast(`${avatarHTML(a.by, "av av-24")}<span class="toast-text"><span class="fs-small b">${escapeHTML(a.by?.pseudo ?? "")} a signé ton livre d'or</span><span class="fs-cap t3">« ${escapeHTML(a.texte ?? "")} »</span></span><a class="btn btn-sm" href="${escapeHTML(a.href ?? "/moi/musee")}">Voir</a>`, {timeout: 8000});
             } else {
                 toast(`<span class="fs-small b">Nouvelle alerte</span><a class="btn btn-sm" href="/activite?vue=alertes">Voir</a>`);
             }
