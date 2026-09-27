@@ -40,6 +40,10 @@ var devAuth bool
 var admins string
 var backupSources string
 var backupIndex string
+var lldapURL string
+var adminGroups string
+var launchAt string
+var launchGate string
 
 func init() {
 	flag.StringVar(&port, "port", ":8080", "The address and port the fileserver listens at.")
@@ -58,6 +62,10 @@ func init() {
 	flag.StringVar(&admins, "admins", "", "Comma-separated slugs of the players who are admins (e.g. tiago,evan).")
 	flag.StringVar(&backupSources, "backups", "./bak,./web/root/archives", "Comma-separated backup sources: directories of captures and/or archive zips.")
 	flag.StringVar(&backupIndex, "backupIndex", "", "Where to keep the backup index. (default: backups.idx in -data)")
+	flag.StringVar(&lldapURL, "lldap", "", "LLDAP of JustBetter for the logins (e.g. http://192.168.1.84:1390/); empty = no JustBetter login.")
+	flag.StringVar(&adminGroups, "adminGroups", "admins,lldap_admin", "LLDAP groups whose members are admins of the place.")
+	flag.StringVar(&launchAt, "launchAt", "", "Release date for the countdown, Paris time 2006-01-02T15:04 (only while none is set in /admin/reglages).")
+	flag.StringVar(&launchGate, "launchGate", "tout", "Before the release: tout (site closed) or accueil (home page only). Used with -launchAt.")
 	flag.BoolVar(&devAuth, "devAuth", false, "Enable the \"dev\" login provider (fake accounts, no password). Never in production.")
 }
 
@@ -107,6 +115,10 @@ func main() {
 	}
 
 	var providers []place.Provider
+	if lldapURL != "" {
+		providers = append(providers, place.NewJustBetterProvider(lldapURL, strings.Split(adminGroups, ",")))
+		log.Info("JustBetter login through LLDAP at ", lldapURL)
+	}
 	if devAuth {
 		log.Warning("The \"dev\" login provider is enabled: anyone can log in as anyone.")
 		providers = append(providers, place.DevProvider{})
@@ -175,11 +187,18 @@ func main() {
 		}
 	}()
 
+	if launchAt != "" {
+		if err := api.SeedLaunch(launchAt, launchGate); err != nil {
+			log.Warning("Launch date: ", err)
+		}
+	}
+	api.WatchLaunch()
+
 	mux := http.NewServeMux()
 	mux.Handle("/api/", api)
 	mux.Handle("/auth/", auth)
 	mux.Handle("/media/", place.MediaHandler(mediaDir))
-	pages := place.PagesHandler{Root: root}
+	pages := place.PagesHandler{Root: root, Rewrite: api.RewritePage}
 	for _, p := range pages.Paths() {
 		mux.Handle(p, pages)
 	}
@@ -189,7 +208,7 @@ func main() {
 	server := http.Server{
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)), //disable HTTP/2
 		Addr:         port,
-		Handler:      xffmw.Handler(mux),
+		Handler:      xffmw.Handler(api.LaunchGate(mux)),
 	}
 	log.Info("Listening on ", port)
 	log.Fatal(server.ListenAndServe())

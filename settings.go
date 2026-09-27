@@ -13,32 +13,36 @@ import (
 )
 
 type Settings struct {
-	Cooldown     int    `json:"cooldown"`     // seconds between two pixels
-	CooldownNew  int    `json:"cooldown_new"` // seconds, accounts of less than an hour
-	Mode         string `json:"mode"`         // normal | readonly | maintenance
-	ModeMsg      string `json:"mode_msg"`     // shown in read-only / maintenance
-	ModeUntil    string `json:"mode_until"`   // free text, e.g. "18:00"
-	BannerOn     bool   `json:"banner_on"`    // announcement banner
-	BannerText   string `json:"banner_text"`
-	BannerStyle  string `json:"banner_style"` // event | info | danger
-	BannerFrom   string `json:"banner_from"`  // YYYY-MM-DD, empty = now
-	BannerUntil  string `json:"banner_until"` // YYYY-MM-DD, empty = no end
-	MaxConns     int    `json:"max_conns"`
-	MaxRate      int    `json:"max_rate"`
-	Contact      string `json:"contact"`       // address shown to suspended players
-	WordsFilter  bool   `json:"words_filter"`  // forbidden words in pseudos, bios, titles
-	Words        string `json:"words"`         // comma-separated
-	NoLinks      bool   `json:"no_links"`      // no links in bios
-	AvatarCheck  bool   `json:"avatar_check"`  // avatars reviewed before being shown
-	SoundsCheck  bool   `json:"sounds_check"`  // museum sounds reviewed (phase 6)
-	VoiceLimit   bool   `json:"voice_limit"`   // voice comments limited to 30 s
-	GuestbookFlt bool   `json:"guestbook_flt"` // guestbook filter
+	Cooldown      int    `json:"cooldown"`     // seconds between two pixels
+	CooldownNew   int    `json:"cooldown_new"` // seconds, accounts of less than an hour
+	Mode          string `json:"mode"`         // normal | readonly | maintenance
+	ModeMsg       string `json:"mode_msg"`     // shown in read-only / maintenance
+	ModeUntil     string `json:"mode_until"`   // free text, e.g. "18:00"
+	BannerOn      bool   `json:"banner_on"`    // announcement banner
+	BannerText    string `json:"banner_text"`
+	BannerStyle   string `json:"banner_style"` // event | info | danger
+	BannerFrom    string `json:"banner_from"`  // YYYY-MM-DD, empty = now
+	BannerUntil   string `json:"banner_until"` // YYYY-MM-DD, empty = no end
+	MaxConns      int    `json:"max_conns"`
+	MaxRate       int    `json:"max_rate"`
+	Contact       string `json:"contact"`        // address shown to suspended players
+	WordsFilter   bool   `json:"words_filter"`   // forbidden words in pseudos, bios, titles
+	Words         string `json:"words"`          // comma-separated
+	NoLinks       bool   `json:"no_links"`       // no links in bios
+	AvatarCheck   bool   `json:"avatar_check"`   // avatars reviewed before being shown
+	SoundsCheck   bool   `json:"sounds_check"`   // museum sounds reviewed (phase 6)
+	VoiceLimit    bool   `json:"voice_limit"`    // voice comments limited to 30 s
+	GuestbookFlt  bool   `json:"guestbook_flt"`  // guestbook filter
+	LaunchAt      string `json:"launch_at"`      // release, Paris time "2006-01-02T15:04" (launch.go)
+	LaunchGate    string `json:"launch_gate"`    // off | tout (site closed until then) | accueil (home page only)
+	LaunchTrailer bool   `json:"launch_trailer"` // play the trailer at zero
 }
 
 var defaultSettings = Settings{
 	Mode: "normal", BannerStyle: "event", MaxConns: 64, MaxRate: 30,
 	WordsFilter: true, Words: "connard,connasse,salope,pute,encule,enculé,nazi,pd,fdp,ntm",
 	NoLinks: true, SoundsCheck: true, VoiceLimit: true, GuestbookFlt: true,
+	LaunchGate: "off", LaunchTrailer: true,
 }
 
 func (s *Store) LoadSettings() Settings {
@@ -60,6 +64,10 @@ func (api *API) applySettings(st Settings) {
 	api.hub.mu.Lock()
 	api.hub.cooldownNew = time.Duration(st.CooldownNew) * time.Second
 	api.hub.mode = st.Mode
+	api.hub.closedUntil = time.Time{}
+	if t, ok := st.launchTime(); ok && st.LaunchGate == "tout" {
+		api.hub.closedUntil = t // nobody but the admins draws before the release
+	}
 	if st.MaxConns > 0 {
 		api.hub.maxConns = st.MaxConns
 	}
@@ -114,7 +122,7 @@ func (api *API) handlePublicStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	st := api.Settings()
-	writeJSON(w, map[string]any{"mode": st.modeInfo(), "announce": st.announce(api.store.now()), "contact": st.Contact})
+	writeJSON(w, map[string]any{"mode": st.modeInfo(), "announce": st.announce(api.store.now()), "contact": st.Contact, "launch": api.launchStatus(st), "now": api.store.now().UnixMilli()})
 }
 
 // GET/PUT /api/admin/settings
@@ -136,6 +144,12 @@ func (api *API) handleSettings(w http.ResponseWriter, r *http.Request, admin *Us
 		}
 		if st.BannerStyle != "info" && st.BannerStyle != "danger" {
 			st.BannerStyle = "event"
+		}
+		if st.LaunchGate != "tout" && st.LaunchGate != "accueil" {
+			st.LaunchGate = "off"
+		}
+		if _, err := time.ParseInLocation(launchLayout, st.LaunchAt, Paris); err != nil {
+			st.LaunchAt = ""
 		}
 		st.MaxConns = max(1, min(st.MaxConns, 10000))
 		st.MaxRate = max(0, min(st.MaxRate, 1000))
@@ -184,6 +198,13 @@ func settingsDiff(a, b Settings) string {
 			out = append(out, "bannière « "+b.BannerText+" »")
 		} else {
 			out = append(out, "bannière retirée")
+		}
+	}
+	if a.LaunchAt != b.LaunchAt || a.LaunchGate != b.LaunchGate {
+		if t, ok := b.launchTime(); ok && b.LaunchGate != "off" {
+			out = append(out, "lancement "+frenchLaunchDate(t))
+		} else {
+			out = append(out, "compte à rebours coupé")
 		}
 	}
 	if a.MaxConns != b.MaxConns {

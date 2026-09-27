@@ -18,6 +18,23 @@ Les six étapes du HANDOFF (§9) sont codées, plus les trois demandes ajoutées
 | 5. Admin complet | tableau de bord, utilisateurs, outil zone, modération, journal annulable avec export CSV, réglages ; côté joueur : lecture seule, maintenance, bannière d'annonce, compte suspendu, « Signaler » | `9f802a4`, `45038e5` |
 | 6. Musées perso | annuaire `/musees`, visite `/u/:pseudo/musee`, éditeur `/moi/musee`, livre d'or, coups de cœur, sons modérés | `07ec425` |
 
+## Sortie : compte à rebours, bande-annonce, connexion, mise en ligne
+
+- **Connexion JustBetter** : `/login` demande l'identifiant et le mot de passe JustBetter, vérifiés auprès de LLDAP comme sur justbetter.fr et JUST-TCG (`justbetter.go`, option `-lldap`).
+  - Les membres des groupes `Admins` et `lldap_admin` sont admins.
+  - Après 5 échecs en 10 minutes, la même adresse doit attendre.
+- **Compte à rebours** (`/lancement`, le lien à envoyer sur Discord) : la mascotte, le décompte, « Ajouter à mon agenda », et un son facultatif pour les 10 dernières secondes.
+  - À zéro, ta bande-annonce se lance (préchargée pendant la dernière minute), puis le bouton « Entrer sur le place ».
+  - Pendant l'attente, le serveur renvoie les visiteurs vers le décompte : en mode « Tout fermé », personne sauf les admins ne dessine ; « Accueil seulement » laisse le reste ouvert.
+  - À l'heure pile, tout s'ouvre sans intervention.
+  - La date se règle dans `/admin/reglages` → Lancement, ou au premier démarrage avec `LAUNCH_AT`.
+- **Aperçu Discord** : titre, description avec la date et image `img/og-lancement.png`. `/bande-annonce` annonce aussi la vidéo (`og:video`).
+- **Bande-annonce** : ta vidéo (`~/Downloads/betterplace-trailer.mp4`), servie depuis `data/media/bande-annonce.mp4`. Elle est aussi sur `/bande-annonce`.
+- **Mise en ligne** : voir `deploy/justbetter/README.md`.
+  - Deux étapes : `stage.sh` depuis le PC, puis `sudo bash ~/place-deploy/switch.sh` sur le serveur.
+  - La v1 est sauvegardée, le canvas conservé, et le retour arrière se fait avec `rollback.sh`.
+  - L'image Docker a été construite et essayée en local avec podman.
+
 ## Données réelles (mises à jour le 27/09/2026)
 
 - **Canvas** : celui de place.justbetter.fr au 27/09/2026. L'ancien canvas de dev (copie du 28/03/2024) est remplacé.
@@ -78,8 +95,7 @@ node design/outils/demo-seed.mjs
 
 ## Ce qui reste à faire
 
-- **Connexion JustBetter (OIDC)** : seul le fournisseur de dev existe pour l'instant. Tant qu'elle n'est pas branchée, on ne peut pas déployer (voir `PLAN-PHASE-1.md` §8, point 1).
-- **Déploiement** : rien n'a été fait, j'attends ton feu vert.
+- **Déploiement** : tout est prêt, il ne manque que la date de sortie pour lancer `stage.sh`.
 - **Serveur actuel** : `timelapse.sh` ne produit plus d'archives zip (ni sans doute `timelapse.mp4`) depuis avril 2025. Seul `backup.sh` tourne encore. À relancer côté serveur si tu veux les zips des mois récents.
 - **Admin** : le motif d'une suspension et le message à un joueur se saisissent encore dans les fenêtres natives du navigateur (`prompt()`). Une vraie modale serait plus propre.
 - **Musées** : l'animation « Rejouer sa construction » n'existe que pour les œuvres présentes dans les sauvegardes. Pour les autres, l'œuvre reste fixe.

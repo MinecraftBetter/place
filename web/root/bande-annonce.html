@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr" class="bp launch-page" data-theme="sombre">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+	<meta name="theme-color" content="#3ee06c">
+	<link rel="icon" href="/favicon.png">
+	<meta name="description" content="{{DESCRIPTION}}">
+	<meta property="og:site_name" content="JustBetter">
+	<meta property="og:type" content="video.other">
+	<meta property="og:video" content="{{VIDEO}}">
+	<meta property="og:video:secure_url" content="{{VIDEO}}">
+	<meta property="og:video:type" content="video/mp4">
+	<meta property="og:video:width" content="1920">
+	<meta property="og:video:height" content="1080">
+	<meta property="og:description" content="{{DESCRIPTION}}">
+	<meta property="og:image" content="{{ORIGIN}}/img/og-lancement.png">
+	<meta property="og:image:width" content="1200">
+	<meta property="og:image:height" content="630">
+	<meta name="twitter:card" content="summary_large_image">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Pixelify+Sans:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="/css/bp.css">
+	<link rel="stylesheet" href="/css/lancement.css">
+	<meta property="og:title" content="BetterPlace · la bande-annonce">
+	<meta property="og:url" content="{{ORIGIN}}/bande-annonce">
+	<title>Bande-annonce · BetterPlace</title>
+</head>
+<body>
+	<main class="ba">
+		<video class="js-video" controls playsinline preload="metadata" hidden></video>
+		<div class="ba-missing js-missing" hidden>
+			<img class="px anim-bob" src="/img/farwest-x8.png" alt="" width="72" height="124">
+			<h1 class="pixel" style="margin: 0">La bande-annonce arrive bientôt</h1>
+		</div>
+		<div class="ba-top"><a class="btn glass js-back" href="/lancement">Retour</a></div>
+		<div class="ba-bar"><a class="btn btn-primary btn-lg btn-px js-go" href="/ace" hidden>Entrer sur le place</a></div>
+	</main>
+	<script type="module" src="/js/bande-annonce.js"></script>
+</body>
+</html>

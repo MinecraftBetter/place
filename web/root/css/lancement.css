@@ -1,0 +1,51 @@
+/* BetterPlace — compte à rebours (/lancement) et bande-annonce (/bande-annonce) */
+
+.launch-page, .launch-page body { height: 100%; }
+.launch-page body { margin: 0; background: #0b0a09; color: #f3efe6; overflow: hidden; }
+
+/* ----- la bande-annonce (vidéo) ----- */
+.ba { position: absolute; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; }
+.ba video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+.ba-bar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; padding: 16px 16px calc(16px + env(safe-area-inset-bottom)); pointer-events: none; }
+.ba-bar > * { pointer-events: auto; }
+.ba-top { position: absolute; top: calc(12px + env(safe-area-inset-top)); right: 12px; z-index: 2; display: flex; gap: 8px; }
+.ba-missing { display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; padding: 24px; }
+
+/* ----- compte à rebours ----- */
+.cd { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; padding: 24px 16px; text-align: center; }
+.cd-bg { position: absolute; inset: -40px; background-size: cover; background-position: center; image-rendering: pixelated; filter: blur(6px) brightness(.28) saturate(1.2); transform: scale(1.05); }
+.cd-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 55% at 50% 100%, rgba(240, 183, 90, .16), transparent 70%); }
+.cd > *:not(.cd-bg):not(.cd-glow) { position: relative; }
+.cd-brand { display: flex; align-items: center; gap: 12px; font-size: 26px; }
+.cd-scene { display: flex; align-items: flex-end; gap: 16px; }
+.cd-scene img { width: 90px; height: 155px; }
+.cd-scene .bulle { margin-bottom: 118px; max-width: 280px; font-size: 16px; text-align: left; }
+.cd h1 { font-size: clamp(30px, 6vw, 56px); margin: 0; line-height: 1.1; }
+.cd-date { font-size: clamp(16px, 2.4vw, 22px); color: #cfc6b4; margin: -8px 0 0; }
+.cd-date b { color: #f5c77a; }
+.cd-clock { display: flex; gap: clamp(8px, 2vw, 18px); }
+.cd-unit { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.cd-num { font-family: "Pixelify Sans", monospace; font-size: clamp(40px, 11vw, 104px); line-height: 1; min-width: 1.4em; padding: 14px 10px 12px; background: #1a1916; border: 3px solid #34322d; box-shadow: 0 8px 0 #000, inset 0 -6px 0 rgba(0, 0, 0, .35); border-radius: 10px; font-variant-numeric: tabular-nums; }
+.cd-num.tick { animation: cdtick .25s steps(3); }
+@keyframes cdtick { from { transform: translateY(-6px); color: #f5c77a; } to { transform: none; } }
+.cd-label { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #a39b8c; }
+.cd-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.cd-final { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; background: #0b0a09; font-family: "Pixelify Sans", monospace; font-size: min(46vh, 60vw); line-height: 1; color: #f5c77a; text-shadow: 0 12px 0 #000; }
+.cd-final span { display: block; }
+.cd-final span.tick { animation: cdboom .9s steps(6); }
+@keyframes cdboom { from { transform: scale(1.4); opacity: 1; } to { transform: scale(.9); opacity: .6; } }
+.cd-credit { position: absolute; bottom: 14px; left: 0; right: 0; font-size: 13px; color: #8f8778; }
+.cd-sound[aria-pressed="true"] { box-shadow: inset 0 0 0 2px #3ee06c; }
+.cd-trailer { position: absolute; inset: 0; z-index: 25; }
+@media (max-width: 600px) {
+  .cd-scene img { width: 60px; height: 103px; }
+  .cd-scene .bulle { margin-bottom: 70px; font-size: 14px; }
+  .cd-num { padding: 10px 6px 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .cd-num.tick, .cd-final span.tick { animation: none; } }
+.cd-credit .heart { color: #aa5757; }
+
+.launch-page [hidden] { display: none !important; }
+.bp .cd a.btn, .bp .ba a.btn { color: #f3efe6; text-decoration: none; }
+.bp .cd a.btn-primary, .bp .ba a.btn-primary { color: var(--accent-ink, #0b1a10); }
+.cd-actions .btn svg, .ba .btn svg { flex-shrink: 0; }

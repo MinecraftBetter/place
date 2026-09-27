@@ -118,6 +118,7 @@ func (api *API) handleMe(w http.ResponseWriter, r *http.Request) {
 	res := map[string]any{
 		"mode":     settings.modeInfo(),
 		"announce": settings.announce(api.store.now()),
+		"launch":   api.launchStatus(settings),
 		"user":     nil,
 		"cooldown": api.hub.Cooldown().Seconds(),
 		"ready_in": 0.0,

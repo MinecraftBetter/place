@@ -1,0 +1,20 @@
+# place.justbetter.fr — the new BetterPlace (replaces the compose of the v1 in
+# /mnt/JustFast/Configs/RPlace; the v1 file is kept by switch.sh as docker-compose.v1.yml).
+services:
+  place:
+    image: justbetter.place
+    build:
+      context: src
+    volumes:
+      - ./bak:/bak                        # captures of backup.sh (every minute), unchanged
+      - ./src/place.png:/place.png        # the canvas, unchanged
+      - ./archives:/web/root/archives     # monthly zips, unchanged
+      - ./data:/data                      # new: accounts, pixel owners, uploads, backup index
+    environment:
+      LLDAP_URL: http://192.168.1.84:1390/
+      ADMIN_GROUPS: admins,lldap_admin
+      LAUNCH_AT: "__LAUNCH_AT__"          # release date, Paris time (only at the first start)
+      LAUNCH_GATE: tout                   # tout: site closed until then · accueil: home page only
+    ports:
+      - 20003:8080
+    restart: always

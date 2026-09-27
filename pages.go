@@ -37,13 +37,16 @@ func init() {
 	AddPage("/musees", "musees.html")
 	AddPage("/moi/musee", "musee-editeur.html")
 	AddPage("/moi/musee/", "musee-editeur.html")
+	AddPage("/lancement", "lancement.html")
+	AddPage("/bande-annonce", "bande-annonce.html")
 	AddPage("/admin", "admin.html")
 	AddPage("/admin/", "admin.html")
 }
 
 // PagesHandler serves the page registered for a request path.
 type PagesHandler struct {
-	Root string
+	Root    string
+	Rewrite func(r *http.Request, page string) string // fills server-side values (link previews)
 }
 
 func (p PagesHandler) match(path string) string {
@@ -91,5 +94,8 @@ func (p PagesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-cache")
+	if p.Rewrite != nil {
+		b = []byte(p.Rewrite(r, string(b)))
+	}
 	w.Write(b)
 }

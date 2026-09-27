@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr" class="bp launch-page" data-theme="sombre">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+	<meta name="theme-color" content="#3ee06c">
+	<link rel="icon" href="/favicon.png">
+	<meta name="description" content="{{DESCRIPTION}}">
+	<meta property="og:site_name" content="JustBetter">
+	<meta property="og:type" content="website">
+	<meta property="og:description" content="{{DESCRIPTION}}">
+	<meta property="og:image" content="{{ORIGIN}}/img/og-lancement.png">
+	<meta property="og:image:width" content="1200">
+	<meta property="og:image:height" content="630">
+	<meta name="twitter:card" content="summary_large_image">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Pixelify+Sans:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="/css/bp.css">
+	<link rel="stylesheet" href="/css/lancement.css">
+	<meta property="og:title" content="BetterPlace revient !">
+	<meta property="og:url" content="{{ORIGIN}}/lancement">
+	<title>BetterPlace revient !</title>
+</head>
+<body>
+	<main class="cd js-cd" aria-live="polite">
+		<div class="cd-bg" style="background-image: url(/place.png)"></div><div class="cd-glow"></div>
+		<div class="cd-brand"><img src="/img/cube-logo.png" alt="" width="40" height="40"><span class="pixel b">BetterPlace</span></div>
+		<div class="cd-scene"><img class="px anim-bob" src="/img/farwest-x8.png" alt="La mascotte cowboy"><div class="bulle js-bulle">Howdy ! Le nouveau place arrive…</div></div>
+		<h1 class="pixel js-title">Le nouveau place arrive</h1>
+		<p class="cd-date js-date">La date arrive très bientôt.</p>
+		<div class="cd-clock js-clock" hidden>
+			<div class="cd-unit"><span class="cd-num js-d">00</span><span class="cd-label">jours</span></div>
+			<div class="cd-unit"><span class="cd-num js-h">00</span><span class="cd-label">heures</span></div>
+			<div class="cd-unit"><span class="cd-num js-m">00</span><span class="cd-label">minutes</span></div>
+			<div class="cd-unit"><span class="cd-num js-s">00</span><span class="cd-label">secondes</span></div>
+		</div>
+		<div class="cd-actions">
+			<button class="btn btn-lg btn-px cd-sound js-sound" type="button" aria-pressed="false"><span data-icon="music" data-size="20"></span><span class="js-sound-label">Activer le son pour le jour J</span></button>
+			<a class="btn btn-lg js-ics" href="#" download="betterplace.ics" hidden><span data-icon="clock" data-size="20"></span>Ajouter à mon agenda</a>
+			<a class="btn btn-lg btn-primary btn-px js-open" href="/ace" hidden>Entrer sur le place</a>
+			<a class="btn btn-lg js-replay" href="/bande-annonce" hidden><span data-icon="play" data-size="20"></span>Revoir la bande-annonce</a>
+		</div>
+		<p class="cd-credit">Fait avec <span class="heart">❤</span> par Evan et Tiago</p>
+	</main>
+	<div class="cd-final js-final" hidden><span></span></div>
+	<div class="cd-trailer ba js-trailer" hidden>
+		<video class="js-video" playsinline preload="auto"></video>
+		<div class="ba-top"><button class="btn glass js-unmute" type="button" hidden><span data-icon="music" data-size="18"></span>Activer le son</button>
+			<button class="btn glass js-skip" type="button">Passer</button></div>
+		<div class="ba-bar"><button class="btn btn-lg js-play" type="button" hidden><span data-icon="play" data-size="20"></span>Lancer la bande-annonce</button>
+			<a class="btn btn-primary btn-lg btn-px js-enter" href="/ace" hidden>Entrer sur le place</a></div>
+	</div>
+	<script type="module" src="/js/lancement.js"></script>
+</body>
+</html>

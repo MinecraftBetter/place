@@ -242,6 +242,9 @@ html.bp.page body { min-height: 100vh; min-height: 100dvh; }
 .login-actions { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
 .login-already { padding: 16px; display: flex; flex-direction: column; gap: 14px; margin-top: auto; }
 .login-dev { padding: 14px; display: flex; flex-direction: column; gap: 12px; margin: 6px 0; }
+.login-jb { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.login-jb-head { display: flex; align-items: center; gap: 10px; }
+.login-error { border-radius: 10px; }
 .login-dev-head { display: flex; align-items: center; gap: 10px; }
 .login-dev-accounts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
 .login-dev-account { appearance: none; width: 100%; border: 1px solid transparent; background: transparent; color: var(--text); font: inherit; border-radius: var(--r); padding: 6px 2px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; min-width: 0; }

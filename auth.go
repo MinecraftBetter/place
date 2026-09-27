@@ -17,9 +17,8 @@ const (
 	sessionTTL    = 30 * 24 * time.Hour
 )
 
-// Provider is a way to log in. The dev provider stands in until JustBetter's
-// OAuth/OIDC is wired: a "justbetter" provider will mount /auth/justbetter and
-// /auth/justbetter/callback, then call Auth.Login with the identity it got.
+// Provider is a way to log in: "justbetter" (LLDAP, justbetter.go) in production,
+// "dev" (any pseudo, no password) locally.
 type Provider interface {
 	Name() string
 	Mount(mux *http.ServeMux, a *Auth)
@@ -85,7 +84,7 @@ func (a *Auth) Login(w http.ResponseWriter, r *http.Request, n NewUser, next str
 		http.Error(w, "Connexion impossible.", http.StatusInternalServerError)
 		return
 	}
-	if a.admins[u.Slug] && u.Role != "admin" {
+	if (n.Admin || a.admins[u.Slug]) && u.Role != "admin" {
 		if err := a.store.SetRole(u.ID, "admin"); err == nil {
 			u.Role = "admin"
 		}

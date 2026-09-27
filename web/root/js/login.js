@@ -37,7 +37,18 @@ try {
     $(".js-justbetter").hidden = !justbetter;
     $(".js-justbetter-off").hidden = justbetter;
     $(".js-justbetter-note").hidden = justbetter;
-    if (justbetter) $(".js-justbetter").href = "/auth/justbetter?next=" + encodeURIComponent(next);
+    const err = new URLSearchParams(location.search).get("erreur");
+    const ERRORS = {
+        identifiants: "Identifiant ou mot de passe incorrect.",
+        trop: "Trop d'essais : attends quelques minutes avant de réessayer.",
+        indisponible: "Le serveur de comptes JustBetter ne répond pas. Réessaie dans un instant.",
+    };
+    if (justbetter && ERRORS[err]) {
+        const box = $(".js-error");
+        box.textContent = ERRORS[err];
+        box.hidden = false;
+        $("#jb-pass").focus();
+    }
     $(".js-dev").hidden = !auth.includes("dev");
     if (!auth.length) {
         $(".js-justbetter-note").textContent = "La connexion n'est pas encore ouverte. En attendant, tu peux regarder le canvas en invité.";

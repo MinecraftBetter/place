@@ -2,3 +2,9 @@
 .git/
 bak/
 *.zip
+design/
+data/
+place.png
+owners.bin
+betterplace.db*
+place-dev*

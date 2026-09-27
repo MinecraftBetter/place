@@ -11,6 +11,21 @@ const MODE_HINT = {
     maintenance: "Le canvas affiche l'écran de maintenance ; le timelapse et le musée restent ouverts.",
 };
 const STYLES = [["event", "Événement"], ["info", "Info"], ["danger", "Alerte"]];
+const LAUNCH_GATES = [["off", "Site ouvert"], ["tout", "Tout fermé"], ["accueil", "Accueil seulement"]];
+const LAUNCH_HINT = {
+    off: "Pas de compte à rebours : le site est ouvert normalement.",
+    tout: "Les visiteurs voient le compte à rebours, et personne ne dessine sauf les admins. À l'heure pile, la bande-annonce se lance et tout s'ouvre tout seul.",
+    accueil: "Seule la page d'accueil est remplacée par le compte à rebours. Le canvas et le reste du site restent ouverts.",
+};
+
+function launchState() {
+    if (st.launch_gate === "off" || !st.launch_at) return `<span class="pill st-neutre">aucun</span>`;
+    const at = new Date(st.launch_at + ":00");
+    const ms = at - Date.now();
+    if (ms <= 0) return `<span class="pill st-valide">sorti</span>`;
+    const d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / 36e5);
+    return `<span class="pill st-attente">dans ${d ? `${d} j ` : ""}${h} h</span>`;
+}
 let root, st = null, saved = null, info = null;
 
 const dirty = () => JSON.stringify(st) !== JSON.stringify(saved);
@@ -58,6 +73,16 @@ function render() {
                     <button class="btn btn-sm js-reanalyse" type="button">Réanalyser maintenant</button>
                 </div>
             </section>
+            <section class="card adm-card adm-launch"><div class="sec-head"><span class="fs-h3">Lancement</span>${launchState()}</div>
+                <div class="field"><label class="label" for="lat">Date et heure de sortie (heure de Paris)</label>
+                    <input id="lat" type="datetime-local" class="input input-mono" data-text="launch_at" value="${escapeHTML(st.launch_at)}"></div>
+                <div class="field"><span class="label">Avant la sortie</span>
+                    <div class="seg me-seg-wrap" role="group" aria-label="Avant la sortie">${LAUNCH_GATES.map(([id, l]) => `<button type="button" class="${id === st.launch_gate ? "on" : ""}" data-gate="${id}">${l}</button>`).join("")}</div>
+                    <span class="hint pretty">${LAUNCH_HINT[st.launch_gate] ?? ""}</span></div>
+                <div class="edit-toggle"><span class="fs-small grow">Lancer la bande-annonce à zéro</span><button class="toggle${st.launch_trailer ? " toggle-on" : ""}" type="button" data-bool="launch_trailer" aria-pressed="${!!st.launch_trailer}" aria-label="Lancer la bande-annonce à zéro"></button></div>
+                <div class="adm-user-row"><a class="btn btn-sm" href="/lancement" target="_blank" rel="noopener">${icon("eye", 16)}Voir le compte à rebours</a>
+                    <a class="btn btn-sm btn-ghost" href="/bande-annonce" target="_blank" rel="noopener">${icon("play", 16)}Voir la bande-annonce</a></div>
+            </section>
             <section class="card adm-card"><div class="sec-head"><span class="fs-h3">Musées perso</span><span class="bonus">bonus</span></div>
                 <div class="adm-toggles">${[["sounds_check", "Sons importés validés par l'équipe"], ["voice_limit", "Commentaire vocal : 30 s max"], ["guestbook_flt", "Livre d'or : filtre de mots"]].map(([k, l]) =>
                     `<div class="edit-toggle"><span class="fs-small grow">${l}</span><button class="toggle${st[k] ? " toggle-on" : ""}" type="button" data-bool="${k}" aria-pressed="${!!st[k]}" aria-label="${l}"></button></div>`).join("")}</div>
@@ -78,6 +103,8 @@ export async function mount(el) {
     root.onclick = async e => {
         const m = e.target.closest("[data-mode]");
         if (m) { st.mode = m.dataset.mode; render(); return; }
+        const g = e.target.closest("[data-gate]");
+        if (g) { st.launch_gate = g.dataset.gate; render(); return; }
         const s = e.target.closest("[data-style]");
         if (s) { st.banner_style = s.dataset.style; render(); return; }
         const b = e.target.closest("[data-bool]");

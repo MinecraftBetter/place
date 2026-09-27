@@ -393,6 +393,7 @@ type NewUser struct {
 	Pseudo     string
 	AvatarURL  string
 	Accent     string
+	Admin      bool // the provider says so (JustBetter admin groups)
 }
 
 // LoginUser returns the account for a provider identity, creating it on first login.

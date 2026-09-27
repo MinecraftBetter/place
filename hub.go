@@ -75,6 +75,7 @@ type Hub struct {
 	maxRate     float64       // anti-flood: pixels per second per player (0 = unlimited)
 	cooldownNew time.Duration // cooldown for accounts of less than an hour
 	mode        string        // normal | readonly | maintenance
+	closedUntil time.Time     // release countdown: only admins draw before (launch.go)
 	mu          sync.Mutex
 	clients     map[*client]struct{}
 	nextAt      map[uint32]time.Time
@@ -304,8 +305,11 @@ func (h *Hub) handlePixel(c *client, p PixelColor) {
 	}
 	uid := c.user.ID
 	h.mu.Lock()
-	if (h.mode == "readonly" || h.mode == "maintenance") && c.user.Role != "admin" {
+	if (h.mode == "readonly" || h.mode == "maintenance" || now.Before(h.closedUntil)) && c.user.Role != "admin" {
 		mode := h.mode
+		if mode == "normal" {
+			mode = "readonly"
+		}
 		h.mu.Unlock()
 		fail(mode, 0)
 		return
