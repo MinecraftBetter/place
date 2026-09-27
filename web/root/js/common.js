@@ -25,3 +25,25 @@ export function badgeTile(b, {small = false} = {}) {
     </div>`;
 }
 
+
+export function claimThumb(c, size = 72) {
+    const m = Math.max(2, Math.min(8, Math.floor(Math.max(c.w, c.h) / 6)));
+    const w = c.w + 2 * m, h = c.h + 2 * m;
+    const z = Math.max(1, Math.min(16, Math.floor(size * 2 / Math.max(w, h))));
+    return `/api/crop.png?x=${Math.max(0, c.x - m)}&y=${Math.max(0, c.y - m)}&w=${w}&h=${h}&z=${z}`;
+}
+
+export function authorsLine(c, meId) {
+    const names = [c.demandeur, ...c.co_auteurs.map(a => a.user)].filter(Boolean)
+        .map(u => escapeHTML(u.pseudo) + (u.id === meId ? " (toi)" : ""));
+    if (names.length <= 1) return names[0] ?? "";
+    return names.slice(0, -1).join(", ") + " et " + names[names.length - 1];
+}
+
+export function statusPill(c) {
+    if (c.statut === "validee") return `<span class="pill st-valide">Validée</span>`;
+    if (c.statut === "refusee") return `<span class="pill st-refuse">Refusée</span>`;
+    const rivals = c.conflits.filter(k => k.claim_id && k.recouvrement_pct >= 30).length;
+    return rivals ? `<span class="pill st-conflit">${rivals + 1} revendications</span>` : `<span class="pill st-attente">En attente</span>`;
+}
+

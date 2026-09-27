@@ -89,6 +89,16 @@ function renderOverlay() {
     }
     renderLoupe(showReticle);
 
+    const zoneEl = $("#inspect-zone");
+    if (app.inspectZone) {
+        const z = app.inspectZone, s = gl.pixelToScreen(z.x, z.y);
+        Object.assign(zoneEl.style, {left: s.x + "px", top: s.y + "px", width: z.w * zoom + "px", height: z.h * zoom + "px"});
+        zoneEl.querySelector("span").textContent = z.titre;
+        zoneEl.hidden = false;
+    } else {
+        zoneEl.hidden = true;
+    }
+
     const layer = $("#pending-layer");
     layer.textContent = "";
     for (const p of app.pending) {

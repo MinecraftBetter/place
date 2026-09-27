@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr" class="bp void app-canvas claim-page" data-theme="sombre">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+	<meta name="theme-color" content="#11100e">
+	<link rel="icon" href="/favicon.png">
+	<script>
+		try {
+			var t = JSON.parse(localStorage.getItem("bp-theme"));
+			if (t !== "clair" && t !== "sombre") t = matchMedia("(prefers-color-scheme: light)").matches ? "clair" : "sombre";
+			document.documentElement.dataset.theme = t;
+		} catch (e) {}
+	</script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Pixelify+Sans:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="/css/bp.css">
+	<link rel="stylesheet" href="/css/app.css">
+	<link rel="stylesheet" href="/css/pages.css">
+	<title>Revendiquer une œuvre · BetterPlace</title>
+</head>
+<body class="is-guest">
+	<div class="claim-layout">
+		<main class="claim-stage js-stage">
+			<canvas id="viewport-canvas" oncontextmenu="return false;" aria-label="Le canvas : sélectionne ton œuvre"></canvas>
+			<canvas id="claim-overlay" aria-hidden="true"></canvas>
+			<div class="claim-top">
+				<a class="btn btn-icon glass js-cancel" href="/ace" aria-label="Annuler et revenir au canvas"><span data-icon="close"></span></a>
+				<div class="glass claim-title only-m"><span class="fs-small b">Revendiquer une œuvre</span><span class="mono fs-cap t3">1 / 2</span></div>
+				<div class="glass claim-tools js-tools" role="toolbar" aria-label="Outils de sélection">
+					<button type="button" data-tool="rect" aria-pressed="true"><span data-icon="rect" data-size="18"></span>Rectangle <span class="kbd only-d">R</span></button>
+					<button type="button" data-tool="lasso" aria-pressed="false"><span data-icon="lasso" data-size="18"></span>Lasso <span class="kbd only-d">L</span></button>
+					<button type="button" data-tool="wand" aria-pressed="false"><span data-icon="wand" data-size="18"></span>Baguette <span class="kbd only-d">B</span></button>
+				</div>
+				<div class="grow only-d"></div>
+				<div class="glass claim-coords only-d"><span class="mono fs-small js-coords">–</span><span class="mono fs-cap t3 js-zoom"></span></div>
+			</div>
+			<div class="glass claim-hint only-d"><span class="fs-small t2 js-hint"></span></div>
+			<div class="glass claim-wandopts js-wandopts" hidden>
+				<label class="fs-cap b" for="tol">Tolérance</label>
+				<input id="tol" type="range" min="0" max="120" step="10" value="0" class="js-tol">
+				<span class="mono fs-cap js-tol-v">0</span>
+				<button type="button" class="btn btn-sm btn-ghost js-clear">Effacer</button>
+			</div>
+		</main>
+
+		<aside class="claim-aside js-aside">
+			<header class="claim-aside-head only-d">
+				<div class="claim-aside-title"><img src="/img/badges/pionnier.png" alt="" class="px" width="26" height="26"><h1 class="fs-h2">Revendiquer une œuvre</h1></div>
+				<p class="fs-small t2 pretty">Pour les dessins d'avant les comptes. La communauté pourra confirmer, puis l'équipe valide.</p>
+			</header>
+			<div class="claim-step1 only-m js-step1">
+				<div class="grab"></div>
+				<p class="fs-small t2 pretty js-hint-m"></p>
+				<div class="claim-chips js-chips"></div>
+				<div class="js-analysis-mini"></div>
+				<button type="button" class="btn btn-primary btn-lg btn-px btn-block js-next" disabled>Suivant</button>
+			</div>
+			<form class="claim-form js-form" novalidate>
+				<header class="claim-form-head only-m">
+					<button type="button" class="btn btn-icon btn-ghost js-back" aria-label="Retour à la zone"><span data-icon="back"></span></button>
+					<h1 class="fs-h2 grow">Revendiquer</h1>
+					<span class="mono fs-cap t3">2 / 2</span>
+				</header>
+				<div class="claim-zone-card card only-m js-zone-card"></div>
+				<section class="js-analysis"></section>
+				<div class="field"><label class="label" for="c-titre">Titre de l'œuvre</label><input id="c-titre" class="input js-titre" maxlength="60" autocomplete="off" placeholder="Bord de mer, Creeper, Sapin de Noël…"></div>
+				<div class="field">
+					<label class="label" for="c-msg">Message ou preuve</label>
+					<textarea id="c-msg" class="textarea js-msg" maxlength="1000" placeholder="Un souvenir précis, un lien vers une capture ou un message… Tout aide."></textarea>
+				</div>
+				<div class="claim-two">
+					<div class="field">
+						<span class="label">Co-auteurs</span>
+						<div class="claim-coauthors js-coauthors"></div>
+						<div class="claim-search js-search-wrap" hidden>
+							<input class="input js-search" placeholder="Pseudo…" autocomplete="off" aria-label="Chercher un co-auteur">
+							<div class="card claim-results js-results" hidden></div>
+						</div>
+						<span class="hint js-co-hint">Tes co-auteurs devront confirmer depuis le fil des revendications.</span>
+					</div>
+					<div class="field">
+						<span class="label">Pixels pionniers</span>
+						<div class="seg js-rep" role="group" aria-label="Répartition"><button type="button" data-rep="egale" class="on">Parts égales</button><button type="button" data-rep="poids">Je précise</button></div>
+						<div class="claim-weights js-weights" hidden></div>
+						<span class="hint js-rep-hint"></span>
+					</div>
+				</div>
+				<div class="card-2 claim-expect js-expect" hidden></div>
+				<p class="fs-cap t3 pretty">Ta demande apparaîtra dans le fil des revendications : les autres joueurs pourront confirmer « je l'ai vu·e la faire » ou émettre un doute. Un admin tranche ensuite.</p>
+				<p class="fs-small tdanger js-error" role="alert"></p>
+				<button type="submit" class="btn btn-primary btn-lg btn-px btn-block js-send" disabled>Envoyer la demande</button>
+			</form>
+		</aside>
+	</div>
+	<script type="module" src="/js/claim.js"></script>
+</body>
+</html>

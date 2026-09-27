@@ -121,6 +121,8 @@ func main() {
 	save := func() {
 		if err := canvas.SaveFiles(savePath, ownersPath); err != nil {
 			log.Error("Saving the canvas: ", err)
+		} else {
+			place.MarkSaved(time.Now().UnixMilli())
 		}
 	}
 	go func() {

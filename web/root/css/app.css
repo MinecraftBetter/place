@@ -329,3 +329,12 @@ html.bp.page body { min-height: 100vh; min-height: 100dvh; }
 .bpm-arrows { display: flex; gap: 4px; }
 .bpm-arrows .btn { font-size: 16px; }
 body.bp-dragging #viewport-canvas { cursor: move; }
+
+#inspect-zone { position: absolute; border: 2px dashed var(--gold); border-radius: 2px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .5); }
+#inspect-zone .pill { position: absolute; left: 0; top: -26px; background: #241604; color: #f5c77a; }
+.insp-art { display: flex; align-items: center; gap: 10px; }
+.bp a.insp-art, .bp a.insp-art-author, .bp a.insp-author { color: var(--text); }
+.bp a.insp-art:hover, .bp a.insp-author:hover, .bp a.insp-art-author:hover { text-decoration: none; }
+.insp-art-authors { display: flex; flex-direction: column; gap: 8px; }
+.insp-art-author { display: flex; align-items: center; gap: 10px; color: var(--text); }
+a.insp-author { color: var(--text); }

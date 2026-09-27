@@ -5,6 +5,13 @@ import {formatCoord, relativeTime} from "./view.js";
 import {$, avatarHTML, escapeHTML, fillIcons, hideSheet, icon, showSheet} from "./ui.js";
 
 const HOVER_DELAY = 300;
+const MONTHS_LONG = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+const dateLong = ms => { const d = new Date(ms); return `${d.getDate() === 1 ? "1er" : d.getDate()} ${MONTHS_LONG[d.getMonth()]} ${d.getFullYear()}`; };
+
+function artRow(art, big) {
+    return `<a href="/oeuvre/${art.id}" class="card-2 insp-art" style="padding: 8px">
+        <span class="fs-cap t3">${big ? "Fait partie de l'œuvre" : "Œuvre"}</span><span class="fs-small b grow ellip">${escapeHTML(art.titre)}</span>${icon("chevron", 16)}</a>`;
+}
 const DETAIL_TTL = 10000;
 
 export class Inspector {
@@ -75,7 +82,10 @@ export class Inspector {
     }
 
     #hideCard() {
-        if (this.#current && this.#current.mode !== "sheet") this.#current = null;
+        if (this.#current && this.#current.mode !== "sheet") {
+            this.#current = null;
+            this.#app.inspectZone = null;
+        }
         this.#card.hidden = true;
         this.#card.classList.remove("pinned");
         this.#app.render();
@@ -87,6 +97,7 @@ export class Inspector {
             this.#card.hidden = true;
             showSheet(this.#sheet, {onClose: () => {
                 if (this.#current?.mode === "sheet") this.#current = null;
+                this.#app.inspectZone = null;
                 this.#app.render();
             }});
         } else {
@@ -124,7 +135,10 @@ export class Inspector {
                 const data = await resp.json();
                 this.#details.set(x + "," + y, {at: Date.now(), owner: data.owner?.id ?? 0, data});
                 if (data.owner) app.users.put(data.owner);
-                if (this.#stillOn(x, y)) this.#render(false);
+                if (this.#stillOn(x, y)) {
+                    this.#app.inspectZone = data.oeuvre ? {x: data.oeuvre.x, y: data.oeuvre.y, w: data.oeuvre.w, h: data.oeuvre.h, titre: data.oeuvre.titre} : null;
+                    this.#render(false);
+                }
             } catch { /* offline: keep the local info */ }
         }
     }
@@ -157,24 +171,44 @@ export class Inspector {
             </div>`;
         }
 
+        const art = details?.oeuvre;
         if (ownerId) {
             const pseudo = owner ? escapeHTML(owner.pseudo) : "…";
             const when = placedAt ? (big ? "posé " : "") + relativeTime(placedAt) : "";
             if (big) {
                 const ring = owner?.accent || "var(--accent)";
-                out += `<div class="card-2 insp-author" style="padding: 12px; gap: 12px">
+                out += `<a class="card-2 insp-author" href="/u/${escapeHTML(owner?.slug ?? "")}" style="padding: 12px; gap: 12px">
                     ${avatarHTML(owner, "av av-48", `box-shadow: 0 0 0 2px var(--surface-2), 0 0 0 4px ${escapeHTML(ring)}`)}
                     <div style="display: flex; flex-direction: column; flex-grow: 1; gap: 2px"><span class="fs-body b">${pseudo}</span><span class="fs-small t3">${when}</span></div>
-                </div>`;
+                    <span class="fs-small tac b" style="display: flex; align-items: center; gap: 2px">Profil${icon("chevron", 16)}</span>
+                </a>`;
             } else {
-                out += `<div class="insp-author">${avatarHTML(owner, "av av-32")}<span class="fs-small grow"><b>${pseudo}</b>${when ? ` <span class="t3">· ${when}</span>` : ""}</span></div>`;
+                out += `<a class="insp-author" href="/u/${escapeHTML(owner?.slug ?? "")}">${avatarHTML(owner, "av av-32")}<span class="fs-small grow"><b>${pseudo}</b>${when ? ` <span class="t3">· ${when}</span>` : ""}</span><span class="fs-cap tac b">Profil</span></a>`;
             }
+            if (art) out += artRow(art, big);
+        } else if (art) {
+            // A pixel of a claimed pre-account artwork (m-inspecteur-origine).
+            const authors = art.auteurs.map(a => `<a class="insp-art-author" href="/u/${escapeHTML(a.user?.slug ?? "")}">${avatarHTML(a.user, "av av-32")}<span class="fs-small b grow">${escapeHTML(a.user?.pseudo ?? "")}</span><span class="fs-cap t3">${a.role === "auteur" ? "auteur" : "co-auteur"}</span></a>`).join("");
+            out += `<div class="card-2 insp-origin">
+                <div style="display: flex; align-items: center; gap: 10px"><span class="pill st-neutre">Œuvre d'origine</span><span class="fs-cap t3">posé avant les comptes</span></div>
+                <a href="/oeuvre/${art.id}" class="insp-art">
+                    <img src="/img/badges/pionnier.png" alt="" class="px" width="${big ? 40 : 28}" height="${big ? 40 : 28}">
+                    <div style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span class="fs-${big ? "body" : "small"} b">${escapeHTML(art.titre)}</span>
+                    ${art.apparue_le ? `<span class="fs-${big ? "small" : "cap"} t2">Œuvre pionnière · là depuis le ${dateLong(art.apparue_le)}</span>` : ""}</div>
+                    ${icon("chevron", 18)}
+                </a>
+                ${big ? `<div class="rule"></div><div class="insp-art-authors">${authors}</div>` : `<span class="fs-cap t2">par ${art.auteurs.map(a => escapeHTML(a.user?.pseudo ?? "")).join(" et ")}</span>`}
+            </div>
+            ${big && art.revendiquee_le ? `<p class="fs-cap t3 pretty">Revendiquée le ${dateLong(art.revendiquee_le)}${art.confirmations ? `, confirmée par ${art.confirmations} joueur${art.confirmations > 1 ? "s" : ""}` : ""}, validée par l'équipe.</p>` : ""}`;
         } else if (parseHex(hex) === "#FFFFFF") {
             out += `<div style="display: flex; flex-direction: column; gap: 6px"><span class="pill st-neutre" style="align-self: flex-start">Pixel libre</span><p class="fs-small t2 pretty">Personne n'a posé de pixel ici depuis l'ouverture des comptes.</p></div>`;
-        } else if (mode === "sheet") {
-            out += `<div class="card-2 insp-origin"><div style="display: flex; align-items: center; gap: 10px"><span class="pill st-neutre">Œuvre d'origine</span><span class="fs-cap t3">posé avant les comptes</span></div><p class="fs-small t2 pretty">Cette zone n'a pas encore d'auteur.</p></div>`;
         } else {
-            out += `<div style="display: flex; flex-direction: column; gap: 6px"><span class="pill st-neutre" style="align-self: flex-start">Œuvre d'origine</span><p class="fs-small t2 pretty">Posé avant les comptes. Cette zone n'a pas encore d'auteur.</p></div>`;
+            const claimHref = `/revendiquer?x=${x}&y=${y}&z=8`;
+            out += mode === "sheet"
+                ? `<div class="card-2 insp-origin"><div style="display: flex; align-items: center; gap: 10px"><span class="pill st-neutre">Œuvre d'origine</span><span class="fs-cap t3">posé avant les comptes</span></div><p class="fs-small t2 pretty">Cette zone n'a pas encore d'auteur.</p>
+                    <a class="btn btn-sm btn-gold btn-px" href="${claimHref}" style="align-self: flex-start">C'est toi ? Revendique-la</a></div>`
+                : `<div style="display: flex; flex-direction: column; gap: 8px"><span class="pill st-neutre" style="align-self: flex-start">Œuvre d'origine</span><p class="fs-small t2 pretty">Posé avant les comptes. Cette zone n'a pas encore d'auteur.</p>
+                    ${mode === "pinned" ? `<a class="btn btn-sm btn-gold btn-px" href="${claimHref}" style="align-self: flex-start">C'est toi ? Revendique-la</a>` : ""}</div>`;
         }
 
         if (big && details?.history?.length) {
