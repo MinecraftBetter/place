@@ -7,9 +7,11 @@ package place
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -159,18 +161,36 @@ func (p *JustBetterProvider) tooMany(ip string, failed bool) bool {
 	return len(recent) >= loginMaxFailures
 }
 
-// clientIP: X-Real-IP is set by nginx to the address it really sees (the first public
-// address of X-Forwarded-For, which RemoteAddr holds after the xff middleware, can be
-// forged, and is missing for visitors on the server's own network, who would then all
-// share the proxy's address).
+// clientIP is the address the failed-login limit counts. X-Real-IP (set by nginx to the
+// address it really sees) is only believed when the TCP peer is a private address — the
+// proxy; the port can also be reached directly on the local network, where the header
+// could be forged. The peer is the one kept by KeepPeer, before the xff middleware
+// rewrites RemoteAddr from X-Forwarded-For (whose first public address can be forged too).
 func clientIP(r *http.Request) string {
-	if ip := strings.TrimSpace(r.Header.Get("X-Real-IP")); ip != "" {
-		return ip
+	peer := r.RemoteAddr
+	if p, ok := r.Context().Value(peerKey{}).(string); ok {
+		peer = p
 	}
-	if i := strings.LastIndex(r.RemoteAddr, ":"); i > 0 {
-		return r.RemoteAddr[:i]
+	host := peer
+	if h, _, err := net.SplitHostPort(peer); err == nil {
+		host = h
 	}
-	return r.RemoteAddr
+	if ip := net.ParseIP(host); ip != nil && (ip.IsPrivate() || ip.IsLoopback()) {
+		if real := net.ParseIP(strings.TrimSpace(r.Header.Get("X-Real-IP"))); real != nil {
+			return real.String()
+		}
+	}
+	return host
+}
+
+type peerKey struct{}
+
+// KeepPeer remembers the TCP peer of a request before any header rewrites it (main
+// wraps the whole server with it, outside the xff middleware).
+func KeepPeer(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		h.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), peerKey{}, r.RemoteAddr)))
+	})
 }
 
 func (p *JustBetterProvider) Mount(mux *http.ServeMux, a *Auth) {

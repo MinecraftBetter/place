@@ -111,14 +111,29 @@ func TestJustBetterLogin(t *testing.T) {
 }
 
 func TestJustBetterClientIP(t *testing.T) {
-	r := httptest.NewRequest("POST", "/auth/justbetter", nil)
-	r.RemoteAddr = "172.18.0.1:5555" // the proxy, for a visitor on the server's network
-	r.Header.Set("X-Real-IP", "192.168.1.42")
-	if ip := clientIP(r); ip != "192.168.1.42" {
-		t.Fatalf("got %s", ip)
+	ipOf := func(peer, realIP, xff string) string {
+		var got string
+		h := KeepPeer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			r.RemoteAddr = "203.0.113.9:1" // what the xff middleware may put from a forged X-Forwarded-For
+			got = clientIP(r)
+		}))
+		r := httptest.NewRequest("POST", "/auth/justbetter", nil)
+		r.RemoteAddr = peer
+		if realIP != "" {
+			r.Header.Set("X-Real-IP", realIP)
+		}
+		h.ServeHTTP(httptest.NewRecorder(), r)
+		return got
 	}
-	r.Header.Del("X-Real-IP")
-	if ip := clientIP(r); ip != "172.18.0.1" {
-		t.Fatalf("got %s", ip)
+	// through nginx (a private peer): the address nginx saw
+	if ip := ipOf("172.18.0.1:5555", "192.168.1.42", ""); ip != "192.168.1.42" {
+		t.Fatalf("behind the proxy: %s", ip)
+	}
+	if ip := ipOf("172.18.0.1:5555", "", ""); ip != "172.18.0.1" {
+		t.Fatalf("no header: %s", ip)
+	}
+	// straight from outside: the header is not believed, nor the forged X-Forwarded-For
+	if ip := ipOf("198.51.100.7:4444", "10.0.0.1", ""); ip != "198.51.100.7" {
+		t.Fatalf("forged X-Real-IP believed: %s", ip)
 	}
 }

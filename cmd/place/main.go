@@ -208,7 +208,7 @@ func main() {
 	server := http.Server{
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)), //disable HTTP/2
 		Addr:         port,
-		Handler:      xffmw.Handler(api.LaunchGate(mux)),
+		Handler:      place.KeepPeer(xffmw.Handler(api.LaunchGate(mux))),
 	}
 	log.Info("Listening on ", port)
 	log.Fatal(server.ListenAndServe())
