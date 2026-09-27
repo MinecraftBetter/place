@@ -26,6 +26,7 @@
 
 	<!-- Layer above the canvas: hovered pixel, reticle, loupe, pending pixels, animations -->
 	<div id="overlay" aria-hidden="true">
+		<canvas id="bp-overlay"></canvas>
 		<div id="hover-px" class="hover-px" hidden></div>
 		<div id="reticle" hidden>
 			<div class="reticle"></div>
@@ -89,6 +90,7 @@
 		<button class="btn btn-icon btn-sm btn-ghost js-grid" type="button" aria-label="Grille (G)" aria-pressed="false"><span data-icon="grid" data-size="18"></span></button>
 		<button class="btn btn-icon btn-sm btn-ghost js-pipette player-only" type="button" aria-label="Pipette" aria-pressed="false"><span data-icon="pipette" data-size="18"></span></button>
 		<button class="btn btn-icon btn-sm btn-ghost js-copy-link" type="button" aria-label="Copier le lien de cette vue (L)"><span data-icon="link" data-size="18"></span></button>
+		<button class="btn btn-icon btn-sm btn-ghost js-blueprint" type="button" aria-label="Modèle : une image pour savoir où poser les couleurs"><span data-icon="blueprint" data-size="18"></span></button>
 		<span class="d-sep"></span>
 		<span class="fs-cap t3 d-hints player-only"><span class="kbd">Clic gauche</span>déplacer <span class="kbd">Molette</span>pipette <span class="kbd">Clic droit</span>poser</span>
 		<span class="fs-cap t3 d-hints guest-only"><span class="kbd">Clic gauche</span>déplacer <span class="kbd">Molette</span>zoomer <span class="kbd">Survol</span>qui l'a posé</span>
@@ -112,6 +114,7 @@
 		<button class="btn btn-icon glass player-only js-inspect-aim" type="button" aria-label="Inspecter le pixel visé"><span data-icon="search"></span></button>
 		<button class="btn btn-icon glass player-only js-pick-aim" type="button" aria-label="Pipette : prendre la couleur visée"><span data-icon="pipette"></span></button>
 		<button class="btn btn-icon glass js-share" type="button" aria-label="Partager la position"><span data-icon="link"></span></button>
+		<button class="btn btn-icon glass js-blueprint" type="button" aria-label="Modèle : une image pour savoir où poser les couleurs"><span data-icon="blueprint"></span></button>
 	</div>
 
 	<div class="glass m-hint only-m guest-only js-guest-hint">
@@ -195,6 +198,61 @@
 			<button id="share-zoom" class="toggle toggle-on js-share-zoom" type="button" aria-pressed="true" aria-label="Inclure le zoom"></button>
 		</div>
 		<button class="btn btn-block js-share-native" type="button" hidden><span data-icon="share" data-size="18"></span>Partager via…</button>
+	</div>
+
+	<div class="sheet" id="sheet-blueprint" role="dialog" aria-label="Modèle" hidden>
+		<div class="grab"></div>
+		<div class="sheet-head">
+			<div class="sheet-title"><h2 class="fs-h2">Modèle</h2><span class="fs-cap t3">Une image pour savoir quelle couleur poser où</span></div>
+			<button class="btn btn-icon btn-ghost js-close-sheet" type="button" aria-label="Fermer"><span data-icon="close"></span></button>
+		</div>
+		<div class="bpm-empty js-bpm-empty">
+			<p class="fs-small t2 pretty">Choisis une image : elle s'affiche par-dessus le canvas, à l'endroit visé, pour te guider pixel par pixel. Elle reste dans ce navigateur, personne d'autre ne la voit.</p>
+			<div class="field">
+				<span class="label">Taille sur le canvas</span>
+				<div class="seg js-bpm-size" role="group" aria-label="Taille maximale">
+					<button type="button" data-size="32">32 px</button><button type="button" data-size="64">64 px</button><button type="button" data-size="128" class="on">128 px</button><button type="button" data-size="256">256 px</button>
+				</div>
+				<span class="hint">Le plus grand côté de l'image, en pixels du canvas.</span>
+			</div>
+			<div class="share-toggle"><div class="share-toggle-text"><span class="fs-body">Couleurs de la palette</span><span class="fs-cap t3">chaque couleur est remplacée par la plus proche des 30</span></div>
+				<button class="toggle toggle-on js-bpm-quant" type="button" aria-pressed="true" aria-label="Couleurs de la palette"></button></div>
+			<label class="btn btn-primary btn-px btn-block"><span data-icon="upload" data-size="18"></span>Choisir une image<input type="file" accept="image/*" class="js-bpm-file" hidden></label>
+		</div>
+		<div class="bpm-active js-bpm-active" hidden>
+			<div class="bpm-head">
+				<canvas class="px bpm-thumb js-bpm-thumb"></canvas>
+				<div class="sheet-title"><span class="fs-body b ellip js-bpm-name"></span><span class="mono fs-cap t3 js-bpm-dims"></span></div>
+			</div>
+			<div class="bpm-progress">
+				<div class="bar-track"><div class="bar-fill js-bpm-bar" style="width: 0%"></div></div>
+				<span class="fs-cap t2 js-bpm-progress"></span>
+			</div>
+			<div class="bpm-row">
+				<div class="seg js-bpm-mode" role="group" aria-label="Affichage">
+					<button type="button" data-mode="points">Points à poser</button><button type="button" data-mode="image">Image</button>
+				</div>
+				<input type="range" class="bpm-opacity js-bpm-opacity" min="10" max="100" step="5" aria-label="Opacité de l'image">
+			</div>
+			<div class="share-toggle"><div class="share-toggle-text"><span class="fs-body">Suivre le modèle</span><span class="fs-cap t3">la couleur se choisit toute seule sur le modèle</span></div>
+				<button class="toggle js-bpm-follow" type="button" aria-label="Suivre le modèle"></button></div>
+			<div class="bpm-move">
+				<span class="mono fs-small js-bpm-pos"></span>
+				<div class="bpm-arrows">
+					<button class="btn btn-sm btn-icon" type="button" data-nudge="-1,0" aria-label="Déplacer à gauche">←</button>
+					<button class="btn btn-sm btn-icon" type="button" data-nudge="0,-1" aria-label="Déplacer vers le haut">↑</button>
+					<button class="btn btn-sm btn-icon" type="button" data-nudge="0,1" aria-label="Déplacer vers le bas">↓</button>
+					<button class="btn btn-sm btn-icon" type="button" data-nudge="1,0" aria-label="Déplacer à droite">→</button>
+				</div>
+				<button class="btn btn-sm js-bpm-here" type="button"><span data-icon="target" data-size="16"></span><span class="only-m">Sur la visée</span><span class="only-d">Au centre</span></button>
+				<button class="btn btn-sm only-d js-bpm-drag" type="button" aria-pressed="false">Déplacer à la souris</button>
+			</div>
+			<div class="insp-actions">
+				<button class="btn js-bpm-next" type="button"><span data-icon="next" data-size="16"></span>Pixel suivant</button>
+				<button class="btn js-bpm-hide" type="button"><span data-icon="eye" data-size="16"></span><span class="js-bpm-hide-label">Masquer</span></button>
+			</div>
+			<button class="btn btn-ghost btn-block btn-outline-danger js-bpm-remove" type="button"><span data-icon="trash" data-size="16"></span>Retirer le modèle</button>
+		</div>
 	</div>
 
 	<div class="sheet" id="sheet-me" role="dialog" aria-label="Mon compte" hidden>

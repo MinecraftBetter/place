@@ -316,3 +316,16 @@ html.bp.page body { min-height: 100vh; min-height: 100dvh; }
 
 .me-links { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .badge-toast { position: relative; display: inline-flex; flex-shrink: 0; }
+
+/* ----- blueprints (modèles) ----- */
+#bp-overlay { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bpm-empty, .bpm-active { display: flex; flex-direction: column; gap: 14px; }
+.bpm-head { display: flex; align-items: center; gap: 12px; }
+.bpm-thumb { width: 56px; height: 56px; object-fit: contain; background: repeating-conic-gradient(var(--surface-3) 0 25%, var(--surface-2) 0 50%) 0 0 / 12px 12px; border-radius: 8px; flex-shrink: 0; }
+.bpm-progress { display: flex; flex-direction: column; gap: 6px; }
+.bpm-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.bpm-opacity { flex-grow: 1; accent-color: var(--accent); }
+.bpm-move { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.bpm-arrows { display: flex; gap: 4px; }
+.bpm-arrows .btn { font-size: 16px; }
+body.bp-dragging #viewport-canvas { cursor: move; }

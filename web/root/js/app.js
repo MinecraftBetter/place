@@ -9,6 +9,7 @@ import {$, $$, fillIcons, icon, toast, showSheet, hideSheet, sheetOpen, setTheme
 import {Inspector} from "./inspector.js";
 import {setupDesktop} from "./desktop.js";
 import {setupMobile} from "./mobile.js";
+import {setupBlueprint} from "./blueprint-ui.js";
 
 const mobileMQ = matchMedia("(max-width: 767px), (pointer: coarse)");
 const LOUPE_HIDE_DELAY = 2500;
@@ -54,6 +55,7 @@ function drawFrame() {
     frame = 0;
     if (!app.loaded) return;
     app.gl.draw();
+    app.drawBlueprint?.();
     renderOverlay();
     renderCoords();
     app.inspector.reposition();
@@ -272,6 +274,8 @@ app.placePixel = (x, y, {quiet = false} = {}) => {
         if (!quiet) flashCooldown();
         return false;
     }
+    const guide = app.blueprint?.follow ? app.blueprint.colorAt(x, y) : null;
+    if (guide && guide !== app.color) app.setColor(guide);
     const rgb = hexToRgb(app.color);
     const old = app.gl.getColor({x, y});
     if (old[0] === rgb[0] && old[1] === rgb[1] && old[2] === rgb[2]) return false;
@@ -279,6 +283,7 @@ app.placePixel = (x, y, {quiet = false} = {}) => {
     app.readyAt = now + app.cooldown * 1000;
     startCooldownTicker();
     app.gl.setPixelColor(x, y, rgb);
+    app.blueprint?.pixelChanged(x, y, rgb);
     if (app.conn.open) {
         app.conn.sendPixel(x, y, rgb);
         app.sent.set(x + "," + y, old);
@@ -290,10 +295,13 @@ app.placePixel = (x, y, {quiet = false} = {}) => {
         }
         updateConnText();
     }
-    app.recent = pushRecent(app.recent, app.color);
-    storedSet("bp-recent", app.recent);
-    renderRecent();
+    if (!guide) {
+        app.recent = pushRecent(app.recent, app.color);
+        storedSet("bp-recent", app.recent);
+        renderRecent();
+    }
     popFx(x, y, app.color);
+    scheduleBlueprintPanel();
     if (mobileMQ.matches) {
         toast(`<div class="toast-swatch" style="background: ${app.color}"></div><div class="toast-text"><span class="fs-small b">${app.conn.open ? "Pixel posé" : "Pixel en attente"}</span><span class="fs-cap t3 mono">${formatCoord(x, y)} · ${escapeHTML(colorLabel(app.color))}</span></div>`, {timeout: 2200});
     }
@@ -378,9 +386,33 @@ function clampPixel(p) {
     return {x: Math.min(app.width - 1, Math.max(0, p.x)), y: Math.min(app.height - 1, Math.max(0, p.y))};
 }
 
+app.followBlueprint = () => {
+    if (!app.blueprint?.follow || !app.aim) return;
+    const c = app.blueprint.colorAt(app.aim.x, app.aim.y);
+    if (c && c !== app.color) app.setColor(c);
+};
+
+let bpPanelTimer = null;
+function scheduleBlueprintPanel() {
+    if (bpPanelTimer) return;
+    bpPanelTimer = setTimeout(() => { bpPanelTimer = null; app.renderBlueprintPanel?.(); }, 300);
+}
+
+// Brings a pixel into view (and aims at it when there is a reticle).
+app.goTo = p => {
+    if (app.gl.getZoom() < 8) app.gl.setZoom(8);
+    app.gl.centerOn(p.x, p.y);
+    if (app.me) {
+        if (!mobileMQ.matches) app.keyboardAim = true;
+        app.setAim(p, {loupe: true});
+    }
+    app.viewChanged();
+};
+
 app.setAim = (p, {loupe = false} = {}) => {
     app.aim = clampPixel(p);
     app.aimF = {x: app.aim.x + 0.5, y: app.aim.y + 0.5};
+    app.followBlueprint();
     if (loupe) showLoupeFor(LOUPE_HIDE_DELAY);
     renderCooldown();
     app.render();
@@ -394,6 +426,7 @@ app.nudgeAim = (dx, dy) => {
         y: Math.min(app.height - 0.01, Math.max(0, app.aimF.y + dy / z)),
     };
     app.aim = {x: Math.floor(app.aimF.x), y: Math.floor(app.aimF.y)};
+    app.followBlueprint();
     followAim();
     showLoupeFor(Infinity);
 };
@@ -426,6 +459,8 @@ function followAim() {
     }
 }
 
+app.centerPixel = () => centerPixel();
+
 function centerPixel() {
     const c = app.gl.getCenterPixel();
     return clampPixel({x: Math.floor(c.x), y: Math.floor(c.y)});
@@ -457,6 +492,11 @@ app.closeMenus = () => {
 };
 
 app.escape = () => {
+    if (app.blueprintDrag) {
+        app.blueprintDrag = false;
+        document.body.classList.remove("bp-dragging");
+        return;
+    }
     if (!$("#d-menu").hidden) return app.closeMenus();
     if (sheetOpen()) return hideSheet();
     if (app.inspector.pinned) return app.inspector.close();
@@ -691,6 +731,10 @@ function applyPixel(msg) {
     const {x, y, color, u, t} = msg;
     ownersCatchUp?.push(msg);
     app.gl.setPixelColor(x, y, [color.R, color.G, color.B]);
+    if (app.blueprint?.contains(x, y)) {
+        app.blueprint.pixelChanged(x, y, [color.R, color.G, color.B]);
+        scheduleBlueprintPanel();
+    }
     const key = x + "," + y;
     if (u) {
         app.owners?.set(x, y, u);
@@ -711,6 +755,7 @@ function onServerError(msg) {
     const old = app.sent.get(key);
     if (old) {
         app.gl.setPixelColor(msg.x, msg.y, old);
+        app.blueprint?.pixelChanged(msg.x, msg.y, old);
         app.sent.delete(key);
         app.render();
     }
@@ -747,6 +792,7 @@ async function resync() {
         app.buffered = [];
         resyncing = false;
         buffered.forEach(applyPixel);
+        app.blueprint?.recompute();
         app.render();
         refreshOwners();
         flushPending();
@@ -894,6 +940,7 @@ async function start() {
     const buffered = app.buffered;
     app.buffered = [];
     buffered.forEach(applyPixel);
+    if (await app.blueprint.restore()) app.followBlueprint();
     renderCooldown();
     if (app.readyAt > Date.now()) startCooldownTicker();
     app.render();
@@ -918,4 +965,5 @@ mobileMQ.addEventListener("change", () => app.render());
 
 setupDesktop(app);
 setupMobile(app);
+setupBlueprint(app);
 start();

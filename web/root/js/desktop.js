@@ -35,6 +35,11 @@ export function setupDesktop(app) {
         app.closeMenus();
         switch (ev.button) {
             case 0: {
+                if (app.blueprintDrag && app.blueprint?.active) {
+                    const p = app.gl.screenToCanvas(ev.clientX, ev.clientY);
+                    drag = {...pos, button: 0, blueprint: {x: p.x, y: p.y, bx: app.blueprint.x, by: app.blueprint.y}};
+                    return;
+                }
                 if (app.picking) {
                     const p = pixelAt(ev);
                     if (p) app.pickColor(p.x, p.y);
@@ -51,6 +56,10 @@ export function setupDesktop(app) {
                 break;
             }
             case 2: {
+                if (app.blueprintDrag) {
+                    app.escape();
+                    return;
+                }
                 drag = {...pos, button: 2};
                 const p = pixelAt(ev);
                 if (!p) break;
@@ -63,6 +72,11 @@ export function setupDesktop(app) {
     });
 
     document.addEventListener("mouseup", () => {
+        if (drag?.blueprint) {
+            app.blueprint.moveTo(app.blueprint.x, app.blueprint.y);
+            app.renderBlueprintPanel?.();
+            app.render();
+        }
         drag = null;
         lastPainted = null;
         document.body.classList.remove("dragging");
@@ -80,6 +94,15 @@ export function setupDesktop(app) {
                     else if (lastPainted && app.cooldown <= 0) paintLine(lastPainted, p);
                     else app.placePixel(p.x, p.y, {source: "drag", quiet: true});
                     lastPainted = p;
+                }
+            } else if (drag.blueprint) {
+                const p = app.gl.screenToCanvas(ev.clientX, ev.clientY);
+                const b = drag.blueprint;
+                const nx = Math.round(b.bx + p.x - b.x), ny = Math.round(b.by + p.y - b.y);
+                if (nx !== app.blueprint.x || ny !== app.blueprint.y) {
+                    app.blueprint.x = nx;
+                    app.blueprint.y = ny;
+                    app.render();
                 }
             } else {
                 app.gl.move(pos.x - drag.x, pos.y - drag.y);
@@ -137,6 +160,13 @@ export function setupDesktop(app) {
                 break;
             case "l":
                 app.copyLink();
+                break;
+            case "m":
+                if (app.blueprint?.active) {
+                    app.blueprint.visible = !app.blueprint.visible;
+                    app.blueprint.save();
+                    app.render();
+                }
                 break;
             case "i": {
                 const p = (app.keyboardAim && app.aim) || app.hover;
