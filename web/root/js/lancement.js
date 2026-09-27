@@ -34,6 +34,7 @@ async function main() {
     if (st.now) offset = st.now - Date.now();
     launch = st.launch ?? {};
     adminAccess();
+    $(".js-replay").hidden = !launch.video; // the trailer can be watched while waiting
     let line = 0;
     setInterval(() => { line = (line + 1) % LINES.length; if (!ended) $(".js-bulle").textContent = LINES[line]; }, 6000);
     if (!launch.at) return; // no date yet: « La date arrive très bientôt »
@@ -118,6 +119,7 @@ function opened() {
     $(".js-sound").hidden = true;
     $(".js-open").hidden = false;
     $(".js-replay").hidden = !launch.video;
+    $(".js-replay-label").textContent = "Revoir la bande-annonce";
 }
 
 function icsURL(at) {
