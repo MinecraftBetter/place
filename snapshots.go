@@ -8,6 +8,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"net/http"
+	"os"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -70,7 +72,12 @@ func (api *API) handleSnapshots(w http.ResponseWriter, r *http.Request) {
 		end, _ := time.Parse("2006-01", days[len(days)-1].Date[:7])
 		for ; !t.After(end); t = t.AddDate(0, 1, 0) {
 			m := t.Format("2006-01")
-			archive = append(archive, map[string]any{"month": m, "days": months[m], "href": "/archives/archive-" + m + ".zip"})
+			entry := map[string]any{"month": m, "days": months[m]}
+			// a link only when the monthly zip exists (timelapse.sh may not have made it)
+			if api.archivesDir == "" || fileExists(filepath.Join(api.archivesDir, "archive-"+m+".zip")) {
+				entry["href"] = "/archives/archive-" + m + ".zip"
+			}
+			archive = append(archive, entry)
 		}
 	}
 	top := append([]snapshotDay(nil), days...)
@@ -157,3 +164,11 @@ func (api *API) handleSnapshot(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 	w.Write(b)
 }
+
+func fileExists(path string) bool {
+	st, err := os.Stat(path)
+	return err == nil && !st.IsDir()
+}
+
+// SetArchivesDir tells where the monthly zips served at /archives/ are.
+func (api *API) SetArchivesDir(dir string) { api.archivesDir = dir }

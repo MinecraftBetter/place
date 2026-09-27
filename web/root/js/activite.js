@@ -57,6 +57,12 @@ function alertHTML(a) {
             sub = relativeTime(a.ts);
             href = p.href || "/musee";
             break;
+        case "badge_oeuvre":
+            title = `Nouveau badge : ${escapeHTML(p.nom ?? "")}`;
+            sub = `grâce à « ${escapeHTML(p.titre ?? "")} », d'après les sauvegardes · ${relativeTime(a.ts)}`;
+            href = `/oeuvre/${p.oeuvre}`;
+            img = `<img class="px" src="${escapeHTML(p.sprite ?? "")}" alt="" width="40" height="40">`;
+            break;
         case "livre_or":
             title = `${escapeHTML(p.by?.pseudo ?? "Quelqu'un")} a signé ton livre d'or`;
             sub = `« ${escapeHTML(p.texte ?? "")} » · ${relativeTime(a.ts)}`;

@@ -357,6 +357,14 @@ type Backups struct {
 	progress [2]int
 	err      error
 	builtAt  time.Time
+	onUpdate []func(frames int)
+}
+
+// OnUpdate registers a function called after the index gained new captures.
+func (b *Backups) OnUpdate(f func(frames int)) {
+	b.mu.Lock()
+	b.onUpdate = append(b.onUpdate, f)
+	b.mu.Unlock()
 }
 
 func NewBackups(sources []string, indexPath string) *Backups {
@@ -455,7 +463,13 @@ func (b *Backups) Refresh() error {
 		}
 		return err
 	}
+	grew := prev == nil || len(idx.Frames) > len(prev.Frames)
 	b.idx, b.status, b.err, b.builtAt = idx, "ready", nil, time.Now()
+	if grew {
+		for _, f := range b.onUpdate {
+			f(len(idx.Frames))
+		}
+	}
 	log.WithField("endpoint", "Backups").Infof("Index: %d captures, %d pixel changes (%s)", len(idx.Frames), len(idx.EvPos), time.Since(started).Round(time.Second))
 	if b.indexPath != "" {
 		if err := idx.Save(b.indexPath); err != nil {

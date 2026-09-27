@@ -16,7 +16,10 @@ import (
 )
 
 // SetBackups gives the API the backup index (claims analysis, timelapse, stats).
-func (api *API) SetBackups(b *Backups) { api.backups = b }
+func (api *API) SetBackups(b *Backups) {
+	api.backups = b
+	api.watchBackups(b)
+}
 
 func (api *API) index() *BackupIndex {
 	if api.backups == nil {
@@ -81,10 +84,12 @@ func (api *API) serverError(w http.ResponseWriter, what string, err error) {
 // ------------------------------------------------------------------
 // Analysis cache: the same zone is analysed while the player adjusts it.
 
+// analyses of the current index; they also depend on the day (stability over a year)
 var analysisCache = struct {
 	sync.Mutex
-	frames int
-	m      map[string]*ZoneAnalysis
+	idx *BackupIndex
+	day string
+	m   map[string]*ZoneAnalysis
 }{m: map[string]*ZoneAnalysis{}}
 
 func (api *API) analyse(m Mask) (*ZoneAnalysis, error) {
@@ -94,8 +99,8 @@ func (api *API) analyse(m Mask) (*ZoneAnalysis, error) {
 	}
 	key, _ := json.Marshal(m)
 	analysisCache.Lock()
-	if analysisCache.frames != len(idx.Frames) {
-		analysisCache.frames, analysisCache.m = len(idx.Frames), map[string]*ZoneAnalysis{}
+	if day := api.store.now().Format("2006-01-02") + "/" + strconv.FormatInt(api.store.MigrationTime().UnixMilli(), 10); analysisCache.idx != idx || analysisCache.day != day {
+		analysisCache.idx, analysisCache.day, analysisCache.m = idx, day, map[string]*ZoneAnalysis{}
 	}
 	a, ok := analysisCache.m[string(key)]
 	analysisCache.Unlock()

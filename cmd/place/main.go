@@ -161,6 +161,7 @@ func main() {
 	} else {
 		api.SetMediaDir(mediaDir)
 	}
+	api.SetArchivesDir(filepath.Join(root, "archives"))
 
 	// Weekly badges (Top 10): at startup, then every hour.
 	go func() {

@@ -156,8 +156,9 @@ function render() {
             <div class="card tl-card"><span class="fs-h3">La vidéo</span><p class="fs-small t2 pretty">Toute l'histoire du canvas en accéléré, générée chaque nuit à partir des sauvegardes.</p>
                 <a class="btn btn-primary" href="/timelapse.mp4" download>${icon("download", 18)}Télécharger timelapse.mp4</a></div>
             <div class="tl-box"><div class="sec-head"><span class="fs-h3">Les archives</span><span class="fs-cap t3">un zip de sauvegardes par mois</span></div>
-                ${Object.entries(years).map(([y, ms]) => `<div class="tl-year"><span class="mono b">${y}</span><div class="tl-months-list">${ms.map(m => m.days
+                ${Object.entries(years).map(([y, ms]) => `<div class="tl-year"><span class="mono b">${y}</span><div class="tl-months-list">${ms.map(m => m.days && m.href
                     ? `<a class="chip" href="${m.href}" download>${MONTHS_CAP[Number(m.month.slice(5)) - 1]}<span class="mono t3">${m.days} j</span></a>`
+                    : m.days ? `<span class="chip tl-nozip" title="Des captures existent, mais pas encore de zip pour ce mois">${MONTHS_CAP[Number(m.month.slice(5)) - 1]}<span class="mono t3">${m.days} j</span></span>`
                     : `<span class="chip tl-empty" title="Il n'y a pas eu d'activité sur la toile 😢"><del>${MONTHS_CAP[Number(m.month.slice(5)) - 1]}</del></span>`).join("")}</div></div>`).join("")}</div>
             <div class="tl-box"><span class="fs-h3">Les jours les plus actifs</span>
                 ${data.top.map((d, k) => `<button class="card-2 tl-top" type="button" data-goto="${d.date}"><span class="mono fs-cap t3">${k + 1}</span><span class="fs-small b grow">${dateLong(d.date)}</span><span class="mono fs-cap t2">${d.minutes} min</span></button>`).join("")}</div>

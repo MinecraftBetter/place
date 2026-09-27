@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -26,6 +27,8 @@ type API struct {
 	settings     atomic.Pointer[Settings]
 	saveInterval int
 	museums      *museumAPI
+	reanalysing  sync.Mutex
+	archivesDir  string // web root /archives (monthly zips)
 }
 
 // SetSaveInterval tells the admin page how often place.png is written.

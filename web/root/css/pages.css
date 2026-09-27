@@ -567,6 +567,7 @@ html.vis-page, .vis-page body { height: 100%; overflow: hidden; background: #0c0
 .tl-months-list { display: flex; gap: 6px; flex-wrap: wrap; }
 .tl-months-list .chip { height: 30px; }
 .tl-empty { opacity: .55; }
+.tl-nozip { opacity: .8; border-style: dashed; cursor: help; }
 .tl-top { display: flex; align-items: center; gap: 10px; padding: 10px 12px; font: inherit; color: var(--text); cursor: pointer; text-align: left; }
 .tl-sizes { padding: 14px; display: flex; flex-direction: column; gap: 6px; }
 .tl-fallback { width: 100%; max-width: 860px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 16px; }

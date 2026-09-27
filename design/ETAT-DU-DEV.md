@@ -1,6 +1,6 @@
 # État du développement — refonte EvenBetter
 
-*Mis à jour le 27 septembre 2026. Branche locale `phase1-socle` (partie de `redesign`), **non poussée**. Rien n'a été déployé.*
+*Mis à jour le 27 septembre 2026. Branche `phase1-socle` (partie de `redesign`), poussée sur GitHub, sans PR. Rien n'a été déployé.*
 
 Les six étapes du HANDOFF (§9) sont codées, plus les trois demandes ajoutées en cours de route :
 
@@ -17,6 +17,27 @@ Les six étapes du HANDOFF (§9) sont codées, plus les trois demandes ajoutées
 | 4. Communauté | activité, alertes « ton œuvre a bougé », classement, musée public, pages œuvre (avant/après, construction), visite guidée, timelapse sur les vraies captures | `b21df7b`, `fb3e4dc` |
 | 5. Admin complet | tableau de bord, utilisateurs, outil zone, modération, journal annulable avec export CSV, réglages ; côté joueur : lecture seule, maintenance, bannière d'annonce, compte suspendu, « Signaler » | `9f802a4`, `45038e5` |
 | 6. Musées perso | annuaire `/musees`, visite `/u/:pseudo/musee`, éditeur `/moi/musee`, livre d'or, coups de cœur, sons modérés | `07ec425` |
+
+## Données réelles (mises à jour le 27/09/2026)
+
+- **Canvas** : celui de place.justbetter.fr au 27/09/2026. L'ancien canvas de dev (copie du 28/03/2024) est remplacé.
+- **Sauvegardes indexées : 17 489 captures, du 10/09/2022 au 27/09/2026.**
+  - Les 30 zips mensuels du site (`archive-2022-09` → `archive-2025-04`) sont dans `~/BetterPlace/archives/`.
+  - Le serveur ne fait plus de zips depuis avril 2025, mais `bak/` continue d'enregistrer les captures. Elles ont été copiées en lecture seule dans `~/BetterPlace/archives/serveur-bak/` (1 917 fichiers, 2025-05 → 2026-09-27).
+  - 407 captures sont ignorées parce qu'elles sont vides ou tronquées, dont 371 dans `bak/` depuis 2025. L'ancien `timelapse.sh` les rangeait dans `corrupted/`.
+- **Réanalyse automatique** : dès que l'index gagne des captures (vérification toutes les 10 min), les œuvres et les revendications en attente sont réanalysées.
+  - Un badge d'or devenu vrai grâce aux nouvelles captures est donné aux auteurs, par exemple « Indémodable » après un an intact, ou « Bâtisseur ». Ils sont prévenus par une alerte.
+  - Les badges déjà proposés à la validation restent la décision de l'admin.
+  - Un bouton « Réanalyser maintenant » est dans `/admin/reglages`.
+  - Première passe : 6 œuvres, et Zozo42 a gagné « Bâtisseur » pour « Pas vraiment ».
+- **Timelapse** : un mois qui a des captures mais pas de zip n'est plus proposé en téléchargement. Il reste affiché, avec un cadre en pointillés.
+
+Pour remettre à jour plus tard :
+
+```bash
+rsync -a -e "ssh -p 1025" --include='20??-??/***' --exclude='*' tiago@justbetter.fr:/mnt/JustFast/Configs/RPlace/bak/ ~/BetterPlace/archives/serveur-bak/
+curl -o place.png https://place.justbetter.fr/place.png   # serveur de dev arrêté
+```
 
 ## Lancer en local
 
@@ -58,6 +79,7 @@ node design/outils/demo-seed.mjs
 ## Ce qui reste à faire
 
 - **Connexion JustBetter (OIDC)** : seul le fournisseur de dev existe pour l'instant. Tant qu'elle n'est pas branchée, on ne peut pas déployer (voir `PLAN-PHASE-1.md` §8, point 1).
-- **Déploiement et push** : rien n'a été fait, j'attends ton feu vert.
+- **Déploiement** : rien n'a été fait, j'attends ton feu vert.
+- **Serveur actuel** : `timelapse.sh` ne produit plus d'archives zip (ni sans doute `timelapse.mp4`) depuis avril 2025. Seul `backup.sh` tourne encore. À relancer côté serveur si tu veux les zips des mois récents.
 - **Admin** : le motif d'une suspension et le message à un joueur se saisissent encore dans les fenêtres natives du navigateur (`prompt()`). Une vraie modale serait plus propre.
 - **Musées** : l'animation « Rejouer sa construction » n'existe que pour les œuvres présentes dans les sauvegardes. Pour les autres, l'œuvre reste fixe.

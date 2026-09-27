@@ -94,6 +94,18 @@ func (st Settings) modeInfo() map[string]any {
 func (api *API) mountSettings() {
 	api.mux.HandleFunc("/api/admin/settings", api.admin(api.handleSettings))
 	api.mux.HandleFunc("/api/status", api.handlePublicStatus)
+	api.mux.HandleFunc("/api/admin/reanalyse", api.admin(func(w http.ResponseWriter, r *http.Request, admin *User) {
+		if r.Method != http.MethodPost {
+			writeError(w, http.StatusMethodNotAllowed, "Méthode non autorisée.")
+			return
+		}
+		rep, err := api.Reanalyse()
+		if err != nil {
+			writeError(w, http.StatusConflict, "Les sauvegardes ne sont pas encore indexées.")
+			return
+		}
+		writeJSON(w, rep)
+	}))
 }
 
 // GET /api/status — mode and announcement, for every page.
@@ -110,7 +122,7 @@ func (api *API) handleSettings(w http.ResponseWriter, r *http.Request, admin *Us
 	switch r.Method {
 	case http.MethodGet:
 		st := api.Settings()
-		writeJSON(w, map[string]any{"settings": st, "save_interval": api.saveInterval, "backups": api.backupStatus(), "saved_at": lastSave.Load()})
+		writeJSON(w, map[string]any{"settings": st, "save_interval": api.saveInterval, "backups": api.backupStatus(), "saved_at": lastSave.Load(), "reanalyse": api.LastReanalysis()})
 	case http.MethodPut, http.MethodPost:
 		before := api.Settings()
 		st := before

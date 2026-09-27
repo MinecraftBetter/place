@@ -51,6 +51,12 @@ function render() {
                     <span class="fs-small t2">Sauvegardes (backup.sh) : ${info.backups.status === "ready" ? `${formatNumber(info.backups.frames)} captures indexées, la dernière ${relativeTime(info.backups.last)}` : info.backups.status === "indexing" ? `indexation en cours (${info.backups.total ? Math.floor(info.backups.done / info.backups.total * 100) : 0} %)` : "aucune trouvée"}</span>
                     <span class="fs-small t2">Timelapse et archives mensuelles : timelapse.sh (inchangé)</span>
                 </div>
+                <div class="card-2 adm-server-info">
+                    <span class="fs-small b">Analyse des œuvres</span>
+                    <span class="fs-small t2 pretty">${info.reanalyse ? `Dernière analyse ${relativeTime(info.reanalyse.le)} sur ${formatNumber(info.reanalyse.sauvegardes)} captures : ${info.reanalyse.oeuvres} œuvre${info.reanalyse.oeuvres > 1 ? "s" : ""}, ${info.reanalyse.revendications} revendication${info.reanalyse.revendications > 1 ? "s" : ""} en attente, ${info.reanalyse.badges.length} nouveau${info.reanalyse.badges.length > 1 ? "x" : ""} badge${info.reanalyse.badges.length > 1 ? "s" : ""}.` : "Relancée automatiquement quand de nouvelles captures arrivent."}</span>
+                    ${info.reanalyse?.badges.length ? `<span class="fs-cap t3">${info.reanalyse.badges.slice(0, 6).map(g => `${escapeHTML(g.user?.pseudo ?? "")} : ${escapeHTML(g.badge)} (« ${escapeHTML(g.titre)} »)`).join(" · ")}</span>` : ""}
+                    <button class="btn btn-sm js-reanalyse" type="button">Réanalyser maintenant</button>
+                </div>
             </section>
             <section class="card adm-card"><div class="sec-head"><span class="fs-h3">Musées perso</span><span class="bonus">bonus</span></div>
                 <div class="adm-toggles">${[["sounds_check", "Sons importés validés par l'équipe"], ["voice_limit", "Commentaire vocal : 30 s max"], ["guestbook_flt", "Livre d'or : filtre de mots"]].map(([k, l]) =>
@@ -77,6 +83,19 @@ export async function mount(el) {
         const b = e.target.closest("[data-bool]");
         if (b) { st[b.dataset.bool] = !st[b.dataset.bool]; render(); return; }
         if (e.target.closest(".js-reset")) { st = {...saved}; render(); return; }
+        if (e.target.closest(".js-reanalyse")) {
+            e.target.closest(".js-reanalyse").disabled = true;
+            try {
+                const r = await api("/api/admin/reanalyse", {method: "POST"});
+                info.reanalyse = r;
+                render();
+                toast(`<span class="fs-small b">${r.oeuvres} œuvres analysées, ${r.badges.length} nouveau${r.badges.length > 1 ? "x" : ""} badge${r.badges.length > 1 ? "s" : ""}</span>`);
+            } catch (err) {
+                toast(`<span class="fs-small b">${escapeHTML(err.message)}</span>`);
+                render();
+            }
+            return;
+        }
         if (e.target.closest(".js-save")) {
             try {
                 const r = await api("/api/admin/settings", {method: "PUT", body: st});
