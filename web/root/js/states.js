@@ -8,8 +8,11 @@ const ANNOUNCE = {event: ["banner-gold", "megaphone"], info: ["banner-info", "be
 const RETRY = 30;
 
 // The banners shown at the top: the admin's announcement, then the read-only notice.
-export function bannersHTML(announce, mode) {
+export function bannersHTML(announce, mode, launch) {
     let html = "";
+    if (launch?.active && launch.admin) {
+        html += `<div class="banner banner-gold">${icon("shield", 18)}<span class="grow">Fermé au public jusqu'au ${escapeHTML(launch.label ?? "lancement")} : tu vois le site en tant qu'admin. <a href="/lancement">Voir le compte à rebours</a></span></div>`;
+    }
     if (announce?.text) {
         const [cls, ic] = ANNOUNCE[announce.style] ?? ANNOUNCE.event;
         html += `<div class="banner ${cls}">${icon(ic, 18)}<span class="grow">${escapeHTML(announce.text)}</span></div>`;
@@ -116,7 +119,8 @@ export async function mountPageStates(me) {
     if (!st || !("mode" in st)) {
         try { st = await (await fetch("/api/status", {cache: "no-store"})).json(); } catch { return; }
     }
-    const html = bannersHTML(st.announce, st.mode?.mode === "readonly" ? st.mode : null);
+    const launch = st.launch ? {...st.launch, admin: st.user?.role === "admin"} : null;
+    const html = bannersHTML(st.announce, st.mode?.mode === "readonly" ? st.mode : null, launch);
     if (html) {
         const bar = document.createElement("div");
         bar.className = "state-banners state-banners-page";
@@ -129,7 +133,7 @@ export async function mountPageStates(me) {
 
 // /ace: everything live (WebSocket "mode", "announce" and "zone" messages).
 export function setupStates(app) {
-    let mode = {mode: "normal"}, announce = null;
+    let mode = {mode: "normal"}, announce = null, launch = null;
     const bar = document.createElement("div");
     bar.className = "state-banners state-banners-canvas";
     bar.setAttribute("role", "status");
@@ -141,7 +145,7 @@ export function setupStates(app) {
         if (!bar.hidden) document.documentElement.style.setProperty("--banners-h", (bar.offsetHeight + (mobileMQ.matches ? 0 : 8)) + "px");
     });
     const render = () => {
-        const html = bannersHTML(announce, mode.mode !== "normal" && (mode.mode === "readonly" || isAdmin()) ? mode : null);
+        const html = bannersHTML(announce, mode.mode !== "normal" && (mode.mode === "readonly" || isAdmin()) ? mode : null, launch && {...launch, admin: isAdmin()});
         bar.innerHTML = html;
         bar.hidden = !html;
         // push the mobile top bar and the toasts below the banners
@@ -157,6 +161,7 @@ export function setupStates(app) {
     app.applyStatus = me => {
         mode = me.mode ?? mode;
         announce = me.announce ?? null;
+        launch = me.launch ?? null;
         render();
         if (me.blocked) showSanction(me.blocked, me.sanction);
     };
@@ -183,6 +188,10 @@ export function setupStates(app) {
             if (wasMaintenance && mode.mode !== "maintenance" && !isAdmin()) location.reload();
             else if (mode.mode === "normal" && was !== "normal") toast(`<span data-icon="check" data-size="18"></span><span class="fs-small b">Le canvas est de nouveau ouvert</span>`, {timeout: 3000});
             fillIcons($("#toasts"));
+        });
+        conn.addEventListener("launch", ev => {
+            launch = ev.detail.launch ?? null;
+            render();
         });
         conn.addEventListener("announce", ev => {
             announce = ev.detail.text ? {text: ev.detail.text, style: ev.detail.style} : null;

@@ -20,11 +20,20 @@ let offset = 0, launch = {}, soundOn = false, audioCtx = null, lastS = -1, ended
 const pad = n => String(n).padStart(2, "0");
 const now = () => Date.now() + offset;
 
+// admins get in before the release: a button when logged in as one, a discreet link otherwise
+async function adminAccess() {
+    const me = await fetch("/api/me", {cache: "no-store"}).then(r => r.json()).catch(() => null);
+    if (!launch.active) return;
+    if (me?.user?.role === "admin") $(".js-admin-enter").hidden = false;
+    else if (!me?.user) $(".js-admin-login").hidden = false;
+}
+
 async function main() {
     const r = await fetch("/api/status", {cache: "no-store"}).catch(() => null);
     const st = r ? await r.json().catch(() => ({})) : {};
     if (st.now) offset = st.now - Date.now();
     launch = st.launch ?? {};
+    adminAccess();
     let line = 0;
     setInterval(() => { line = (line + 1) % LINES.length; if (!ended) $(".js-bulle").textContent = LINES[line]; }, 6000);
     if (!launch.at) return; // no date yet: « La date arrive très bientôt »

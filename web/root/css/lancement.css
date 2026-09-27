@@ -49,3 +49,6 @@
 .bp .cd a.btn, .bp .ba a.btn { color: #f3efe6; text-decoration: none; }
 .bp .cd a.btn-primary, .bp .ba a.btn-primary { color: var(--accent-ink, #0b1a10); }
 .cd-actions .btn svg, .ba .btn svg { flex-shrink: 0; }
+.cd-admin { position: absolute; right: 14px; bottom: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #8f8778; opacity: .7; }
+.bp a.cd-admin { color: #8f8778; text-decoration: none; }
+.cd-admin:hover { opacity: 1; }
