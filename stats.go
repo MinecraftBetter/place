@@ -237,7 +237,8 @@ func (api *API) handleHeatmap(w http.ResponseWriter, r *http.Request, admin *Use
 		maxV = max(maxV, v)
 	}
 	img := image.NewNRGBA(image.Rect(0, 0, cw, ch))
-	ramp := []color.NRGBA{{12, 11, 10, 255}, {94, 60, 160, 255}, {240, 183, 90, 255}, {255, 107, 107, 255}, {255, 248, 184, 255}}
+	// one hue (gold), dark to bright: sequential data gets a single-hue ramp
+	ramp := []color.NRGBA{{58, 42, 18, 255}, {124, 88, 34, 255}, {196, 142, 58, 255}, {240, 183, 90, 255}, {255, 236, 190, 255}}
 	api.canvas.mu.RLock()
 	for i, v := range heat {
 		p := api.canvas.img.Pix[i*4:]

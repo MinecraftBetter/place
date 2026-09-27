@@ -1,5 +1,6 @@
 // /u/:pseudo — public profile (m-profil, d-profil, e-vides-m).
 
+import {openReport, reportButtonHTML} from "./report.js";
 import {$, avatarHTML, copyText, escapeHTML, fillIcons, icon, toast} from "./ui.js";
 import {mountShell, emptyState, fetchMe} from "./shell.js";
 import {dateFR, bannerHTML, hexAlpha, badgeTile} from "./common.js";
@@ -34,7 +35,8 @@ async function main() {
 
     const actions = `${x.musee ? `<a class="btn only-d" href="/u/${escapeHTML(p.slug)}/musee">${icon("museum", 18)}Son musée</a>` : ""}
         ${p.moi ? `<a class="btn" href="/moi/profil">${icon("edit", 18)}Modifier</a>` : ""}
-        <button class="btn btn-icon js-share" type="button" aria-label="Partager le profil">${icon("link", 18)}</button>`;
+        <button class="btn btn-icon js-share" type="button" aria-label="Partager le profil">${icon("link", 18)}</button>
+        ${p.moi ? "" : reportButtonHTML("Signaler ce profil")}`;
 
     const kpis = `
         <div class="card kpi"><span class="fs-over">Pixels posés</span><span class="kpi-v">${formatNumber(p.pixels_poses)}</span></div>
@@ -105,6 +107,8 @@ async function main() {
     page.removeAttribute("aria-busy");
     fillIcons(page);
 
+    $(".js-report", page)?.addEventListener("click", () => openReport({me: me0.user, cible: `user:${p.id}`, title: `Signaler le profil de ${p.pseudo}`,
+        choices: [["avatar", "Son avatar"], ["banniere", "Sa bannière"], ["bio", "Sa bio"], ["pseudo", "Son pseudo"]]}));
     $(".js-share", page).addEventListener("click", async () => {
         const url = location.origin + "/u/" + p.slug;
         if (navigator.share && matchMedia("(pointer: coarse)").matches) {

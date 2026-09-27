@@ -1,5 +1,6 @@
 // /oeuvre/:id — an artwork: frame, cartel, before/after, construction replay, history (m-oeuvre, d-oeuvre).
 
+import {openReport, reportButtonHTML} from "./report.js";
 import {$, $$, avatarHTML, copyText, escapeHTML, fillIcons, icon, toast} from "./ui.js";
 import {mountShell, emptyState, loginHref} from "./shell.js";
 import {cropOf, frameClass, dateFR, artView, SALLE_LABELS} from "./common.js";
@@ -60,6 +61,7 @@ async function main() {
                     <a class="btn btn-primary btn-px" href="${view}">${icon("target", 18)}Voir sur le canvas · x ${o.x} y ${o.y}</a>
                     <button class="btn js-like" type="button" aria-pressed="${!!o.extra?.liked}"><img class="px" src="/img/badges/coeur.png" alt="" width="18" height="18">Coup de cœur</button>
                     <button class="btn btn-icon js-share" type="button" aria-label="Partager">${icon("link", 18)}</button>
+                    ${d.auteur ? "" : reportButtonHTML("Signaler le titre de l'œuvre")}
                 </div>
                 ${d.auteur ? `<div class="oe-actions">
                     <a class="btn btn-sm btn-gold btn-px" href="/musee/exposer?oeuvre=${o.id}">${e ? "Modifier l'exposition" : "Exposer au musée"}</a>
@@ -151,6 +153,7 @@ async function main() {
         btn.setAttribute("aria-pressed", String(on));
         $(".js-likes").textContent = res.likes;
     });
+    $(".js-report")?.addEventListener("click", () => openReport({me, cible: `oeuvre:${o.id}`, title: `Signaler « ${o.titre} »`, choices: [["oeuvre", "Le titre ou la description"]]}));
     $(".js-share").addEventListener("click", async () => {
         const url = location.origin + "/oeuvre/" + o.id;
         if (navigator.share && matchMedia("(pointer: coarse)").matches) return navigator.share({title: o.titre, url}).catch(() => {});

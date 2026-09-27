@@ -42,6 +42,8 @@ const PATHS = {
     upload: '<path d="M12 15V3M7 8l5-5 5 5M5 13v8h14v-8"></path>',
     dice: '<rect x="4" y="4" width="16" height="16"></rect><path d="M9 9h.01M15 15h.01M15 9h.01M9 15h.01"></path>',
     bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"></path>',
+    lock: '<rect x="5" y="11" width="14" height="10"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path>',
+    megaphone: '<path d="M3 10v4h4l8 5V5L7 10zM18 9a4 4 0 0 1 0 6"></path>',
     filter: '<path d="M4 5h16l-6 7v6l-4 2v-8z"></path>',
     flag: '<path d="M5 21V4M5 4h12l-2 4 2 4H5"></path>',
     eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle>',

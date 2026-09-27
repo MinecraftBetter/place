@@ -107,12 +107,12 @@ body.dragging #viewport-canvas { cursor: grabbing; }
 .insp-origin { padding: 12px; display: flex; flex-direction: column; gap: 8px; background: var(--gold-soft); border-color: color-mix(in srgb, var(--gold) 35%, transparent); }
 
 /* ----- mobile: top bar, side buttons ----- */
-.m-top { position: absolute; top: calc(12px + env(safe-area-inset-top)); left: 12px; right: 12px; display: flex; align-items: center; gap: 8px; z-index: 10; }
+.m-top { position: absolute; top: calc(12px + env(safe-area-inset-top) + var(--banners-h, 0px)); left: 12px; right: 12px; display: flex; align-items: center; gap: 8px; z-index: 10; }
 .m-home { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
 .m-coords { height: 44px; border-radius: 14px; padding: 0 12px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 .m-login { height: 44px; border-radius: 14px; }
 .m-avatar { position: relative; width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; color: var(--text); }
-.m-side { position: absolute; right: 12px; top: calc(68px + env(safe-area-inset-top)); display: flex; flex-direction: column; gap: 8px; z-index: 10; }
+.m-side { position: absolute; right: 12px; top: calc(68px + env(safe-area-inset-top) + var(--banners-h, 0px)); display: flex; flex-direction: column; gap: 8px; z-index: 10; }
 .m-side .btn { border-radius: 14px; }
 .m-online { border-radius: 14px; padding: 0 10px; height: 32px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
@@ -164,11 +164,11 @@ html.bp .sheet { position: fixed; padding: 0 16px calc(24px + env(safe-area-inse
 .theme-seg { align-self: flex-start; }
 
 /* ----- toasts ----- */
-#toasts { position: fixed; top: calc(66px + env(safe-area-inset-top)); left: 12px; right: 64px; display: flex; flex-direction: column; gap: 8px; z-index: 40; pointer-events: none; }
+#toasts { position: fixed; top: calc(66px + env(safe-area-inset-top) + var(--banners-h, 0px)); left: 12px; right: 64px; display: flex; flex-direction: column; gap: 8px; z-index: 40; pointer-events: none; }
 #toasts .toast { pointer-events: auto; }
 @media not all and (max-width: 767px) {
   @media not all and (pointer: coarse) {
-    #toasts { top: 92px; left: 50%; right: auto; width: 440px; margin-left: -220px; }
+    #toasts { top: calc(92px + var(--banners-h, 0px)); left: 50%; right: auto; width: 440px; margin-left: -220px; }
   }
 }
 .toast-swatch { width: 22px; height: 22px; box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .2); flex-shrink: 0; }
@@ -355,3 +355,49 @@ a.insp-author { color: var(--text); }
 .live-empty { padding: 8px; }
 @media (max-width: 1180px) { .d-live { display: none; } }
 .alert-ghost { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+/* ----- États : annonce, lecture seule, maintenance, compte suspendu ----- */
+.state-banners { display: flex; flex-direction: column; gap: 6px; z-index: 12; }
+.state-banners[hidden] { display: none; }
+.state-banners .banner { border-radius: 12px; border: 1px solid var(--line); }
+.state-banners .banner svg { flex-shrink: 0; }
+/* opaque on the canvas: the soft tints are unreadable over pixels */
+.state-banners .banner-gold { background: color-mix(in srgb, var(--gold) 18%, var(--surface)); }
+.state-banners .banner-info { background: color-mix(in srgb, var(--info) 16%, var(--surface)); }
+.state-banners .banner-danger { background: color-mix(in srgb, var(--danger) 16%, var(--surface)); }
+.state-banners-canvas { position: absolute; left: 0; right: 0; top: 0; gap: 0; padding-top: env(safe-area-inset-top); }
+.state-banners-canvas .banner { border-radius: 0; border-width: 0 0 1px; }
+.state-banners-page { margin: 12px 16px 0; }
+@media not all and (max-width: 767px) {
+  @media not all and (pointer: coarse) {
+    .state-banners-canvas { top: 92px; left: 148px; right: 332px; max-width: 640px; margin: 0 auto; gap: 6px; padding-top: 0; }
+    .state-banners-canvas .banner { border-radius: 12px; border-width: 1px; box-shadow: var(--shadow-s); }
+    .m-top, .m-side { --banners-h: 0px; }
+    .state-banners-page { margin: 12px auto 0; width: calc(100% - 32px); max-width: 1180px; }
+  }
+}
+.is-frozen .m-place, .is-frozen .js-place, .m-place.frozen { opacity: .55; }
+.is-frozen .d-cooldown .js-cooldown-fill { background: var(--info) !important; }
+
+.state-screen { position: fixed; inset: 0; z-index: 70; overflow-y: auto; background: var(--bg); }
+.state-screen[hidden] { display: none; }
+.state-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 50% 100%, rgba(240, 183, 90, .12), transparent 70%); pointer-events: none; }
+.state-inner { position: relative; min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 32px 24px 64px; text-align: center; }
+.state-inner .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); }
+.state-inner .brand .pixel { font-size: 20px; }
+.state-mascot { position: relative; display: flex; align-items: flex-end; gap: 14px; }
+.state-mascot .bulle { margin-bottom: 150px; font-size: 15px; }
+.state-title { font-size: clamp(32px, 6vw, 44px); }
+.state-text { max-width: 520px; }
+.state-text .tx, .state-center .tx { color: var(--text); }
+.state-retry { display: flex; flex-direction: column; gap: 8px; width: min(420px, 100%); }
+.state-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.state-credit { position: absolute; bottom: 20px; left: 0; right: 0; }
+.state-narrow { max-width: 440px; margin: 0 auto; justify-content: space-between; align-items: stretch; gap: 18px; padding: 20px 20px 28px; }
+.state-narrow .brand { align-self: flex-start; }
+.state-center { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+.state-medal { position: relative; width: 120px; height: 120px; display: flex; align-items: flex-end; justify-content: center; border-radius: 999px; background: var(--warn-soft); }
+.state-medal img { margin-bottom: 10px; }
+.state-title-s { font-size: 30px; }
+.state-motif { padding: 14px 16px; width: 100%; text-align: left; display: flex; flex-direction: column; gap: 6px; }
+.state-actions-col { display: flex; flex-direction: column; gap: 10px; }

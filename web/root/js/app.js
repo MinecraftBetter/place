@@ -11,6 +11,7 @@ import {setupDesktop} from "./desktop.js";
 import {setupMobile} from "./mobile.js";
 import {setupBlueprint} from "./blueprint-ui.js";
 import {setupCommunity} from "./community-ui.js";
+import {setupStates} from "./states.js";
 
 const mobileMQ = matchMedia("(max-width: 767px), (pointer: coarse)");
 const LOUPE_HIDE_DELAY = 2500;
@@ -281,6 +282,10 @@ app.placePixel = (x, y, {quiet = false} = {}) => {
         if (!quiet) blockedToast(app.blocked);
         return false;
     }
+    if (app.frozen) {
+        if (!quiet) app.frozenToast();
+        return false;
+    }
     const now = Date.now();
     if (now < app.readyAt) {
         if (!quiet) flashCooldown();
@@ -350,13 +355,13 @@ function renderCooldown() {
     const span = app.cooldown > 0 ? app.cooldown : Math.max(remaining, 0.5);
     const progress = ready ? 1 : 1 - remaining / span;
     const box = $(".d-cooldown");
-    if (box) box.hidden = app.cooldown <= 0 && ready;
+    if (box) box.hidden = app.cooldown <= 0 && ready && !app.frozen;
     for (const fill of $$(".js-cooldown-fill")) {
         fill.style.width = (Math.max(0, Math.min(1, progress)) * 100).toFixed(1) + "%";
         fill.style.background = ready ? "var(--accent)" : "var(--gold)";
     }
     const label = $(".js-cooldown-label");
-    if (label) label.textContent = ready ? "Prêt à poser" : `Prochain pixel dans ${formatCountdown(remaining)}`;
+    if (label) label.textContent = app.frozen ? "Lecture seule" : ready ? "Prêt à poser" : `Prochain pixel dans ${formatCountdown(remaining)}`;
     const btn = $(".js-place");
     if (btn) {
         btn.classList.toggle("cooling", !ready);
@@ -370,6 +375,7 @@ function renderCooldown() {
         }
         const lbl = $(".js-place-label", btn);
         lbl.textContent = ready ? "Poser" : formatCountdown(remaining);
+        btn.classList.toggle("frozen", !!app.frozen);
         lbl.classList.toggle("mono", !ready);
         btn.setAttribute("aria-label", ready ? "Poser le pixel" : `Prochain pixel dans ${formatCountdown(remaining)}`);
     }
@@ -722,6 +728,7 @@ function wireConnection(conn) {
         for (const el of $$(".js-online")) el.textContent = formatNumber(n);
         for (const el of $$(".js-online-word")) el.textContent = n > 1 ? "connectés" : "connecté";
     });
+    for (const f of app.onConnection ?? []) f(conn);
 }
 
 for (const b of $$(".js-conn-retry")) b.addEventListener("click", () => {
@@ -785,6 +792,11 @@ function onServerError(msg) {
         case "banned":
             app.blocked = msg.err;
             blockedToast(msg.err);
+            app.sanctionFromServer?.(msg.err);
+            break;
+        case "readonly":
+        case "maintenance":
+            app.frozenToast?.();
             break;
     }
 }
@@ -945,6 +957,8 @@ async function start() {
         app.meAlerts = me.alerts ?? 0;
     }
     renderMe();
+    if (me) app.applyStatus?.(me);
+    app.onFrozenChange = renderCooldown;
 
     gl.setTexture(img);
     applyInitialView();
@@ -982,4 +996,6 @@ setupDesktop(app);
 setupMobile(app);
 setupBlueprint(app);
 setupCommunity(app);
+setupStates(app);
+app.resync = () => resync();
 start();

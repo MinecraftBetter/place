@@ -914,8 +914,16 @@ func (s *Store) Decide(admin *User, c *Claim, d Decision, cw, ch int) (int64, er
 		}
 	}
 	recJSON, _ := json.Marshal(rec)
+	// the journal line: « title » by who, then the reason if any
+	detail := fmt.Sprintf("« %s »", c.Titre)
+	if c.Requester != nil {
+		detail += " de " + c.Requester.Pseudo
+	}
+	if motif != "" {
+		detail += " · " + motif
+	}
 	res, err := tx.Exec(`INSERT INTO admin_actions (admin_id, type, cible, avant_json, apres_json, motif, ts) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		admin.ID, "claim."+d.Action, fmt.Sprintf("claim:%d", c.ID), string(recJSON), fmt.Sprintf(`{"statut":%q,"badges":%q}`, claimStatut, strings.Join(badges, ",")), motif, now)
+		admin.ID, "claim."+d.Action, fmt.Sprintf("claim:%d", c.ID), string(recJSON), fmt.Sprintf(`{"statut":%q,"badges":%q}`, claimStatut, strings.Join(badges, ",")), detail, now)
 	if err != nil {
 		return 0, err
 	}

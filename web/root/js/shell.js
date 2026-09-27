@@ -2,6 +2,7 @@
 // account menu, theme. Usage: const me = await mountShell({active: "musee"});
 
 import {$, $$, avatarHTML, escapeHTML, fillIcons, icon, toggleTheme, currentTheme} from "./ui.js";
+import {mountPageStates} from "./states.js";
 
 export const NAV = [
     {id: "canvas", href: "/ace", label: "Canvas", icon: "canvas"},
@@ -40,6 +41,7 @@ export async function mountShell({active = "", overlay = false} = {}) {
         ${u ? `<button class="me-button js-shell-me" type="button" aria-label="Mon compte" aria-haspopup="true" style="--ring: ${escapeHTML(u.accent || "var(--accent)")}">${avatarHTML(u, "av av-40")}${me.alerts ? `<span class="count">${me.alerts}</span>` : ""}</button>`
             : `<a class="btn btn-sm btn-primary" href="${loginHref()}">Se connecter</a>`}`;
     document.body.prepend(header);
+    mountPageStates(me);
 
     if (u) {
         const menu = document.createElement("div");
