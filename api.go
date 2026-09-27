@@ -29,6 +29,7 @@ func NewAPI(c *Canvas, st *Store, a *Auth, h *Hub) *API {
 	api.mux.HandleFunc("/api/users/", api.handleUserProfile)
 	api.mux.HandleFunc("/api/me/profile", api.handleMeProfile)
 	api.mux.HandleFunc("/api/me/avatar", api.handleMeAvatar)
+	api.mux.HandleFunc("/api/me/banner", api.handleMeBanner)
 	return api
 }
 

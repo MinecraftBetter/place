@@ -72,9 +72,11 @@ type Hub struct {
 	maxConns int
 	now      func() time.Time
 
+	maxRate    float64 // anti-flood: pixels per second per player (0 = unlimited)
 	mu         sync.Mutex
 	clients    map[*client]struct{}
 	nextAt     map[uint32]time.Time
+	buckets    map[uint32]*bucket
 	statTimer  *time.Timer
 	pixelHooks []func(u *User, e PixelEvent)
 }
@@ -90,8 +92,47 @@ type client struct {
 func NewHub(c *Canvas, st *Store, a *Auth, maxConns int, cooldown time.Duration) *Hub {
 	return &Hub{
 		canvas: c, store: st, auth: a, cooldown: cooldown, maxConns: maxConns, now: time.Now,
-		clients: map[*client]struct{}{}, nextAt: map[uint32]time.Time{},
+		clients: map[*client]struct{}{}, nextAt: map[uint32]time.Time{}, buckets: map[uint32]*bucket{},
+		maxRate: 30,
 	}
+}
+
+// bucket is a token bucket: maxRate tokens per second, up to twice that in a burst.
+type bucket struct {
+	tokens float64
+	at     time.Time
+}
+
+// SetMaxRate sets the anti-flood limit (pixels per second per player, 0 = unlimited).
+// Invisible to people drawing by hand, it stops scripts from flooding the canvas.
+func (h *Hub) SetMaxRate(r float64) { h.maxRate = r }
+
+// SetCooldown changes the delay between two pixels (admin settings).
+func (h *Hub) SetCooldown(d time.Duration) {
+	h.mu.Lock()
+	h.cooldown = d
+	h.mu.Unlock()
+}
+
+// allowRate takes a token for the player; the second value is the wait when refused.
+// Called with h.mu held.
+func (h *Hub) allowRate(uid uint32, now time.Time) (bool, float64) {
+	if h.maxRate <= 0 {
+		return true, 0
+	}
+	b := h.buckets[uid]
+	burst := h.maxRate * 2
+	if b == nil {
+		b = &bucket{tokens: burst, at: now}
+		h.buckets[uid] = b
+	}
+	b.tokens = math.Min(burst, b.tokens+now.Sub(b.at).Seconds()*h.maxRate)
+	b.at = now
+	if b.tokens < 1 {
+		return false, (1 - b.tokens) / h.maxRate
+	}
+	b.tokens--
+	return true, 0
 }
 
 // Online returns the number of connections and the maximum.
@@ -101,7 +142,11 @@ func (h *Hub) Online() (count, slots int) {
 	return len(h.clients), h.maxConns
 }
 
-func (h *Hub) Cooldown() time.Duration { return h.cooldown }
+func (h *Hub) Cooldown() time.Duration {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	return h.cooldown
+}
 
 // ReadyIn returns how long the player must still wait before drawing.
 func (h *Hub) ReadyIn(uid uint32) time.Duration {
@@ -236,7 +281,14 @@ func (h *Hub) handlePixel(c *client, p PixelColor) {
 		fail("cooldown", math.Ceil(next.Sub(now).Seconds()*10)/10)
 		return
 	}
-	h.nextAt[uid] = now.Add(h.cooldown)
+	if ok, wait := h.allowRate(uid, now); !ok {
+		h.mu.Unlock()
+		fail("flood", math.Ceil(wait*10)/10)
+		return
+	}
+	if h.cooldown > 0 {
+		h.nextAt[uid] = now.Add(h.cooldown)
+	}
 	h.mu.Unlock()
 
 	p.Color.A = 255

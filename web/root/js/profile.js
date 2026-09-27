@@ -66,7 +66,7 @@ async function main() {
     </section>` : "";
 
     page.innerHTML = `
-        ${bannerHTML(p.banner, accent)}
+        ${bannerHTML(p.banner, accent, "prof-banner", p.banner_url)}
         <section class="prof-head">
             <div class="prof-id">
                 ${avatarHTML(p, "av prof-av", `box-shadow: 0 0 0 5px var(--bg), 0 0 0 9px ${escapeHTML(accent)}`)}

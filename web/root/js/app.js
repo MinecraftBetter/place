@@ -327,7 +327,10 @@ function startCooldownTicker() {
 function renderCooldown() {
     const remaining = Math.max(0, app.readyAt - Date.now()) / 1000;
     const ready = remaining <= 0;
-    const progress = ready ? 1 : 1 - remaining / app.cooldown;
+    const span = app.cooldown > 0 ? app.cooldown : Math.max(remaining, 0.5);
+    const progress = ready ? 1 : 1 - remaining / span;
+    const box = $(".d-cooldown");
+    if (box) box.hidden = app.cooldown <= 0 && ready;
     for (const fill of $$(".js-cooldown-fill")) {
         fill.style.width = (Math.max(0, Math.min(1, progress)) * 100).toFixed(1) + "%";
         fill.style.background = ready ? "var(--accent)" : "var(--gold)";
@@ -713,6 +716,7 @@ function onServerError(msg) {
     }
     switch (msg.err) {
         case "cooldown":
+        case "flood":
             app.readyAt = Date.now() + msg.retry * 1000;
             startCooldownTicker();
             flashCooldown();
@@ -876,7 +880,7 @@ async function start() {
     const me = await meP;
     if (me) {
         app.me = me.user;
-        app.cooldown = me.cooldown || 5;
+        app.cooldown = me.cooldown ?? 0;
         app.readyAt = Date.now() + (me.ready_in || 0) * 1000;
         app.blocked = me.blocked ?? null;
     }

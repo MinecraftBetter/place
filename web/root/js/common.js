@@ -5,8 +5,9 @@ import {escapeHTML} from "./ui.js";
 const MONTHS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
 export const dateFR = ts => { const d = new Date(ts); return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`; };
 
-export function bannerHTML(banner, accent, cls = "prof-banner") {
+export function bannerHTML(banner, accent, cls = "prof-banner", url = "") {
     const b = banner || "desert";
+    if (b === "custom" && url) return `<div class="${cls} banner-custom"><img class="px" src="${escapeHTML(url)}" alt=""></div>`;
     if (b === "uni") return `<div class="${cls}" style="background: ${escapeHTML(hexAlpha(accent || "#3ee06c", .35))}"></div>`;
     return `<div class="${cls}"><img class="px" src="/img/${b === "nuit" ? "nuit" : "desert"}.png" alt=""></div>`;
 }

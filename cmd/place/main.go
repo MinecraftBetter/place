@@ -34,6 +34,7 @@ var height int
 var count int
 var saveInterval int
 var cooldown time.Duration
+var maxRate float64
 var devAuth bool
 
 func init() {
@@ -48,7 +49,8 @@ func init() {
 	flag.IntVar(&height, "height", 1024, "The height to create the canvas.")
 	flag.IntVar(&count, "count", 64, "The maximum number of connections.")
 	flag.IntVar(&saveInterval, "saveInterval", 180, "Save interval in seconds.")
-	flag.DurationVar(&cooldown, "cooldown", 5*time.Second, "Delay between two pixels of the same player.")
+	flag.DurationVar(&cooldown, "cooldown", 0, "Delay between two pixels of the same player (0 = none).")
+	flag.Float64Var(&maxRate, "maxRate", 30, "Anti-flood: maximum pixels per second per player (0 = unlimited).")
 	flag.BoolVar(&devAuth, "devAuth", false, "Enable the \"dev\" login provider (fake accounts, no password). Never in production.")
 }
 
@@ -104,6 +106,7 @@ func main() {
 	}
 	auth := place.NewAuth(store, providers...)
 	hub := place.NewHub(canvas, store, auth, count, cooldown)
+	hub.SetMaxRate(maxRate)
 	placeSv := place.NewServer(canvas, hub)
 
 	// Save periodically and on shutdown

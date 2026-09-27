@@ -6,9 +6,10 @@ import {PALETTE, colorName} from "./palette.js";
 import {bannerHTML, hexAlpha} from "./common.js";
 import {formatNumber} from "./view.js";
 import {avatarBlob, randomSeed} from "./avatar-gen.js";
+import {PixelEditor} from "./pixel-editor.js";
 
 const ACCENTS = [["#FF63AA", "rose"], ["#5EB3FF", "bleu evian"], ["#3EE06C", "vert"], ["#FFD623", "jaune"], ["#FFA800", "orange foncé"], ["#6A5CFF", "violet clair"], ["#00CCC0", "bleu sale de bain"], ["#FF2651", "rouge clair"]];
-const BANNERS = [["desert", "Désert"], ["nuit", "Nuit"], ["uni", "Uni"]];
+const BANNERS = [["desert", "Désert"], ["nuit", "Nuit"], ["uni", "Uni"], ["custom", "Dessin"]];
 
 const slugify = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/œ/g, "o").replace(/æ/g, "a")
     .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 32).replace(/-+$/, "") || "joueur";
@@ -29,6 +30,7 @@ async function main() {
         accent: (p.accent || "#3ee06c").toUpperCase(), fav: (p.couleur_pref || "").toUpperCase(),
         pins: p.badges_epingles.slice(), map: p.carte_publique, alerts: p.alertes_retouche ?? true,
         avatar: p.avatar, avatarBlob: null, avatarURL: null,
+        bannerURL: p.banner_url || "", bannerDraft: null, bannerDirty: false,
     };
 
     page.innerHTML = `
@@ -67,6 +69,10 @@ async function main() {
                 <span class="label">Bannière</span>
                 <div class="edit-banners js-banners"></div>
             </div>
+            <div class="field edit-wide js-banner-editor-field" hidden>
+                <span class="label">Dessine ta bannière</span>
+                <div class="card pe js-banner-editor"></div>
+            </div>
             <div class="field">
                 <span class="label">Couleur d'accent</span>
                 <div class="edit-accents js-accents"></div>
@@ -94,9 +100,11 @@ async function main() {
         $(".js-bio-count").textContent = `${[...st.bio].length} / 160`;
         const avatarUser = {pseudo: st.pseudo, accent: st.accent, avatar: st.avatarURL || st.avatar};
         $(".js-avatar-now").innerHTML = avatarHTML(avatarUser, "av av-48");
+        const drawnURL = st.bannerDraft || st.bannerURL;
         $(".js-banners").innerHTML = BANNERS.map(([id, label]) => `
             <button type="button" class="edit-banner${st.banner === id ? " on" : ""}" data-banner="${id}" aria-pressed="${st.banner === id}" style="--acc: ${st.accent}">
-                ${bannerHTML(id, st.accent, "edit-banner-img")}<span class="pill">${label}</span></button>`).join("");
+                ${id === "custom" && !drawnURL ? `<span class="edit-banner-draw">${icon("edit", 20)}</span>` : bannerHTML(id, st.accent, "edit-banner-img", drawnURL)}<span class="pill">${label}</span></button>`).join("");
+        $(".js-banner-editor-field").hidden = st.banner !== "custom";
         $(".js-accents").innerHTML = ACCENTS.map(([hex, name]) =>
             `<button type="button" class="swatch swatch-s edit-accent${st.accent === hex ? " swatch-sel" : ""}" data-accent="${hex}" style="background: ${hex}" aria-label="${name}" title="${name}"></button>`).join("");
         $(".js-palette").innerHTML = PALETTE.map(([hex, name]) =>
@@ -113,7 +121,7 @@ async function main() {
         const favName = st.fav ? colorName(st.fav) : null;
         const pinned = earned.filter(b => st.pins.includes(b.id));
         $(".js-preview").innerHTML = `
-            ${bannerHTML(st.banner, st.accent, "edit-prev-banner")}
+            ${bannerHTML(st.banner, st.accent, "edit-prev-banner", st.bannerDraft || st.bannerURL)}
             <div class="edit-prev-body">
                 ${avatarHTML(avatarUser, "av av-96", `box-shadow: 0 0 0 4px var(--surface), 0 0 0 8px ${st.accent}`)}
                 <div class="edit-prev-name"><span class="pixel b">${escapeHTML(st.pseudo || "…")}</span><span class="mono fs-small t3">/u/${escapeHTML(slug)}</span></div>
@@ -130,6 +138,14 @@ async function main() {
                     <div class="card-2"><span class="mono b tgold">${formatNumber(p.pixels_pionniers)}</span><br><span class="fs-cap t3">pionniers</span></div>
                 </div>
             </div>`;
+    };
+    const editor = new PixelEditor($(".js-banner-editor"));
+    if (st.bannerURL) await editor.load(st.bannerURL);
+    else editor.startingPoint(st.accent);
+    editor.onChange = () => {
+        st.bannerDraft = editor.toDataURL();
+        st.bannerDirty = true;
+        render();
     };
     render();
 
@@ -174,6 +190,13 @@ async function main() {
         btn.disabled = true;
         $(".js-error").textContent = "";
         try {
+            if (st.banner === "custom" && (st.bannerDirty || !st.bannerURL)) {
+                const fd = new FormData();
+                fd.append("banner", await editor.toBlob(), "banner.png");
+                const r = await fetch("/api/me/banner", {method: "POST", body: fd});
+                const j = await r.json();
+                if (!r.ok) throw new Error(j.error || "Bannière refusée.");
+            }
             if (st.avatarBlob) {
                 const fd = new FormData();
                 fd.append("avatar", st.avatarBlob, "avatar.png");

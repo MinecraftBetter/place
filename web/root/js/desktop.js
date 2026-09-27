@@ -9,6 +9,23 @@ export function setupDesktop(app) {
     const cvs = $("#viewport-canvas");
     let drag = null;   // {x, y, button}
     let lastMouse = null;
+    let lastPainted = null; // last pixel painted while dragging with the right button
+
+    // Paints every pixel between two points (Bresenham), so fast strokes leave no holes.
+    const paintLine = (a, b) => {
+        let {x: x0, y: y0} = a;
+        const {x: x1, y: y1} = b;
+        const dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0);
+        const sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+        let err = dx + dy;
+        for (let guard = 0; guard < 2048; guard++) {
+            app.placePixel(x0, y0, {source: "drag", quiet: true});
+            if (x0 === x1 && y0 === y1) break;
+            const e2 = 2 * err;
+            if (e2 >= dy) { err += dy; x0 += sx; }
+            if (e2 <= dx) { err += dx; y0 += sy; }
+        }
+    };
 
     const pixelAt = ev => app.gl.screenToPixel(ev.clientX, ev.clientY);
 
@@ -39,6 +56,7 @@ export function setupDesktop(app) {
                 if (!p) break;
                 if (ev.ctrlKey) app.pickColor(p.x, p.y);
                 else app.placePixel(p.x, p.y, {source: "mouse"});
+                lastPainted = p;
                 break;
             }
         }
@@ -46,6 +64,7 @@ export function setupDesktop(app) {
 
     document.addEventListener("mouseup", () => {
         drag = null;
+        lastPainted = null;
         document.body.classList.remove("dragging");
     });
 
@@ -58,7 +77,9 @@ export function setupDesktop(app) {
                 const p = pixelAt(ev);
                 if (p) {
                     if (ev.ctrlKey) app.pickColor(p.x, p.y);
+                    else if (lastPainted && app.cooldown <= 0) paintLine(lastPainted, p);
                     else app.placePixel(p.x, p.y, {source: "drag", quiet: true});
+                    lastPainted = p;
                 }
             } else {
                 app.gl.move(pos.x - drag.x, pos.y - drag.y);

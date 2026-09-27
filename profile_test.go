@@ -326,3 +326,45 @@ func httptestRequest(method, path string) *http.Request {
 	req, _ := http.NewRequest(method, "http://x"+path, io.NopCloser(strings.NewReader("")))
 	return req
 }
+
+func TestDrawnBanner(t *testing.T) {
+	e := newEnv(t, 8)
+	e.api.SetMediaDir(t.TempDir())
+	ck := e.login(t, "Brindille")
+	str := func(s string) *string { return &s }
+	u, _ := e.store.UserBySlug("brindille")
+	if _, err := e.store.UpdateProfile(u, ProfileUpdate{Banner: str("custom")}); err == nil {
+		t.Fatal("custom banner accepted before drawing one")
+	}
+	post := func(img image.Image) (int, map[string]string) {
+		var png1 bytes.Buffer
+		png.Encode(&png1, img)
+		var body bytes.Buffer
+		mw := multipart.NewWriter(&body)
+		fw, _ := mw.CreateFormFile("banner", "b.png")
+		fw.Write(png1.Bytes())
+		mw.Close()
+		req, _ := http.NewRequest("POST", e.srv.URL+"/api/me/banner", &body)
+		req.Header.Set("Content-Type", mw.FormDataContentType())
+		req.AddCookie(ck)
+		res, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		m := map[string]string{}
+		json.NewDecoder(res.Body).Decode(&m)
+		res.Body.Close()
+		return res.StatusCode, m
+	}
+	if status, _ := post(image.NewNRGBA(image.Rect(0, 0, 48, 48))); status != 400 {
+		t.Fatalf("square banner: %d", status)
+	}
+	status, m := post(image.NewNRGBA(image.Rect(0, 0, 48, 16)))
+	if status != 200 || !strings.HasPrefix(m["banner_url"], "/media/banners/1-") {
+		t.Fatalf("banner: %d %v", status, m)
+	}
+	p := e.getJSON(t, "/api/users/brindille", nil)
+	if p["banner"] != "custom" || p["banner_url"] != m["banner_url"] {
+		t.Fatalf("profile banner %v %v", p["banner"], p["banner_url"])
+	}
+}

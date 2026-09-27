@@ -76,6 +76,9 @@ var schema = []string{
 		ts      INTEGER NOT NULL,
 		PRIMARY KEY (user_id, badge)
 	);`,
+
+	// version 3 — banners drawn pixel by pixel
+	`ALTER TABLE users ADD COLUMN banniere_url TEXT NOT NULL DEFAULT '';`,
 }
 
 // OpenStore opens (and creates or migrates) the database. Use ":memory:" in tests.
@@ -150,7 +153,8 @@ type User struct {
 	PixelsVisible  int64
 	CreatedAt      int64
 	Bio            string
-	Banner         string // desert | nuit | uni
+	Banner         string // desert | nuit | uni | custom
+	BannerURL      string // the drawn banner when Banner == "custom"
 	FavColor       string // a palette colour, "#RRGGBB"
 	PixelsRestored int64  // pixels put back to their previous colour (badge Restaurateur)
 	PixelsNight    int64  // pixels placed between 2 and 5 am, Paris time (badge Noctambule)
@@ -190,7 +194,8 @@ func (u *User) WriteBlock(now time.Time) string {
 // userCols selects a user from "users u".
 const userCols = `u.id, u.fournisseur, u.id_externe, u.pseudo, u.slug, u.avatar_url, u.accent, u.role, u.statut,
 	COALESCE(u.suspendu_jusqua, 0), u.pixels_poses, u.pixels_visibles, u.cree_le, u.bio, u.banner, u.couleur_pref,
-	u.pixels_restaures, u.pixels_nuit, u.pixels_pionniers, u.badges_epingles, u.carte_publique, u.alertes_retouche`
+	u.pixels_restaures, u.pixels_nuit, u.pixels_pionniers, u.badges_epingles, u.carte_publique, u.alertes_retouche,
+	u.banniere_url`
 
 type scanner interface{ Scan(dest ...any) error }
 
@@ -199,7 +204,7 @@ func scanUser(row scanner) (*User, error) {
 	var pinned string
 	err := row.Scan(&u.ID, &u.Provider, &u.ExternalID, &u.Pseudo, &u.Slug, &u.AvatarURL, &u.Accent, &u.Role,
 		&u.Status, &u.SuspendedUntil, &u.PixelsPlaced, &u.PixelsVisible, &u.CreatedAt, &u.Bio, &u.Banner, &u.FavColor,
-		&u.PixelsRestored, &u.PixelsNight, &u.PixelsPioneer, &pinned, &u.MapPublic, &u.RetouchAlerts)
+		&u.PixelsRestored, &u.PixelsNight, &u.PixelsPioneer, &pinned, &u.MapPublic, &u.RetouchAlerts, &u.BannerURL)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}

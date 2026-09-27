@@ -28,7 +28,7 @@ import (
 // Choices offered by the profile editor (d-profil-edition).
 var (
 	AccentColors = []string{"#FF63AA", "#5EB3FF", "#3EE06C", "#FFD623", "#FFA800", "#6A5CFF", "#00CCC0", "#FF2651"}
-	Banners      = []string{"desert", "nuit", "uni"}
+	Banners      = []string{"desert", "nuit", "uni", "custom"}
 )
 
 const (
@@ -107,6 +107,9 @@ func (s *Store) UpdateProfile(u *User, p ProfileUpdate) (*User, error) {
 	if p.Banner != nil {
 		if !inList(*p.Banner, Banners) {
 			return nil, &FieldError{"banner", "Bannière inconnue."}
+		}
+		if strings.EqualFold(*p.Banner, "custom") && u.BannerURL == "" {
+			return nil, &FieldError{"banner", "Dessine d'abord ta bannière."}
 		}
 		add("banner", strings.ToLower(*p.Banner))
 	}
@@ -297,6 +300,7 @@ type profileJSON struct {
 	*PublicUser
 	Bio          string         `json:"bio"`
 	Banner       string         `json:"banner"`
+	BannerURL    string         `json:"banner_url,omitempty"`
 	FavColor     string         `json:"couleur_pref"`
 	CreatedAt    int64          `json:"cree_le"`
 	Placed       int64          `json:"pixels_poses"`
@@ -330,7 +334,7 @@ func (api *API) buildProfile(u *User, viewer *User) (*profileJSON, error) {
 		return nil, err
 	}
 	p := &profileJSON{
-		PublicUser: u.Public(), Bio: u.Bio, Banner: u.Banner, FavColor: u.FavColor, CreatedAt: u.CreatedAt,
+		PublicUser: u.Public(), Bio: u.Bio, Banner: u.Banner, BannerURL: u.BannerURL, FavColor: u.FavColor, CreatedAt: u.CreatedAt,
 		Placed: u.PixelsPlaced, Visible: u.PixelsVisible, Pioneer: u.PixelsPioneer, RankWeek: week, RankAll: all,
 		Pinned: u.PinnedBadges, MapPublic: u.MapPublic, IsMe: viewer != nil && viewer.ID == u.ID, Role: u.Role,
 	}
@@ -478,6 +482,93 @@ func (api *API) onProfileChanged(u *User) {
 
 var avatarNameRE = regexp.MustCompile(`^[0-9]+-[0-9a-f]{12}\.png$`)
 
+const (
+	maxBannerBytes = 64 << 10
+	maxBannerW     = 128
+	maxBannerH     = 64
+)
+
+// processBanner checks a drawn banner: a small PNG (at most 128×64), between 2:1 and
+// 4:1. It is re-encoded, which also drops any metadata.
+func processBanner(r io.Reader) ([]byte, error) {
+	errBanner := errors.New("bannière illisible : un PNG de 128 × 64 pixels au plus")
+	img, err := png.Decode(io.LimitReader(r, maxBannerBytes+1))
+	if err != nil {
+		return nil, errBanner
+	}
+	b := img.Bounds()
+	if b.Dx() < 8 || b.Dy() < 4 || b.Dx() > maxBannerW || b.Dy() > maxBannerH || b.Dx() < 2*b.Dy() || b.Dx() > 4*b.Dy() {
+		return nil, errBanner
+	}
+	out := image.NewNRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
+	for y := 0; y < b.Dy(); y++ {
+		for x := 0; x < b.Dx(); x++ {
+			c := color.NRGBAModel.Convert(img.At(b.Min.X+x, b.Min.Y+y)).(color.NRGBA)
+			c.A = 255
+			out.SetNRGBA(x, y, c)
+		}
+	}
+	return encodePNG(out), nil
+}
+
+// POST /api/me/banner (multipart field "banner"): saves a drawn banner and selects it.
+func (api *API) handleMeBanner(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeError(w, http.StatusMethodNotAllowed, "Méthode non autorisée.")
+		return
+	}
+	u := api.auth.User(r)
+	if u == nil {
+		writeError(w, http.StatusUnauthorized, "Connecte-toi pour changer de bannière.")
+		return
+	}
+	if api.mediaDir == "" {
+		writeError(w, http.StatusServiceUnavailable, "Les imports sont désactivés sur ce serveur.")
+		return
+	}
+	r.Body = http.MaxBytesReader(w, r.Body, maxBannerBytes+16<<10)
+	file, _, err := r.FormFile("banner")
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "Bannière manquante.")
+		return
+	}
+	defer file.Close()
+	data, err := processBanner(file)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	url, err := api.saveMedia("banners", u.ID, data)
+	if err != nil {
+		log.WithField("endpoint", "API").Error("Banner: ", err)
+		writeError(w, http.StatusInternalServerError, "Enregistrement impossible.")
+		return
+	}
+	if _, err := api.store.db.Exec(`UPDATE users SET banniere_url = ?, banner = 'custom' WHERE id = ?`, url, u.ID); err != nil {
+		writeError(w, http.StatusInternalServerError, "Enregistrement impossible.")
+		return
+	}
+	u.BannerURL, u.Banner = url, "custom"
+	for _, f := range ProfileHooks {
+		f(api, u, "banner")
+	}
+	writeJSON(w, map[string]string{"banner_url": url})
+}
+
+// saveMedia stores an uploaded PNG under media/<kind>/<uid>-<hash>.png and returns its URL.
+func (api *API) saveMedia(kind string, uid uint32, data []byte) (string, error) {
+	sum := sha1.Sum(data)
+	name := fmt.Sprintf("%d-%s.png", uid, hex.EncodeToString(sum[:6]))
+	dir := filepath.Join(api.mediaDir, kind)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return "", err
+	}
+	if err := writeFileAtomic(filepath.Join(dir, name), data); err != nil {
+		return "", err
+	}
+	return "/media/" + kind + "/" + name, nil
+}
+
 // POST /api/me/avatar (multipart field "avatar")
 func (api *API) handleMeAvatar(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -505,20 +596,12 @@ func (api *API) handleMeAvatar(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	sum := sha1.Sum(data)
-	name := fmt.Sprintf("%d-%s.png", u.ID, hex.EncodeToString(sum[:6]))
-	dir := filepath.Join(api.mediaDir, "avatars")
-	if err := os.MkdirAll(dir, 0755); err != nil {
-		log.WithField("endpoint", "API").Error("Avatar dir: ", err)
+	url, err := api.saveMedia("avatars", u.ID, data)
+	if err != nil {
+		log.WithField("endpoint", "API").Error("Avatar: ", err)
 		writeError(w, http.StatusInternalServerError, "Enregistrement impossible.")
 		return
 	}
-	if err := writeFileAtomic(filepath.Join(dir, name), data); err != nil {
-		log.WithField("endpoint", "API").Error("Avatar write: ", err)
-		writeError(w, http.StatusInternalServerError, "Enregistrement impossible.")
-		return
-	}
-	url := "/media/avatars/" + name
 	if err := api.store.SetAvatar(u.ID, url); err != nil {
 		writeError(w, http.StatusInternalServerError, "Enregistrement impossible.")
 		return
@@ -540,7 +623,7 @@ func MediaHandler(dir string) http.Handler {
 			http.NotFound(w, r)
 			return
 		}
-		if strings.HasPrefix(clean, "/avatars/") && !avatarNameRE.MatchString(filepath.Base(clean)) {
+		if (strings.HasPrefix(clean, "/avatars/") || strings.HasPrefix(clean, "/banners/")) && !avatarNameRE.MatchString(filepath.Base(clean)) {
 			http.NotFound(w, r)
 			return
 		}

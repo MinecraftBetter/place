@@ -283,3 +283,29 @@ func TestSlowClientDoesNotBlockBroadcast(t *testing.T) {
 		t.Fatal("fast client missed the message")
 	}
 }
+
+func TestNoCooldownButFloodGuard(t *testing.T) {
+	e := newEnv(t, 8)
+	e.hub.SetCooldown(0)
+	e.hub.SetMaxRate(2) // burst of 4
+	conn := e.dial(t, e.login(t, "Rapide"), "")
+	for i := 0; i < 4; i++ {
+		sendPixel(t, conn, i, 0)
+		if m := next(t, conn, func(m map[string]any) bool { return isPixel(m) || m["type"] == "error" }); m["type"] == "error" {
+			t.Fatalf("pixel %d refused without cooldown: %v", i, m)
+		}
+	}
+	sendPixel(t, conn, 5, 0)
+	m := next(t, conn, isType("error"))
+	if m["err"] != "flood" || m["retry"].(float64) <= 0 {
+		t.Fatalf("flood guard: %v", m)
+	}
+	e.clock.Add(time.Second)
+	sendPixel(t, conn, 6, 0)
+	if m := next(t, conn, func(m map[string]any) bool { return isPixel(m) || m["type"] == "error" }); m["type"] == "error" {
+		t.Fatalf("refused after waiting: %v", m)
+	}
+	if me := e.getJSON(t, "/api/me", nil); me["cooldown"] != 0.0 {
+		t.Fatalf("cooldown %v", me["cooldown"])
+	}
+}

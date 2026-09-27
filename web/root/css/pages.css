@@ -147,3 +147,14 @@ a.me-row { color: var(--text); padding: 2px; border-radius: var(--r-s); }
     .edit-palette .swatch { width: 32px; height: 32px; border-radius: 8px; }
   }
 }
+
+/* ----- drawn banners and the pixel editor ----- */
+.banner-custom img { position: absolute; inset: 0; width: 100% !important; height: 100% !important; margin: 0 !important; transform: none !important; object-fit: cover; image-rendering: pixelated; }
+.edit-banner-draw { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-2); background: repeating-linear-gradient(45deg, var(--surface-2) 0 8px, var(--surface) 8px 16px); }
+.pe { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.pe-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pe-tools > button { height: 32px; padding: 0 10px; }
+.pe-canvas-wrap { border-radius: var(--r-s); overflow: hidden; border: 1px solid var(--line-2); background: #000; }
+.pe-canvas { display: block; width: 100%; aspect-ratio: 3 / 1; image-rendering: pixelated; touch-action: none; }
+.pe-palette { display: grid; grid-template-columns: repeat(15, minmax(0, 1fr)); gap: 4px; }
+.pe-swatch { width: 100%; height: auto; aspect-ratio: 1; border-radius: 6px; }
