@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr" class="bp vis-page" data-theme="sombre">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+	<meta name="theme-color" content="#11100e">
+	<link rel="icon" href="/favicon.png">
+	<script>/* the tour is always dark */
+		try {
+		} catch (e) {}
+	</script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Pixelify+Sans:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="/css/bp.css">
+	<link rel="stylesheet" href="/css/app.css">
+	<link rel="stylesheet" href="/css/pages.css">
+	<title>Visite guidée · BetterPlace</title>
+</head>
+<body>
+	<div class="vis-stage" aria-hidden="true"><img class="px cam js-cam" src="/place.png" alt=""></div>
+	<div class="vis-shade"></div>
+	<div class="vis-top">
+		<div class="vis-segs js-segs"></div>
+		<div class="vis-head"><img src="/img/cube-logo.png" alt="" width="24" height="24"><span class="fs-small b js-room">Visite guidée</span><span class="grow"></span>
+			<a class="btn btn-icon btn-ghost" href="/musee" aria-label="Quitter la visite"><span data-icon="close"></span></a></div>
+	</div>
+	<div class="vis-bottom">
+		<div class="js-card"></div>
+		<div class="vis-controls">
+			<button class="btn btn-icon glass btn-round js-prev" type="button" aria-label="Œuvre précédente"><span data-icon="prev"></span></button>
+			<button class="btn btn-icon glass btn-round js-play" type="button" aria-label="Pause"><span data-icon="pause"></span></button>
+			<button class="btn btn-icon glass btn-round js-next" type="button" aria-label="Œuvre suivante"><span data-icon="next"></span></button>
+			<span class="grow"></span>
+			<a class="btn glass js-view" href="/ace">Voir sur le canvas</a>
+			<button class="btn btn-icon glass btn-round js-like" type="button" aria-label="Coup de cœur" aria-pressed="false"><img class="px" src="/img/badges/coeur.png" alt="" width="20" height="20"></button>
+		</div>
+	</div>
+	<script type="module" src="/js/visite.js"></script>
+</body>
+</html>

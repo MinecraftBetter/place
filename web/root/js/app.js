@@ -10,6 +10,7 @@ import {Inspector} from "./inspector.js";
 import {setupDesktop} from "./desktop.js";
 import {setupMobile} from "./mobile.js";
 import {setupBlueprint} from "./blueprint-ui.js";
+import {setupCommunity} from "./community-ui.js";
 
 const mobileMQ = matchMedia("(max-width: 767px), (pointer: coarse)");
 const LOUPE_HIDE_DELAY = 2500;
@@ -40,6 +41,7 @@ const app = {
     sent: new Map(),      // "x,y" → previous colour, to undo a refused pixel
     buffered: [],         // WebSocket pixels received before the image
     placedAt: new Map(),  // "x,y" → ms, from the live feed (for the hover card)
+    onLoaded: [],         // called once the canvas is ready
 };
 window.bpApp = app; // handy in the console
 
@@ -886,6 +888,7 @@ function applyInitialView() {
     } else {
         gl.setCam(0, 0);
     }
+    if (new URLSearchParams(location.search).has("alerte")) app.userMoved = true;
     if (storedGet("bp-grid", false)) {
         gl.setGrid(true);
         for (const b of $$(".js-grid")) b.setAttribute("aria-pressed", "true");
@@ -939,6 +942,7 @@ async function start() {
         app.cooldown = me.cooldown ?? 0;
         app.readyAt = Date.now() + (me.ready_in || 0) * 1000;
         app.blocked = me.blocked ?? null;
+        app.meAlerts = me.alerts ?? 0;
     }
     renderMe();
 
@@ -964,6 +968,7 @@ async function start() {
 
     // Who placed what: loaded after the image so the canvas shows up first.
     refreshOwners();
+    for (const f of app.onLoaded) f();
 }
 
 window.addEventListener("resize", () => {
@@ -976,4 +981,5 @@ mobileMQ.addEventListener("change", () => app.render());
 setupDesktop(app);
 setupMobile(app);
 setupBlueprint(app);
+setupCommunity(app);
 start();

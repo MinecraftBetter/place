@@ -69,6 +69,23 @@ export class Blueprint {
         this.save();
     }
 
+    // Loads an exact image (e.g. an artwork's reference) at a canvas position.
+    async fromURL(url, x, y, name) {
+        const img = new Image();
+        img.src = url;
+        await img.decode();
+        const c = document.createElement("canvas");
+        c.width = img.width; c.height = img.height;
+        const ctx = c.getContext("2d", {willReadFrequently: true});
+        ctx.drawImage(img, 0, 0);
+        this.name = name;
+        this.#set(img.width, img.height, toCells(ctx.getImageData(0, 0, img.width, img.height).data, false));
+        this.x = x;
+        this.y = y;
+        this.recompute();
+        this.save();
+    }
+
     #set(w, h, cells) {
         this.w = w; this.h = h; this.cells = cells;
         this.wrong = new Uint8Array(w * h);

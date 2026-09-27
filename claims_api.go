@@ -702,8 +702,14 @@ func (api *API) handleOeuvre(w http.ResponseWriter, r *http.Request) {
 			f(api, []*Oeuvre{o}, viewer)
 		}
 		contrib, hist := api.oeuvreStory(o)
+		var badges, message string
+		api.store.db.QueryRow(`SELECT badges, message FROM claims WHERE id = ?`, o.ClaimID).Scan(&badges, &message)
+		bl := []string{}
+		if badges != "" {
+			bl = strings.Split(badges, ",")
+		}
 		writeJSON(w, map[string]any{"oeuvre": o, "analyse": o.Analysis(), "contributeurs": contrib, "histoire": hist,
-			"auteur": isAuthor(o, viewer), "sauvegardes": api.index() != nil})
+			"auteur": isAuthor(o, viewer), "sauvegardes": api.index() != nil, "badges": bl, "message": message})
 		return
 	}
 	if h, ok := OeuvreRoutes[sub]; ok {

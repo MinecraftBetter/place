@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr" class="bp page content-page" data-theme="sombre">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+	<meta name="theme-color" content="#11100e">
+	<link rel="icon" href="/favicon.png">
+	<script>
+		try {
+			var t = JSON.parse(localStorage.getItem("bp-theme"));
+			if (t !== "clair" && t !== "sombre") t = matchMedia("(prefers-color-scheme: light)").matches ? "clair" : "sombre";
+			document.documentElement.dataset.theme = t;
+		} catch (e) {}
+	</script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Pixelify+Sans:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="/css/bp.css">
+	<link rel="stylesheet" href="/css/app.css">
+	<link rel="stylesheet" href="/css/pages.css">
+	<title>Le Musée · BetterPlace</title>
+</head>
+<body class="mu-body">
+	<main id="page" class="page-main" aria-busy="true"></main>
+	<script type="module" src="/js/musee.js"></script>
+</body>
+</html>

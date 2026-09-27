@@ -420,6 +420,26 @@ func (api *API) setReference(o *Oeuvre) {
 	api.store.db.Exec(`UPDATE oeuvres SET reference = ?, reference_le = ? WHERE id = ?`, buf, api.store.now().UnixMilli(), o.ID)
 }
 
+// backfillReferences gives a reference to artworks validated before references existed.
+func (api *API) backfillReferences() {
+	rows, err := api.store.db.Query(`SELECT id FROM oeuvres WHERE reference IS NULL`)
+	if err != nil {
+		return
+	}
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		rows.Scan(&id)
+		ids = append(ids, id)
+	}
+	rows.Close()
+	for _, id := range ids {
+		if o, err := api.store.Oeuvre(id); err == nil && o != nil {
+			api.setReference(o)
+		}
+	}
+}
+
 // intactPct compares an artwork with its reference.
 func (api *API) intactPct(o *Oeuvre) (float64, bool) {
 	var ref []byte
@@ -486,6 +506,7 @@ func init() {
 
 func (api *API) mountCommunity() {
 	api.community = newCommunity(api)
+	api.backfillReferences()
 	api.hub.OnPixel(api.community.onPixel)
 	go api.community.flushLoop()
 	api.hub.OnBadge(func(u *User, badge string) {

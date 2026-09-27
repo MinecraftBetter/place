@@ -97,6 +97,14 @@
 		<span class="fs-cap t3 d-hints guest-only"><span class="kbd">Clic gauche</span>déplacer <span class="kbd">Molette</span>zoomer <span class="kbd">Survol</span>qui l'a posé</span>
 	</div>
 
+	<!-- Live activity (desktop, d-canvas) -->
+	<aside class="glass d-live only-d" id="d-live">
+		<div class="d-live-head"><span class="live"></span><span class="fs-small b grow">En direct</span>
+			<a class="btn btn-sm btn-ghost" href="/activite">Tout voir</a>
+			<button class="btn btn-sm btn-icon btn-ghost js-live-toggle" type="button" aria-label="Replier le fil" aria-expanded="true"><span data-icon="chevron" data-size="16"></span></button></div>
+		<div class="d-live-list js-live-list"></div>
+	</aside>
+
 	<!-- Inspector card (desktop hover / pinned with I) -->
 	<div class="card elev d-inspector anim-feed" id="d-inspector" hidden></div>
 
@@ -255,6 +263,8 @@
 			<button class="btn btn-ghost btn-block btn-outline-danger js-bpm-remove" type="button"><span data-icon="trash" data-size="16"></span>Retirer le modèle</button>
 		</div>
 	</div>
+
+	<div class="sheet" id="sheet-alert" role="dialog" aria-label="Ton œuvre a bougé" hidden></div>
 
 	<div class="sheet" id="sheet-me" role="dialog" aria-label="Mon compte" hidden>
 		<div class="grab"></div>

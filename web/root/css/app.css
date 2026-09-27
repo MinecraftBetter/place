@@ -338,3 +338,20 @@ body.bp-dragging #viewport-canvas { cursor: move; }
 .insp-art-authors { display: flex; flex-direction: column; gap: 8px; }
 .insp-art-author { display: flex; align-items: center; gap: 10px; color: var(--text); }
 a.insp-author { color: var(--text); }
+
+/* ----- live activity panel (desktop) ----- */
+.d-live { position: absolute; right: 16px; top: 92px; width: 300px; border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 6px; z-index: 9; max-height: calc(100vh - 200px); }
+.d-live-head { display: flex; align-items: center; gap: 8px; padding: 2px 4px 4px; }
+.d-live-list { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; scrollbar-width: none; }
+.d-live.collapsed { width: auto; }
+.d-live.collapsed .d-live-list, .d-live.collapsed .d-live-head a { display: none; }
+.d-live.collapsed .js-live-toggle svg { transform: rotate(180deg); }
+.live-item { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; color: var(--text); }
+.bp a.live-item { color: var(--text); }
+.bp a.live-item:hover { text-decoration: none; background: var(--surface-2); }
+.live-item.act-gold { background: var(--gold-soft); }
+.live-item.act-info { background: var(--info-soft); }
+.live-item .av, .live-item .px { width: 28px; height: 28px; flex-shrink: 0; }
+.live-empty { padding: 8px; }
+@media (max-width: 1180px) { .d-live { display: none; } }
+.alert-ghost { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
