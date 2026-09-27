@@ -82,8 +82,11 @@ func TestJustBetterLogin(t *testing.T) {
 	if loc := login("lucie", "faux").Header.Get("Location"); !strings.Contains(loc, "erreur=identifiants") || !strings.HasPrefix(loc, "/login?next=%2Fmusee") {
 		t.Fatalf("wrong password: %s", loc)
 	}
+	if loc := login("lucie@example.com", "secret").Header.Get("Location"); !strings.Contains(loc, "erreur=email") {
+		t.Fatalf("e-mail instead of the username: %s", loc)
+	}
 	// too many failures from the same address: blocked, even with the right password
-	for i := 0; i < 5; i++ {
+	for i := 0; i < loginMaxFailures; i++ {
 		login("lucie", "faux")
 	}
 	if loc := login("lucie", "secret").Header.Get("Location"); !strings.Contains(loc, "erreur=trop") {
@@ -104,5 +107,18 @@ func TestJustBetterLogin(t *testing.T) {
 	req.Header.Set("Origin", "https://evil.example")
 	if res, _ := client.Do(req); res.StatusCode != http.StatusForbidden {
 		t.Fatalf("cross-site login accepted: %d", res.StatusCode)
+	}
+}
+
+func TestJustBetterClientIP(t *testing.T) {
+	r := httptest.NewRequest("POST", "/auth/justbetter", nil)
+	r.RemoteAddr = "172.18.0.1:5555" // the proxy, for a visitor on the server's network
+	r.Header.Set("X-Real-IP", "192.168.1.42")
+	if ip := clientIP(r); ip != "192.168.1.42" {
+		t.Fatalf("got %s", ip)
+	}
+	r.Header.Del("X-Real-IP")
+	if ip := clientIP(r); ip != "172.18.0.1" {
+		t.Fatalf("got %s", ip)
 	}
 }

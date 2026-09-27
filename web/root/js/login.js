@@ -39,8 +39,9 @@ try {
     $(".js-justbetter-note").hidden = justbetter;
     const err = new URLSearchParams(location.search).get("erreur");
     const ERRORS = {
-        identifiants: "Identifiant ou mot de passe incorrect.",
-        trop: "Trop d'essais : attends quelques minutes avant de réessayer.",
+        identifiants: "Nom d'utilisateur ou mot de passe incorrect.",
+        email: "Utilise ton nom d'utilisateur JustBetter, pas ton e-mail.",
+        trop: "Trop d'essais ratés depuis cette connexion : attends 10 minutes avant de réessayer.",
         indisponible: "Le serveur de comptes JustBetter ne répond pas. Réessaie dans un instant.",
     };
     if (justbetter && ERRORS[err]) {

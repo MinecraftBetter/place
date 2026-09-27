@@ -29,7 +29,7 @@ type JustBetterProvider struct {
 }
 
 const (
-	loginMaxFailures = 5
+	loginMaxFailures = 10
 	loginWindow      = 10 * time.Minute
 )
 
@@ -159,9 +159,14 @@ func (p *JustBetterProvider) tooMany(ip string, failed bool) bool {
 	return len(recent) >= loginMaxFailures
 }
 
-// clientIP: RemoteAddr is already the real client behind nginx (xff middleware in
-// main, which only trusts private proxies); X-Forwarded-For itself can be forged.
+// clientIP: X-Real-IP is set by nginx to the address it really sees (the first public
+// address of X-Forwarded-For, which RemoteAddr holds after the xff middleware, can be
+// forged, and is missing for visitors on the server's own network, who would then all
+// share the proxy's address).
 func clientIP(r *http.Request) string {
+	if ip := strings.TrimSpace(r.Header.Get("X-Real-IP")); ip != "" {
+		return ip
+	}
 	if i := strings.LastIndex(r.RemoteAddr, ":"); i > 0 {
 		return r.RemoteAddr[:i]
 	}
@@ -191,6 +196,10 @@ func (p *JustBetterProvider) Mount(mux *http.ServeMux, a *Auth) {
 			password := r.FormValue("motdepasse")
 			if username == "" || password == "" || len(username) > 64 || len(password) > 256 {
 				back("identifiants")
+				return
+			}
+			if strings.Contains(username, "@") {
+				back("email") // LLDAP wants the username, like justbetter.fr
 				return
 			}
 			id, err := p.authenticate(username, password)

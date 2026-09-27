@@ -99,7 +99,7 @@ func (a *Auth) Login(w http.ResponseWriter, r *http.Request, n NewUser, next str
 		Name: sessionCookie, Value: token, Path: "/", MaxAge: int(sessionTTL.Seconds()),
 		HttpOnly: true, SameSite: http.SameSiteLaxMode, Secure: isHTTPS(r),
 	})
-	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Auth").Info("Logged in: ", u.Pseudo, " (", u.Provider, ")")
+	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Auth").Info("Logged in: ", u.Pseudo, " (", u.Provider, ", ", u.Role, ")")
 	http.Redirect(w, r, safeNext(next), http.StatusSeeOther)
 }
 

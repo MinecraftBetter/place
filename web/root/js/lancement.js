@@ -26,6 +26,12 @@ async function adminAccess() {
     if (!launch.active) return;
     if (me?.user?.role === "admin") $(".js-admin-enter").hidden = false;
     else if (!me?.user) $(".js-admin-login").hidden = false;
+    else {
+        // logged in, but the site opens for players at the hour: say so
+        const who = $(".js-who");
+        who.hidden = false;
+        who.querySelector("b").textContent = me.user.pseudo;
+    }
 }
 
 async function main() {

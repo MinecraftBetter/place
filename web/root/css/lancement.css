@@ -52,3 +52,5 @@
 .cd-admin { position: absolute; top: calc(8px + env(safe-area-inset-top)); right: 10px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 6px; font-size: 11px; line-height: 1; color: #8f8778; opacity: .45; z-index: 2; }
 .bp a.cd-admin { color: #8f8778; text-decoration: none; }
 .cd-admin:hover, .cd-admin:focus-visible { opacity: 1; }
+.cd-who { margin: -10px 0 0; font-size: 14px; color: #a3d9b1; }
+.cd-who b { color: #3ee06c; }
