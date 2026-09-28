@@ -36,6 +36,8 @@ func (api *API) mountClaims() {
 	api.mux.HandleFunc("/api/users/search", api.handleUserSearch)
 	api.mux.HandleFunc("/api/oeuvres", api.handleOeuvres)
 	api.mux.HandleFunc("/api/oeuvres/", api.handleOeuvre)
+	api.mux.HandleFunc("/api/zones", api.handleZones)
+	api.mux.HandleFunc("/api/zones.png", api.handleZonesPNG)
 	api.mux.HandleFunc("/api/admin/claims", api.admin(api.handleAdminClaims))
 	api.mux.HandleFunc("/api/admin/claims/", api.admin(api.handleAdminClaimDecision))
 	api.mux.HandleFunc("/api/backups/status", api.handleBackupStatus)
@@ -640,6 +642,7 @@ func (api *API) RefreshOeuvres() {
 	}
 	cw, ch := api.canvas.Size()
 	api.oeuvres.Rebuild(os, cw, ch)
+	oeuvresVersion.Add(1)
 	if api.community != nil {
 		api.community.refreshAuthors(os)
 	}

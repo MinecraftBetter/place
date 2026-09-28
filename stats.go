@@ -44,7 +44,7 @@ func (api *API) handleStats(w http.ResponseWriter, r *http.Request, admin *User)
 	online, slots := api.hub.Online()
 	claims, _ := api.store.ClaimCounts()
 	kpi := map[string]any{
-		"connectes": online, "slots": slots,
+		"connectes": online, "connexions": api.hub.Connections(), "slots": slots,
 		"pixels_1h":       count(`SELECT COUNT(*) FROM pixel_events WHERE ts >= ?`, now.Add(-time.Hour).UnixMilli()),
 		"pixels":          count(`SELECT COUNT(*) FROM pixel_events WHERE ts >= ?`, from),
 		"pixels_prev":     count(`SELECT COUNT(*) FROM pixel_events WHERE ts >= ? AND ts < ?`, prev, from),

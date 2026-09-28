@@ -20,6 +20,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"unicode/utf8"
 
 	log "github.com/sirupsen/logrus"
@@ -232,13 +233,19 @@ func processAvatar(r io.Reader) ([]byte, error) {
 // ------------------------------------------------------------------
 // Contribution map: the canvas darkened, the player's visible pixels in their colours.
 
-func (c *Canvas) ContributionsPNG(uid uint32, accent color.NRGBA) []byte {
+func (c *Canvas) ContributionsPNG(uid uint32, accent color.NRGBA, claimed []int32) []byte {
 	c.mu.RLock()
 	w, h := c.img.Rect.Dx(), c.img.Rect.Dy()
 	out := image.NewNRGBA(c.img.Rect)
 	mine := make([]bool, len(c.owners))
 	for i, id := range c.owners {
 		mine[i] = id == uid
+	}
+	for _, p := range claimed {
+		// still the artwork's: nobody has painted over it since the accounts
+		if int(p) < len(mine) && c.owners[p] == 0 {
+			mine[p] = true
+		}
 	}
 	for i := range c.owners {
 		p := c.img.Pix[i*4 : i*4+4]
@@ -404,16 +411,19 @@ func (api *API) handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Small cache: contribution maps are recomputed only when the canvas changed.
+// Small cache: contribution maps are recomputed only when the canvas or the artworks changed.
 var contribCache = struct {
 	sync.Mutex
-	version uint64
+	version [2]uint64
 	m       map[uint32][]byte
 }{m: map[uint32][]byte{}}
 
+// oeuvresVersion grows each time the artworks change (RefreshOeuvres).
+var oeuvresVersion atomic.Uint64
+
 func (api *API) contributions(uid uint32, accent color.NRGBA) []byte {
 	api.canvas.mu.RLock()
-	ver := api.canvas.version
+	ver := [2]uint64{api.canvas.version, oeuvresVersion.Load()}
 	api.canvas.mu.RUnlock()
 	contribCache.Lock()
 	if contribCache.version != ver {
@@ -424,7 +434,15 @@ func (api *API) contributions(uid uint32, accent color.NRGBA) []byte {
 	if ok {
 		return b
 	}
-	b = api.canvas.ContributionsPNG(uid, accent)
+	// the pixels of the artworks claimed before the accounts count as theirs too
+	var claimed []int32
+	if os, err := api.store.Oeuvres(uid, false); err == nil {
+		cw, ch := api.canvas.Size()
+		for _, o := range os {
+			claimed = append(claimed, maskPositions(o.Mask, cw, ch)...)
+		}
+	}
+	b = api.canvas.ContributionsPNG(uid, accent, claimed)
 	contribCache.Lock()
 	if contribCache.version == ver && len(contribCache.m) < 64 {
 		contribCache.m[uid] = b

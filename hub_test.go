@@ -214,7 +214,7 @@ func TestPingPongAndStat(t *testing.T) {
 	conn.WriteMessage(websocket.TextMessage, []byte("ping"))
 	next(t, conn, func(m map[string]any) bool { return m["raw"] == "pong" })
 
-	e.dial(t, nil, "")
+	e.dial(t, e.login(t, "Nyx"), "")
 	next(t, conn, func(m map[string]any) bool { return m["type"] == "stat" && m["online"] == 2.0 })
 
 	res, err := http.Get(e.srv.URL + "/stat")
@@ -226,6 +226,23 @@ func TestPingPongAndStat(t *testing.T) {
 	res.Body.Close()
 	if stat["connections"] != 2 || stat["slots"] != 8 {
 		t.Fatalf("/stat %v", stat)
+	}
+}
+
+// « X connectés » counts people: one player with several tabs is one person,
+// guests count once per address.
+func TestOnlineCountsPeople(t *testing.T) {
+	e := newEnv(t, 8)
+	brin := e.login(t, "Brindille")
+	conn := e.dial(t, brin, "")
+	next(t, conn, isType("stat"))
+	e.dial(t, brin, "") // a second tab
+	e.dial(t, e.login(t, "Nyx"), "")
+	e.dial(t, nil, "")
+	e.dial(t, nil, "") // the same guest, another tab
+	next(t, conn, func(m map[string]any) bool { return m["type"] == "stat" && m["online"] == 3.0 })
+	if people, _ := e.hub.Online(); people != 3 {
+		t.Fatalf("online %d, want 3", people)
 	}
 }
 

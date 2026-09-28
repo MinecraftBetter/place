@@ -100,7 +100,7 @@ func TestRetouchAlertAndCommunity(t *testing.T) {
 	if extra := e.getJSON(t, "/api/oeuvres/1", nil)["oeuvre"].(map[string]any)["extra"].(map[string]any); extra["retouchee"] != false {
 		t.Fatalf("still retouched after keep %v", extra)
 	}
-	for _, p := range []string{"/api/oeuvres/1/reference.png", "/api/oeuvres/1/avant.png?z=4", "/api/oeuvres/1/construction.png?n=6"} {
+	for _, p := range []string{"/api/oeuvres/1/avant.png?z=4", "/api/oeuvres/1/construction.png?n=6"} {
 		if status, b := e.get(t, p, nil); status != 200 || len(b) < 50 {
 			t.Fatalf("%s: %d", p, status)
 		}

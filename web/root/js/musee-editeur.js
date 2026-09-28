@@ -5,7 +5,7 @@
 import {$, $$, avatarHTML, copyText, escapeHTML, fillIcons, icon, toast} from "./ui.js";
 import {mountShell, loginHref, emptyState} from "./shell.js";
 import {relativeTime} from "./view.js";
-import {cropOf, authorsOf} from "./common.js";
+import {artOf, cropOf, authorsOf} from "./common.js";
 import {Chiptune} from "./chiptune.js";
 import {THEMES, WALL_COLORS, LIGHTS, PARTICLES, FRAMES, MUSICS, ENTREES, PARCOURS, GUIDES, VISIBILITES, ANIMS, SONS, TAILLES, WORK_FRAMES, SPOTS,
     wallStyle, theme, inkOf, particlesHTML, workFrameHTML, spotStyle, cartelHTML, animateWorks, FOND_TYPES, PAYSAGES} from "./museum-kit.js";
@@ -264,7 +264,7 @@ function renderRooms() {
         ${m.salles.length > 1 ? `<button type="button" class="btn btn-sm btn-ghost js-del-salle">${icon("trash", 16)}Supprimer la salle</button>` : ""}</div>`;
     const ws = works();
     $(".js-order").innerHTML = ws.map((w, i) => w.oeuvre ? `<div class="me-order-item${i === sel ? " on" : ""}">
-            <button type="button" class="me-order-thumb" data-sel="${i}" aria-label="Choisir ${escapeHTML(w.oeuvre.titre)}"><img class="px" src="${cropOf(w.oeuvre, 96, 90)}" alt="" loading="lazy">${w.vedette ? `<span class="me-star">${icon("star", 12)}</span>` : ""}</button>
+            <button type="button" class="me-order-thumb" data-sel="${i}" aria-label="Choisir ${escapeHTML(w.oeuvre.titre)}"><img class="px art" src="${artOf(w.oeuvre, 96)}" alt="" loading="lazy">${w.vedette ? `<span class="me-star">${icon("star", 12)}</span>` : ""}</button>
             <span class="fs-cap ellip">${escapeHTML(w.oeuvre.titre)}</span>
             <div class="me-order-move"><button type="button" class="btn btn-icon btn-sm btn-ghost" data-move="${i}:-1" aria-label="Avancer" ${i === 0 ? "disabled" : ""}>${icon("prev", 14)}</button>
                 <button type="button" class="btn btn-icon btn-sm btn-ghost" data-move="${i}:1" aria-label="Reculer" ${i === ws.length - 1 ? "disabled" : ""}>${icon("next", 14)}</button></div></div>` : "").join("")
@@ -282,7 +282,7 @@ function renderWork() {
     const o = w.oeuvre;
     const voices = sonsOf("voix"), passages = sonsOf("passage");
     const voix = data.sons.find(s => s.id === w.voix_id);
-    el.innerHTML = `<div class="me-work-head"><img class="px" src="${cropOf(o, 96, 90)}" alt="" width="56" height="56"><div class="grow" style="min-width: 0"><span class="fs-over">Œuvre sélectionnée</span>
+    el.innerHTML = `<div class="me-work-head"><img class="px art" src="${artOf(o, 96)}" alt="" width="56" height="56"><div class="grow" style="min-width: 0"><span class="fs-over">Œuvre sélectionnée</span>
             <span class="fs-body b ellip">${escapeHTML(o.titre)}</span><span class="fs-cap t3 ellip">${escapeHTML(authorsOf(o))}</span></div></div>
         <div class="field"><span class="label">Animation</span><div class="me-anims">${Object.entries(ANIMS).map(([id, [l, sub]]) =>
             `<button type="button" class="card-2 me-anim${id === w.animation ? " on" : ""}" data-wset="animation" data-value="${id}" aria-pressed="${id === w.animation}"><span class="fs-small b">${l}</span><span class="fs-cap t3">${sub}</span></button>`).join("")}</div></div>
@@ -442,7 +442,7 @@ function openPicker() {
     const dlg = $(".js-picker");
     const hung = new Set(m.salles.flatMap(s => s.oeuvres.map(w => w.oeuvre_id)));
     const grid = list => list.length ? `<div class="me-pick-grid">${list.map(o => `<button type="button" class="card-2 me-pick" data-add="${o.id}" ${hung.has(o.id) ? "disabled" : ""}>
-            <img class="px" src="${cropOf(o, 120, 90)}" alt="" loading="lazy"><span class="fs-cap b ellip">${escapeHTML(o.titre)}</span><span class="fs-cap t3 ellip">${hung.has(o.id) ? "déjà exposée" : escapeHTML(authorsOf(o))}</span></button>`).join("")}</div>` : "";
+            <img class="px art" src="${artOf(o, 120)}" alt="" loading="lazy"><span class="fs-cap b ellip">${escapeHTML(o.titre)}</span><span class="fs-cap t3 ellip">${hung.has(o.id) ? "déjà exposée" : escapeHTML(authorsOf(o))}</span></button>`).join("")}</div>` : "";
     dlg.innerHTML = `<div class="me-pick-body"><div class="sec-head"><h2 class="fs-h3">Ajouter une œuvre</h2><button class="btn btn-icon btn-sm btn-ghost js-pick-close" type="button" aria-label="Fermer">${icon("close", 16)}</button></div>
         <span class="fs-over">Mes œuvres</span>${grid(data.miennes) || `<p class="fs-small t2">Tu n'as pas encore d'œuvre validée. <a href="/revendiquer">Revendique une œuvre</a> pour l'exposer.</p>`}
         <span class="fs-over">Mes coups de cœur</span>${grid(data.coeurs) || `<p class="fs-small t2">Donne des coups de cœur dans <a href="/musee">le musée</a> pour exposer les œuvres des autres.</p>`}</div>`;

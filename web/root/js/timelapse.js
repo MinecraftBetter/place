@@ -133,12 +133,19 @@ function render() {
         <section class="tl-main">
             <div class="tl-head"><h1 class="fs-h1">Timelapse</h1>
                 <span class="fs-small t2">${days.length} jours d'activité, du ${dateLong(first.date)} au ${dateLong(last.date)} · une image par jour (la dernière capture de la journée), ${formatNumber(data.frames)} captures en tout</span></div>
-            <div class="void tl-stage" style="aspect-ratio: ${data.width} / ${data.height}">
-                <div class="tl-final"></div>
-                <img class="px tl-frame js-frame" alt="Le canvas ce jour-là">
-                <canvas class="px tl-frame tl-replay js-replay-canvas" hidden></canvas>
+            <div class="void tl-stage js-stage" style="aspect-ratio: ${data.width} / ${data.height}; --ratio: ${data.width / data.height}">
+                <div class="tl-view js-view">
+                    <div class="tl-final"></div>
+                    <img class="px tl-frame js-frame" alt="Le canvas ce jour-là" draggable="false">
+                    <canvas class="px tl-frame tl-replay js-replay-canvas" hidden></canvas>
+                </div>
                 <span class="pill tl-grow js-grow">le canvas grandira jusqu'ici · ${data.width} × ${data.height}</span>
                 <div class="glass tl-label"><span class="mono b js-date"></span><span class="fs-cap t3 js-meta"></span></div>
+                <div class="glass tl-zoom" role="group" aria-label="Zoom">
+                    <button class="btn btn-icon btn-sm btn-ghost js-zoom-out" type="button" aria-label="Zoom arrière">${icon("minus", 18)}</button>
+                    <button class="btn btn-sm btn-ghost mono js-zoom-reset" type="button" aria-label="Revenir à la vue entière">×1</button>
+                    <button class="btn btn-icon btn-sm btn-ghost js-zoom-in" type="button" aria-label="Zoom avant">${icon("plus", 18)}</button>
+                </div>
             </div>
             <div class="tl-controls">
                 <button class="btn btn-icon btn-primary btn-round js-play" type="button" aria-label="Lecture">${icon("play", 20)}</button>
@@ -170,6 +177,90 @@ function render() {
     page.removeAttribute("aria-busy");
     fillIcons(page);
     show();
+    setupZoom();
+}
+
+// ------------------------------------------------------------------
+// Zoom in the capture: wheel, pinch, double-click or the buttons; drag to move. The view
+// is resized (not scaled) so the pixels stay sharp.
+
+const view = {s: 1, x: 0, y: 0};
+const MAX_ZOOM = 24;
+
+function applyZoom() {
+    const stage = $(".js-stage"), el = $(".js-view");
+    const W = stage.clientWidth, H = stage.clientHeight;
+    view.s = Math.min(MAX_ZOOM, Math.max(1, view.s));
+    view.x = Math.min(0, Math.max(W - W * view.s, view.x));
+    view.y = Math.min(0, Math.max(H - H * view.s, view.y));
+    Object.assign(el.style, {left: view.x + "px", top: view.y + "px", width: W * view.s + "px", height: H * view.s + "px"});
+    $(".js-zoom-reset").textContent = "×" + (view.s < 10 ? String(Math.round(view.s * 10) / 10).replace(".", ",") : Math.round(view.s));
+    stage.classList.toggle("zoomed", view.s > 1);
+}
+
+function zoomAt(f, cx, cy) {
+    const s = Math.min(MAX_ZOOM, Math.max(1, view.s * f)), k = s / view.s;
+    view.x = cx - (cx - view.x) * k;
+    view.y = cy - (cy - view.y) * k;
+    view.s = s;
+    applyZoom();
+}
+
+function setupZoom() {
+    const stage = $(".js-stage");
+    const local = e => { const r = stage.getBoundingClientRect(); return {x: e.clientX - r.left, y: e.clientY - r.top}; };
+    const centre = () => ({x: stage.clientWidth / 2, y: stage.clientHeight / 2});
+    stage.addEventListener("wheel", e => {
+        e.preventDefault();
+        const p = local(e);
+        zoomAt(Math.exp(-e.deltaY * (e.ctrlKey ? .01 : .002)), p.x, p.y);
+    }, {passive: false});
+    stage.addEventListener("dblclick", e => {
+        if (e.target.closest("button, .tl-label")) return;
+        const p = local(e);
+        if (view.s >= MAX_ZOOM) { view.s = 1; applyZoom(); } else zoomAt(2, p.x, p.y);
+    });
+    const pts = new Map();
+    let pinch = null;
+    stage.addEventListener("pointerdown", e => {
+        if (e.target.closest("button")) return;
+        pts.set(e.pointerId, local(e));
+        stage.setPointerCapture(e.pointerId);
+        if (pts.size === 2) {
+            const [a, b] = [...pts.values()];
+            pinch = {d: Math.hypot(a.x - b.x, a.y - b.y), cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2};
+        }
+    });
+    stage.addEventListener("pointermove", e => {
+        if (!pts.has(e.pointerId)) return;
+        const prev = pts.get(e.pointerId), p = local(e);
+        pts.set(e.pointerId, p);
+        if (pts.size >= 2 && pinch) {
+            const [a, b] = [...pts.values()];
+            const d = Math.hypot(a.x - b.x, a.y - b.y), cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2;
+            view.x += cx - pinch.cx;
+            view.y += cy - pinch.cy;
+            if (pinch.d > 0) zoomAt(d / pinch.d, cx, cy); else applyZoom();
+            pinch = {d, cx, cy};
+        } else if (view.s > 1) {
+            view.x += p.x - prev.x;
+            view.y += p.y - prev.y;
+            applyZoom();
+            stage.classList.add("dragging");
+        }
+    });
+    const up = e => {
+        pts.delete(e.pointerId);
+        if (pts.size < 2) pinch = null;
+        if (!pts.size) stage.classList.remove("dragging");
+    };
+    stage.addEventListener("pointerup", up);
+    stage.addEventListener("pointercancel", up);
+    $(".js-zoom-in").addEventListener("click", () => { const c = centre(); zoomAt(2, c.x, c.y); });
+    $(".js-zoom-out").addEventListener("click", () => { const c = centre(); zoomAt(.5, c.x, c.y); });
+    $(".js-zoom-reset").addEventListener("click", () => { view.s = 1; applyZoom(); });
+    window.addEventListener("resize", applyZoom);
+    applyZoom();
 }
 
 async function main() {

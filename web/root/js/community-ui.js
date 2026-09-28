@@ -1,7 +1,6 @@
-// /ace — community bits: the live panel, alert counts, the « Ton œuvre a bougé » sheet,
-// and ?modele=oeuvre:ID to use an artwork as a blueprint.
+// /ace — community bits: the live panel, alert counts, the « Ton œuvre a bougé » sheet.
 
-import {$, $$, avatarHTML, escapeHTML, fillIcons, hideSheet, icon, showSheet, storedGet, storedSet, toast} from "./ui.js";
+import {$, $$, avatarHTML, escapeHTML, hideSheet, showSheet, storedGet, storedSet, toast} from "./ui.js";
 import {alertText, notifyDevice, deviceSupported, deviceOn, toggleDevice} from "./notify.js";
 import {activityParts} from "./common.js";
 import {relativeTime, formatNumber} from "./view.js";
@@ -95,55 +94,27 @@ export function setupCommunity(app) {
         app.goTo({x: p.x + Math.floor(p.w / 2), y: p.y + Math.floor(p.h / 2)});
         if (app.gl.getZoom() < 4) { app.gl.setZoom(Math.max(4, Math.min(16, 300 / Math.max(p.w, p.h)))); app.viewChanged(); }
         const sheet = $("#sheet-alert");
-        let ghost = false;
-        const render = () => {
-            sheet.innerHTML = `<div class="grab"></div>
-                <h2 class="fs-h1">Ton œuvre a bougé</h2>
-                <p class="fs-small t2 pretty"><b>${escapeHTML(p.by?.pseudo ?? "Quelqu'un")}</b> a retouché <b>${formatNumber(p.count)} pixels</b> de « ${escapeHTML(p.titre)} » ${relativeTime(al.ts)}. Une blague, une collab ? À toi de voir.</p>
-                <div class="alert-ghost"><div class="share-toggle-text"><label class="fs-body" for="ghost">Voir l'original en calque</label><span class="fs-cap t3">ta dernière version complète</span></div>
-                    <button id="ghost" class="toggle${ghost ? " toggle-on" : ""} js-ghost" type="button" aria-pressed="${ghost}" aria-label="Voir l'original en calque"></button></div>
-                <div class="insp-actions"><button class="btn btn-primary btn-px js-retouch" type="button">Retoucher</button><button class="btn js-keep" type="button">Je garde, c'est drôle</button></div>
-                <p class="fs-cap t3 pretty">« Retoucher » affiche l'original en modèle : la couleur d'origine de chaque pixel se choisit toute seule. « Je garde » met à jour ton œuvre avec l'ajout.</p>
-                <a class="btn btn-ghost btn-sm" href="/activite?vue=alertes">Réglages des alertes</a>`;
-        };
-        const loadRef = async mode => {
-            const resp = await fetch(`/api/oeuvres/${p.oeuvre}/reference.png`);
-            if (!resp.ok) { toast(`<span class="fs-small b">Pas de version d'origine pour cette œuvre.</span>`); return false; }
-            const [ox, oy] = (resp.headers.get("X-Origin") || "0,0").split(",").map(Number);
-            await app.blueprint.fromURL(URL.createObjectURL(await resp.blob()), ox, oy, `Original · ${p.titre}`);
-            app.blueprint.mode = mode;
-            app.blueprint.follow = mode === "points";
-            app.blueprint.opacity = 0.6;
-            app.blueprint.visible = true;
-            app.blueprint.save();
-            app.render();
-            return true;
-        };
-        render();
+        sheet.innerHTML = `<div class="grab"></div>
+            <h2 class="fs-h1">Ton œuvre a bougé</h2>
+            <p class="fs-small t2 pretty"><b>${escapeHTML(p.by?.pseudo ?? "Quelqu'un")}</b> a retouché <b>${formatNumber(p.count)} pixels</b> de « ${escapeHTML(p.titre)} » ${relativeTime(al.ts)}. Une blague, une collab ? À toi de voir.</p>
+            <div class="insp-actions"><button class="btn btn-primary btn-px js-retouch" type="button">Retoucher</button><button class="btn js-keep" type="button">Je garde, c'est drôle</button></div>
+            <p class="fs-cap t3 pretty">« Retoucher » te laisse devant ton œuvre pour remettre ses pixels : sa page montre l'avant et l'après. « Je garde » met à jour ton œuvre avec l'ajout.</p>
+            <a class="btn btn-ghost btn-sm" href="/oeuvre/${p.oeuvre}">Voir l'avant / après</a>
+            <a class="btn btn-ghost btn-sm" href="/activite?vue=alertes">Réglages des alertes</a>`;
         sheet.onclick = async e => {
-            if (e.target.closest(".js-ghost")) {
-                ghost = !ghost;
-                if (ghost) await loadRef("image");
-                else { app.blueprint.clear(); app.render(); }
-                render();
-            }
             if (e.target.closest(".js-retouch")) {
-                if (await loadRef("points")) {
-                    hideSheet();
-                    toast(`<span data-icon="blueprint" data-size="18"></span><span class="toast-text"><span class="fs-small b">L'original est en modèle</span><span class="fs-cap t3">Les points montrent les pixels à remettre.</span></span>`);
-                    fillIcons($("#toasts"));
-                }
+                hideSheet();
+                toast(`<span class="toast-text"><span class="fs-small b">À toi de jouer</span><span class="fs-cap t3">Remets les pixels de « ${escapeHTML(p.titre)} ».</span></span>`);
             }
             if (e.target.closest(".js-keep")) {
                 const r = await fetch(`/api/oeuvres/${p.oeuvre}/keep`, {method: "POST"});
                 if (r.ok) {
                     e.target.closest(".js-keep").textContent = "Gardé !";
-                    if (ghost) { app.blueprint.clear(); app.render(); }
                     setTimeout(hideSheet, 900);
                 }
             }
         };
-        showSheet(sheet, {onClose: () => { if (ghost && app.blueprint.mode === "image") { app.blueprint.clear(); app.render(); } }});
+        showSheet(sheet);
     }
 
     // notifications of the device, from the account menu
@@ -165,23 +136,5 @@ export function setupCommunity(app) {
         const q = new URLSearchParams(location.search);
         const alertID = Number(q.get("alerte"));
         if (alertID) openAlert(alertID);
-        const modele = q.get("modele");
-        if (modele?.startsWith("oeuvre:")) {
-            const oid = modele.split(":")[1];
-            const resp = await fetch(`/api/oeuvres/${oid}/reference.png`);
-            if (resp.ok) {
-                const [ox, oy] = (resp.headers.get("X-Origin") || "0,0").split(",").map(Number);
-                const o = await fetch(`/api/oeuvres/${oid}`).then(r => r.json()).catch(() => null);
-                await app.blueprint.fromURL(URL.createObjectURL(await resp.blob()), ox, oy, o?.oeuvre?.titre ?? "Œuvre");
-                app.blueprint.mode = "points";
-                app.blueprint.follow = true;
-                app.blueprint.visible = true;
-                app.blueprint.save();
-                app.followBlueprint();
-                app.render();
-                toast(`<span data-icon="blueprint" data-size="18"></span><span class="toast-text"><span class="fs-small b">Modèle : ${escapeHTML(o?.oeuvre?.titre ?? "l'œuvre")}</span><span class="fs-cap t3">Les points montrent les pixels à poser. Bouton « Modèle » pour le régler.</span></span>`, {timeout: 6000});
-                fillIcons($("#toasts"));
-            }
-        }
     });
 }

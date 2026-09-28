@@ -303,7 +303,10 @@
 /* cadre en bois façon saloon + passe-partout clair : l'œuvre est toujours sur fond blanc (le canvas) */
 .cadre { padding: 9px; background: #6d302f; box-shadow: inset 0 0 0 2px #9c451a, inset 0 0 0 5px #4a1f1e, 0 12px 28px rgba(0, 0, 0, .38); }
 .cadre-or { padding: 9px; background: #9c6a1a; box-shadow: inset 0 0 0 2px #f0b75a, inset 0 0 0 5px #6d4410, 0 12px 28px rgba(0, 0, 0, .38); }
-.passe { padding: 7px; background: #f6f0e4; box-shadow: inset 0 1px 3px rgba(0, 0, 0, .25); }
+.passe { padding: 7px; background: #0e0c09; box-shadow: inset 0 1px 3px rgba(0, 0, 0, .6); }
+/* The artworks are cut along their shape (transparent around): a dark velvet behind them, no white. */
+.velours, .mu-img, .mu-affiche-img, .oe-img, .ex-img, .mp-img, .ex-work-img, .me-order-thumb, .me-fond-work { background: radial-gradient(ellipse 80% 70% at 50% 40%, #2b251c, #14110d 80%); }
+img.art { filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .55)); }
 .cartel { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
 .spot { background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(255, 236, 190, .12), transparent 70%); }
 .bp[data-theme="clair"] .spot { background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(201, 138, 43, .12), transparent 70%); }

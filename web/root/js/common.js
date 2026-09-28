@@ -136,6 +136,28 @@ export function cropOf(o, size = 240, marge = 75) {
     return `/api/crop.png?x=${Math.max(0, o.x - pad)}&y=${Math.max(0, o.y - pad)}&w=${w}&h=${h}&z=${z}`;
 }
 
+// artOf returns the artwork today cut along its shape (transparent around it), about
+// `size` px on its longer side: the museum lays it on a dark mat, no white around.
+export function artOf(o, size = 240) {
+    const z = Math.max(1, Math.min(16, Math.round(size / Math.max(o.w, o.h, 1))));
+    return `/api/oeuvres/${o.id}/image.png?z=${z}`;
+}
+
+// the style of an artwork's image in its frame: `marge` % (50–100) of the frame
+export function artFit(marge = 80) {
+    const m = Math.max(50, Math.min(100, marge ?? 80));
+    return `width: ${m}%; height: ${m}%; object-fit: contain`;
+}
+
+// a frame that hugs the artwork (its proportions, a bit squarer for the extreme ones),
+// at most `h` px high: the width is what is limited, so the proportions always hold
+export function hugRatio(o) {
+    return Math.max(.5, Math.min(2, o.w / Math.max(o.h, 1))).toFixed(3);
+}
+export function hugFrame(o, h, extra = 18) {
+    return `width: min(100%, ${Math.round(h * hugRatio(o)) + extra}px)`;
+}
+
 export function frameClass(expo) {
     return expo?.cadre === "or" ? "cadre-or" : expo?.cadre === "sans" ? "cadre-sans" : "cadre";
 }

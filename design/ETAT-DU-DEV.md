@@ -1,12 +1,12 @@
 # État du développement — refonte EvenBetter
 
-*Mis à jour le 27 septembre 2026. Branche `phase1-socle` (partie de `redesign`), poussée sur GitHub, sans PR. Rien n'a été déployé.*
+*Mis à jour le 28 septembre 2026. Branche `phase1-socle` (partie de `redesign`), poussée sur GitHub, sans PR. En ligne sur place.justbetter.fr derrière le compte à rebours (voir `deploy/justbetter/README.md`).*
 
 Les six étapes du HANDOFF (§9) sont codées, plus les trois demandes ajoutées en cours de route :
 
 - une bannière de profil dessinée pixel par pixel ;
 - aucun délai entre deux pixels ;
-- les modèles (« blueprints »), une image qui guide pour savoir quelle couleur poser où.
+- les modèles (« blueprints »), une image qui guide pour savoir quelle couleur poser où (retirés le 28/09, voir plus bas).
 
 | Étape | Contenu | Commits |
 |---|---|---|
@@ -34,6 +34,26 @@ Les six étapes du HANDOFF (§9) sont codées, plus les trois demandes ajoutées
   - Deux étapes : `stage.sh` depuis le PC, puis `sudo bash ~/place-deploy/switch.sh` sur le serveur.
   - La v1 est sauvegardée, le canvas conservé, et le retour arrière se fait avec `rollback.sh`.
   - L'image Docker a été construite et essayée en local avec podman.
+
+## Retours du 28/09/2026 (tiago et Mika)
+
+- **Revendications** : plus de limite de 5 demandes en attente.
+- **Zones déjà revendiquées** : `/revendiquer` les montre dès l'ouverture, teintées et entourées selon leur vraie forme, avec leur titre. Or = œuvre validée, bleu = demande en attente.
+  - Un bouton permet de les masquer.
+  - Survoler une zone ou commencer une sélection dedans dit à qui elle est.
+  - Les données viennent de `/api/zones` et `/api/zones.png` (`zones.go`).
+- **Carte du profil** : elle éclaire aussi les œuvres revendiquées, pas seulement les pixels posés avec le compte.
+- **Bouton « Revendiquer une œuvre »** : doré, dans la barre d'outils du canvas (ordi) et en haut (mobile). Il ouvre `/revendiquer` là où on regarde.
+- **Modèles supprimés** : bouton, fenêtre, `blueprint.js`, `blueprint-ui.js`, `?modele=` et `/api/oeuvres/:id/reference.png`.
+  - « Retoucher » (alerte « Ton œuvre a bougé ») laisse maintenant devant l'œuvre, avec un lien vers son avant / après.
+- **« X connectés »** : compte les personnes (un compte = 1, peu importe le nombre d'onglets ; un invité = 1 par adresse). Le tableau de bord admin montre aussi le nombre d'onglets.
+- **Inspecteur** : le cadre de l'œuvre n'apparaît qu'une fois le pixel épinglé (touche `I`) ou ouvert sur mobile, jamais au survol ni en zoomant, et jamais celui d'un pixel précédent. Pendant le chargement, il affiche « Recherche de son œuvre… » au lieu de « pas encore d'auteur ».
+- **Musée** : les œuvres sont découpées selon leur forme (`/api/oeuvres/:id/image.png`, transparente autour), posées sur un fond sombre au lieu du blanc.
+  - Les grands cadres (affiche, page de l'œuvre) suivent les proportions de l'œuvre.
+  - « Rejouer la construction » utilise le même cadrage, découpé lui aussi. L'animation n'est plus déformée et se superpose exactement à l'œuvre dans les musées perso.
+- **Timelapse** : le canvas entier tient à l'écran avec ses contrôles.
+  - On zoome à la molette, en pinçant, en double-cliquant ou avec − ×1 +, et on se déplace en glissant.
+  - Les pixels restent nets.
 
 ## Données réelles (mises à jour le 27/09/2026)
 
@@ -74,7 +94,7 @@ node design/outils/demo-seed.mjs
 
 ## Ce qu'il y a à regarder
 
-1. **`/ace`** sur desktop et sur mobile. Poser, pipette, raccourcis `G` `L` `I` `M` et les flèches, modèle (icône plan), inspecteur, fil en direct.
+1. **`/ace`** sur desktop et sur mobile. Poser, pipette, raccourcis `G` `L` `I` et les flèches, bouton « Revendiquer une œuvre », inspecteur, fil en direct.
 2. **`/u/brindille`** et **`/moi/profil`** : bannière dessinée, badges épinglés, carte des contributions.
 3. **`/revendiquer`**, **`/revendications`**, **`/admin/revendications`** : demande, votes, validation. L'analyse vient des vraies sauvegardes.
 4. **`/activite`**, **`/classement`**, **`/musee`**, **`/musee/visite`**, **`/oeuvre/1`**, **`/timelapse`**.

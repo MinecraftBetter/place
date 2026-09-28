@@ -9,6 +9,16 @@ import {formatNumber, relativeTime} from "./view.js";
 
 const slug = decodeURIComponent(location.pathname.replace(/^\/u\//, "").split("/")[0]);
 
+// what the profile map lights up: the pixels placed with the account and the claimed artworks
+function mapCaption(p, x) {
+    const n = x.oeuvres?.length ?? 0;
+    const lit = [
+        p.pixels_visibles ? `ses ${formatNumber(p.pixels_visibles)} pixels visibles` : "",
+        n ? (n > 1 ? `ses ${n} œuvres revendiquées` : "son œuvre revendiquée") : "",
+    ].filter(Boolean);
+    return lit.length ? `canvas assombri, ${lit.join(" et ")} en surbrillance` : "canvas assombri, aucun pixel visible pour l'instant";
+}
+
 async function main() {
     const me0 = await fetchMe();
     await mountShell({active: me0.user?.slug === slug ? "profil" : "", overlay: true});
@@ -61,7 +71,7 @@ async function main() {
         <span class="fs-small t2">Revendication « ${escapeHTML(x.claim_en_cours.titre)} » en cours : une œuvre <b class="tgold">pionnière</b> à la clé.</span></div>` : "";
 
     const map = p.carte_publique || p.moi ? `<section class="prof-map-sec">
-        <div class="sec-head"><h2 class="fs-h2">Ses pixels sur le canvas</h2><span class="fs-cap t3">canvas assombri, ${p.pixels_visibles ? `ses ${formatNumber(p.pixels_visibles)} pixels visibles en surbrillance` : "aucun pixel visible pour l'instant"}</span></div>
+        <div class="sec-head"><h2 class="fs-h2">Ses pixels sur le canvas</h2><span class="fs-cap t3">${mapCaption(p, x)}</span></div>
         <div class="prof-map"><img class="px" src="/api/users/${encodeURIComponent(p.slug)}/contributions.png" alt="Carte des contributions de ${escapeHTML(p.pseudo)}" loading="lazy">
         <a class="glass prof-map-btn" href="/ace"><span class="fs-cap b">Explorer</span></a></div>
         ${!p.carte_publique ? `<span class="fs-cap t3">Ta carte est masquée pour les autres joueurs.</span>` : ""}

@@ -4,6 +4,7 @@ import {$, avatarHTML, escapeHTML, fillIcons, icon} from "./ui.js";
 import {mountShell, loginHref, emptyState} from "./shell.js";
 import {formatNumber} from "./view.js";
 import {THEMES, particlesHTML, FRAMES} from "./museum-kit.js";
+import {artOf} from "./common.js";
 
 const page = $("#page");
 const TABS = [["populaires", "Populaires"], ["nouveaux", "Nouveaux"], ["coeur", "Mes coups de cœur"]];
@@ -14,10 +15,8 @@ function card(m) {
     const a = m.apercu;
     let art = "";
     if (a) {
-        const side = Math.max(a.w, a.h), pad = Math.max(2, Math.round(side * .08));
-        const z = Math.max(1, Math.min(8, Math.floor(160 / (side + 2 * pad))));
         const [, frame, passe] = FRAMES[m.cadre] ?? FRAMES.or;
-        const img = `<img class="px" src="/api/crop.png?x=${Math.max(0, a.x - pad)}&y=${Math.max(0, a.y - pad)}&w=${a.w + 2 * pad}&h=${a.h + 2 * pad}&z=${z}" alt="" loading="lazy">`;
+        const img = `<img class="px art" src="${artOf(a, 160)}" alt="" loading="lazy">`;
         art = `<div class="mus-art mp-frame ${frame}">${passe ? `<div class="${passe}">${img}</div>` : img}</div>`;
     }
     return `<a class="card mus-card" href="/u/${escapeHTML(m.user.slug)}/musee">

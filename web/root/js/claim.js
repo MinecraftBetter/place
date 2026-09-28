@@ -20,7 +20,7 @@ const BADGE_INFO = {
 };
 
 const st = {
-    me: null, gl: null, W: 0, H: 0, pixels: null,
+    me: null, gl: null, W: 0, H: 0, pixels: null, zones: null, zonesOn: true,
     tool: "rect", rect: null, lasso: null, wand: new Set(), tol: 0,
     analysis: null, analysing: false, coauthors: [], rep: "egale", weights: {moi: 1}, step: 1,
 };
@@ -93,6 +93,120 @@ function wandFill(sx, sy) {
 }
 
 // ------------------------------------------------------------------
+// Zones already taken (artworks, claims waiting for the team): tinted, outlined along
+// their real shape, titled. From /api/zones and its map /api/zones.png.
+
+const ZONE_RGB = {oeuvre: [240, 183, 90], attente: [94, 179, 255]};
+
+async function loadZones() {
+    try {
+        const [j, img] = await Promise.all([
+            fetch("/api/zones", {cache: "no-store"}).then(r => r.json()),
+            fetch("/api/zones.png", {cache: "no-store"}).then(r => r.arrayBuffer()).then(loadImage),
+        ]);
+        const W = st.W, H = st.H, list = j.zones ?? [];
+        const c = document.createElement("canvas");
+        c.width = W;
+        c.height = H;
+        const cx = c.getContext("2d", {willReadFrequently: true});
+        cx.drawImage(img, 0, 0);
+        const src = cx.getImageData(0, 0, W, H).data;
+        const idx = new Uint16Array(W * H);
+        const tint = cx.createImageData(W, H);
+        for (let p = 0; p < W * H; p++) {
+            if (!src[p * 4 + 3]) continue;
+            const n = src[p * 4] << 8 | src[p * 4 + 1];
+            const z = list[n - 1];
+            if (!z) continue;
+            idx[p] = n;
+            tint.data.set([...ZONE_RGB[z.type] ?? ZONE_RGB.oeuvre, 64], p * 4);
+        }
+        cx.putImageData(tint, 0, 0);
+        // outlines: the pixel edges where the zone changes, merged in runs
+        const at = (x, y) => x < 0 || y < 0 || x >= W || y >= H ? 0 : idx[y * W + x];
+        const type = (a, b) => a === b ? null : list[(b || a) - 1]?.type ?? null;
+        const paths = {oeuvre: new Path2D(), attente: new Path2D()};
+        for (let y = 0; y <= H; y++) {
+            let run = null, x0 = 0;
+            for (let x = 0; x <= W; x++) {
+                const t = x < W ? type(at(x, y - 1), at(x, y)) : null;
+                if (t === run) continue;
+                if (run) { paths[run].moveTo(x0, y); paths[run].lineTo(x, y); }
+                run = t;
+                x0 = x;
+            }
+        }
+        for (let x = 0; x <= W; x++) {
+            let run = null, y0 = 0;
+            for (let y = 0; y <= H; y++) {
+                const t = y < H ? type(at(x - 1, y), at(x, y)) : null;
+                if (t === run) continue;
+                if (run) { paths[run].moveTo(x, y0); paths[run].lineTo(x, y); }
+                run = t;
+                y0 = y;
+            }
+        }
+        st.zones = {list, idx, tint: c, paths};
+        const n = {oeuvre: 0, attente: 0};
+        for (const z of list) n[z.type]++;
+        const btn = $(".js-zones");
+        $(".js-zones-text", btn).textContent = [
+            `${n.oeuvre} déjà revendiquée${n.oeuvre > 1 ? "s" : ""}`, n.attente ? `${n.attente} en attente` : "",
+        ].filter(Boolean).join(" · ");
+        $(".lg-attente", btn).hidden = !n.attente;
+        btn.hidden = !list.length;
+        render();
+    } catch { /* no layer: the analysis still reports the overlaps */ }
+}
+
+function zoneAt(px) {
+    const n = st.zones?.idx[px.y * st.W + px.x];
+    return n ? st.zones.list[n - 1] : null;
+}
+
+const byLine = z => z.par?.length ? ` par ${z.par.map(u => u.pseudo).join(", ")}` : "";
+
+function drawZones(gl, z) {
+    if (!st.zones || !st.zonesOn) return;
+    const o = gl.pixelToScreen(0, 0);
+    octx.save();
+    octx.imageSmoothingEnabled = false;
+    octx.drawImage(st.zones.tint, o.x, o.y, st.W * z, st.H * z);
+    octx.setTransform(z, 0, 0, z, o.x, o.y);
+    octx.lineWidth = Math.min(3, Math.max(1.5, z / 4)) / z;
+    for (const [t, path] of Object.entries(st.zones.paths)) {
+        octx.strokeStyle = `rgb(${ZONE_RGB[t].join(", ")})`;
+        octx.stroke(path);
+    }
+    octx.restore();
+    // the titles of the zones big enough on screen
+    for (const zn of st.zones.list) {
+        if (zn.w * z < 56 || zn.h * z < 28) continue;
+        const s = gl.pixelToScreen(zn.x, zn.y);
+        if (s.x > overlay.width || s.y > overlay.height || s.x + zn.w * z < 0 || s.y + zn.h * z < 0) continue;
+        const text = (zn.type === "attente" ? "En attente · " : "") + zn.titre;
+        label(text, Math.max(4, s.x + 4), Math.max(4, s.y + 4), zn.type === "attente" ? ["#0d2a45", "#9fd2ff"] : undefined, zn.w * z - 8);
+    }
+}
+
+// a zone already taken under the pointer: said in the hint (desktop), once in a toast (touch)
+let warned = null;
+function warnZone(px, {toastIt = false} = {}) {
+    const zn = st.zonesOn ? zoneAt(px) : null;
+    const hint = $(".js-hint");
+    if (zn) {
+        const text = zn.type === "attente"
+            ? `« ${zn.titre} » est déjà demandée${byLine(zn)}, en attente de l'équipe.`
+            : `« ${zn.titre} » est déjà revendiquée${byLine(zn)}.`;
+        hint.textContent = text + " Si c'est la tienne, envoie quand même ta demande : l'équipe départagera.";
+        if (toastIt && warned !== zn) toast(`<span class="fs-small b">${escapeHTML(text)}</span>`, {timeout: 3500});
+    } else if (warned) {
+        hint.textContent = HINTS[st.tool] + MOVE_HINT[mobileMQ.matches ? "m" : "d"];
+    }
+    warned = zn;
+}
+
+// ------------------------------------------------------------------
 // Drawing
 
 const overlay = $("#claim-overlay");
@@ -114,6 +228,7 @@ function draw() {
     st.gl.draw();
     const gl = st.gl, z = gl.getZoom();
     octx.clearRect(0, 0, overlay.width, overlay.height);
+    drawZones(gl, z);
     const m = currentMask();
     const toS = (x, y) => gl.pixelToScreen(x, y);
     octx.save();
@@ -183,12 +298,13 @@ function dim(pathFn) {
     octx.fill("evenodd");
 }
 
-function label(text, x, y) {
+function label(text, x, y, [bg, fg] = ["#241604", "#f5c77a"], maxW = Infinity) {
     octx.font = "600 12px 'Instrument Sans', sans-serif";
+    while (text.length > 4 && octx.measureText(text).width + 16 > maxW) text = text.slice(0, -2).trimEnd() + "…";
     const w = octx.measureText(text).width + 16;
-    octx.fillStyle = "#241604";
+    octx.fillStyle = bg;
     octx.fillRect(x, y, w, 22);
-    octx.fillStyle = "#f5c77a";
+    octx.fillStyle = fg;
     octx.fillText(text, x + 8, y + 15);
 }
 
@@ -229,6 +345,7 @@ function setupInput() {
         }
         const p = canvasAt(ev);
         const px = clampPx(p);
+        warnZone(px, {toastIt: ev.pointerType !== "mouse"});
         if (st.tool === "rect") {
             if (st.rect) {
                 const b = maskBounds(currentMask());
@@ -255,6 +372,7 @@ function setupInput() {
         render();
     });
     el.addEventListener("pointermove", ev => {
+        if (ev.pointerType === "mouse" && !pointers.size && st.gl) warnZone(clampPx(canvasAt(ev)));
         if (!pointers.has(ev.pointerId)) return;
         pointers.set(ev.pointerId, {x: ev.clientX, y: ev.clientY});
         if (!action) return;
@@ -619,6 +737,12 @@ async function main() {
         $(".js-tol-v").textContent = st.tol;
     });
     $(".js-clear").addEventListener("click", clearSelection);
+    $(".js-zones").addEventListener("click", e => {
+        st.zonesOn = !st.zonesOn;
+        e.currentTarget.setAttribute("aria-pressed", String(st.zonesOn));
+        render();
+    });
+    loadZones();
     st.tool = "";
     setTool("rect");
     window.addEventListener("resize", sizeCanvases);

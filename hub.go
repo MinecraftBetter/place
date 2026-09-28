@@ -6,6 +6,7 @@ import (
 	"image/color"
 	"math"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
@@ -87,8 +88,9 @@ type Hub struct {
 
 type client struct {
 	conn   *websocket.Conn
-	user   *User // nil for guests
-	ip     string
+	user   *User  // nil for guests
+	ip     string // the TCP peer, for the logs
+	addr   string // the visitor's address (clientIP), to count guests once
 	send   chan []byte
 	closed bool // guarded by Hub.mu
 }
@@ -139,11 +141,31 @@ func (h *Hub) allowRate(uid uint32, now time.Time) (bool, float64) {
 	return true, 0
 }
 
-// Online returns the number of connections and the maximum.
-func (h *Hub) Online() (count, slots int) {
+// Online returns the number of people connected and the maximum of connections.
+func (h *Hub) Online() (people, slots int) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	return len(h.clients), h.maxConns
+	return h.peopleLocked(), h.maxConns
+}
+
+// Connections returns the number of WebSocket connections (a person may have several tabs).
+func (h *Hub) Connections() int {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	return len(h.clients)
+}
+
+// peopleLocked counts each player once whatever their number of tabs, and guests once per address.
+func (h *Hub) peopleLocked() int {
+	seen := make(map[string]struct{}, len(h.clients))
+	for c := range h.clients {
+		if c.user != nil {
+			seen["u"+strconv.FormatUint(uint64(c.user.ID), 10)] = struct{}{}
+		} else {
+			seen["g"+c.addr] = struct{}{}
+		}
+	}
+	return len(seen)
 }
 
 func (h *Hub) Cooldown() time.Duration {
@@ -193,7 +215,7 @@ func (h *Hub) ServeWS(w http.ResponseWriter, r *http.Request) {
 	if sameOrigin(r) {
 		user = h.auth.User(r)
 	}
-	c := &client{user: user, ip: r.RemoteAddr, send: make(chan []byte, sendQueue)}
+	c := &client{user: user, ip: r.RemoteAddr, addr: clientIP(r), send: make(chan []byte, sendQueue)}
 
 	h.mu.Lock()
 	if len(h.clients) >= h.maxConns {
@@ -447,7 +469,7 @@ func (h *Hub) scheduleStat() {
 	h.statTimer = time.AfterFunc(statDelay, func() {
 		h.mu.Lock()
 		h.statTimer = nil
-		msg := mustJSON(statMsg{"stat", len(h.clients), h.maxConns})
+		msg := mustJSON(statMsg{"stat", h.peopleLocked(), h.maxConns})
 		h.mu.Unlock()
 		h.broadcast(msg)
 	})

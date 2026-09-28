@@ -1,6 +1,6 @@
 package place
 
-// Artwork pages (d-oeuvre): reference image, before/after, construction replay, history.
+// Artwork pages (d-oeuvre): before/after, construction replay, history.
 
 import (
 	"fmt"
@@ -13,40 +13,45 @@ import (
 )
 
 func init() {
-	OeuvreRoutes["reference.png"] = handleReferencePNG
+	OeuvreRoutes["image.png"] = handleImagePNG
 	OeuvreRoutes["avant.png"] = handleAvantPNG
 	OeuvreRoutes["construction.png"] = handleConstructionPNG
 }
 
-// GET /api/oeuvres/:id/reference.png — the artwork as its authors last kept it,
-// transparent outside the zone (used as a blueprint by « Retoucher »).
-func handleReferencePNG(api *API, w http.ResponseWriter, r *http.Request, o *Oeuvre) {
-	var ref []byte
-	api.store.db.QueryRow(`SELECT reference FROM oeuvres WHERE id = ?`, o.ID).Scan(&ref)
+// GET /api/oeuvres/:id/image.png?z= — the artwork today, cut along its zone: its exact
+// box, transparent outside (the museum frames it on a dark mat).
+func handleImagePNG(api *API, w http.ResponseWriter, r *http.Request, o *Oeuvre) {
 	cw, ch := api.canvas.Size()
-	b := o.Mask.Bounds(cw, ch)
-	if len(ref) != b.Dx()*b.Dy()*3 {
-		writeError(w, http.StatusNotFound, "Pas de version de référence pour cette œuvre.")
+	box := o.Mask.Bounds(cw, ch).Intersect(image.Rect(0, 0, cw, ch))
+	if box.Empty() {
+		writeError(w, http.StatusNotFound, "Zone invalide.")
 		return
 	}
-	in := map[int32]bool{}
+	z, _ := strconv.Atoi(r.URL.Query().Get("z"))
+	z = max(1, min(z, 16))
+	img := image.NewNRGBA(image.Rect(0, 0, box.Dx()*z, box.Dy()*z))
 	for _, p := range maskPositions(o.Mask, cw, ch) {
-		in[p] = true
-	}
-	img := image.NewNRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
-	for y := 0; y < b.Dy(); y++ {
-		for x := 0; x < b.Dx(); x++ {
-			if !in[int32((b.Min.Y+y)*cw+b.Min.X+x)] {
-				continue
-			}
-			i := (y*b.Dx() + x) * 3
-			img.SetNRGBA(x, y, color.NRGBA{ref[i], ref[i+1], ref[i+2], 255})
+		x, y := int(p)%cw, int(p)/cw
+		if !image.Pt(x, y).In(box) {
+			continue
 		}
+		c, _, _ := api.canvas.At(x, y)
+		fillCell(img, x-box.Min.X, y-box.Min.Y, z, c)
 	}
 	w.Header().Set("Content-Type", "image/png")
-	w.Header().Set("X-Origin", fmt.Sprintf("%d,%d", b.Min.X, b.Min.Y))
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Write(encodePNG(img))
+}
+
+// fillCell paints the z×z cell (cx, cy) of img.
+func fillCell(img *image.NRGBA, cx, cy, z int, c color.NRGBA) {
+	for dy := 0; dy < z; dy++ {
+		row := img.Pix[(cy*z+dy)*img.Stride:]
+		for dx := 0; dx < z; dx++ {
+			o := (cx*z + dx) * 4
+			row[o], row[o+1], row[o+2], row[o+3] = c.R, c.G, c.B, 255
+		}
+	}
 }
 
 // beforeFrame picks the capture shown as "avant": when the artwork was finished,
@@ -106,7 +111,8 @@ func handleConstructionPNG(api *API, w http.ResponseWriter, r *http.Request, o *
 	n = max(4, min(n, 48))
 	z, _ := strconv.Atoi(r.URL.Query().Get("z"))
 	frames := constructionFrames(idx, pos, n)
-	img, times := ZoneSprite(idx, pos, frames, max(1, min(z, 8)))
+	box := o.Mask.Bounds(idx.W, idx.H).Intersect(image.Rect(0, 0, idx.W, idx.H))
+	img, times := ZoneSprite(idx, pos, box, frames, max(1, min(z, 8)))
 	tj := "["
 	for i, t := range times {
 		if i > 0 {
@@ -138,23 +144,27 @@ func constructionFrames(idx *BackupIndex, pos []int32, n int) []int {
 	return uniqueSorted(frames, len(idx.Frames))
 }
 
-// ZoneSprite renders frames of a zone (with its margin) side by side at scale z.
-func ZoneSprite(idx *BackupIndex, pos []int32, frames []int, z int) ([]byte, []int64) {
-	box := cropBox(pos, idx.W, idx.H)
+// ZoneSprite renders frames of a zone side by side at scale z: each frame is box, the
+// pixels outside the zone transparent (the museum lays it over the artwork's image).
+func ZoneSprite(idx *BackupIndex, pos []int32, box image.Rectangle, frames []int, z int) ([]byte, []int64) {
 	bw, bh := box.Dx(), box.Dy()
 	if z <= 1 {
-		z = max(1, min(8, 160/max(bw, bh)))
+		z = max(1, min(8, 160/max(bw, bh, 1)))
 	}
-	boxPos := make([]int32, 0, bw*bh)
-	for y := box.Min.Y; y < box.Max.Y; y++ {
-		for x := box.Min.X; x < box.Max.X; x++ {
-			boxPos = append(boxPos, int32(y*idx.W+x))
+	cells := make([]int, 0, len(pos)) // cell in the box of each position kept
+	rank := make(map[int32]int, len(pos))
+	var kept []int32
+	for _, p := range pos {
+		x, y := int(p)%idx.W, int(p)/idx.W
+		if !image.Pt(x, y).In(box) {
+			continue
 		}
+		rank[p] = len(kept)
+		kept = append(kept, p)
+		cells = append(cells, (y-box.Min.Y)*bw+x-box.Min.X)
 	}
-	rank := make(map[int32]int, len(boxPos))
-	state := make([]uint32, len(boxPos))
-	for i, p := range boxPos {
-		rank[p] = i
+	state := make([]uint32, len(kept))
+	for i, p := range kept {
 		state[i] = idx.First[p]
 	}
 	img := image.NewNRGBA(image.Rect(0, 0, len(frames)*bw*z, bh*z))
@@ -168,16 +178,8 @@ func ZoneSprite(idx *BackupIndex, pos []int32, frames []int, z int) ([]byte, []i
 			e++
 		}
 		times[fi] = idx.Frames[k].T * 1000
-		for i := range boxPos {
-			c := rgbToNRGBA(state[i])
-			x0, y0 := fi*bw*z+(i%bw)*z, (i/bw)*z
-			for dy := 0; dy < z; dy++ {
-				row := img.Pix[(y0+dy)*img.Stride:]
-				for dx := 0; dx < z; dx++ {
-					o := (x0 + dx) * 4
-					row[o], row[o+1], row[o+2], row[o+3] = c.R, c.G, c.B, 255
-				}
-			}
+		for i, cell := range cells {
+			fillCell(img, fi*bw+cell%bw, cell/bw, z, rgbToNRGBA(state[i]))
 		}
 	}
 	return encodePNG(img), times

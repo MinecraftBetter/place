@@ -1,8 +1,11 @@
 package place
 
 import (
+	"bytes"
 	"encoding/json"
 	"image"
+	"image/color"
+	"image/png"
 	"net/http"
 	"strings"
 	"testing"
@@ -245,4 +248,133 @@ func hasBadge(p map[string]any, id string) bool {
 		}
 	}
 	return false
+}
+
+// No cap on the claims a player may have waiting (tiago, 28/09/2026).
+func TestClaimNoPendingLimit(t *testing.T) {
+	e := claimEnv(t)
+	brin := e.login(t, "Brindille")
+	for i := 0; i < 8; i++ {
+		z := map[string]any{"type": "rect", "rect": []int{i % 4 * 4, i / 4 * 4, 4, 4}}
+		if status, m := e.post(t, "/api/claims", brin, map[string]any{"masque": z, "titre": "Œuvre " + string(rune('A'+i))}); status != 200 {
+			t.Fatalf("claim %d: %d %v", i+1, status, m)
+		}
+	}
+}
+
+// /revendiquer shows the zones already taken: artworks and claims waiting for a decision.
+func TestClaimedZones(t *testing.T) {
+	e := claimEnv(t)
+	brin, nyx, admin := e.login(t, "Brindille"), e.login(t, "Nyx"), e.login(t, "Tiago")
+	_, m := e.post(t, "/api/claims", brin, map[string]any{"masque": zone, "titre": "Bord de mer"})
+	id := int(m["id"].(float64))
+	if status, d := e.post(t, "/api/admin/claims/"+itoa(id)+"/decision", admin, map[string]any{"action": "valider"}); status != 200 {
+		t.Fatalf("validate: %d %v", status, d)
+	}
+	e.post(t, "/api/claims", nyx, map[string]any{"masque": map[string]any{"type": "rect", "rect": []int{8, 8, 3, 3}}, "titre": "Phare"})
+	_, m = e.post(t, "/api/claims", nyx, map[string]any{"masque": map[string]any{"type": "rect", "rect": []int{12, 0, 2, 2}}, "titre": "Annulée"})
+	if status, _ := e.post(t, "/api/claims/"+itoa(int(m["id"].(float64)))+"/cancel", nyx, nil); status != 200 {
+		t.Fatalf("cancel: %d", status)
+	}
+
+	zs := e.getJSON(t, "/api/zones", nil)["zones"].([]any)
+	if len(zs) != 2 {
+		t.Fatalf("zones %v", zs)
+	}
+	byType := map[string]map[string]any{}
+	for i, z := range zs {
+		z := z.(map[string]any)
+		z["index"] = i + 1
+		byType[z["type"].(string)] = z
+	}
+	o, p := byType["oeuvre"], byType["attente"]
+	if o == nil || o["titre"] != "Bord de mer" || o["w"] != 4.0 || p == nil || p["titre"] != "Phare" || p["x"] != 8.0 {
+		t.Fatalf("zones %v", zs)
+	}
+	if par := o["par"].([]any); len(par) != 1 || par[0].(map[string]any)["pseudo"] != "Brindille" {
+		t.Fatalf("authors %v", o["par"])
+	}
+
+	status, b := e.get(t, "/api/zones.png", nil)
+	if status != 200 {
+		t.Fatalf("zones.png %d", status)
+	}
+	img, err := png.Decode(bytes.NewReader(b))
+	if err != nil {
+		t.Fatal(err)
+	}
+	at := func(x, y int) int {
+		c := color.NRGBAModel.Convert(img.At(x, y)).(color.NRGBA)
+		if c.A == 0 {
+			return 0
+		}
+		return int(c.R)<<8 | int(c.G)
+	}
+	if at(1, 1) != o["index"] || at(9, 9) != p["index"] || at(15, 15) != 0 || at(12, 0) != 0 || at(5, 5) != 0 {
+		t.Fatalf("zone map: (1,1)=%d (9,9)=%d (15,15)=%d (12,0)=%d", at(1, 1), at(9, 9), at(15, 15), at(12, 0))
+	}
+}
+
+// The profile map lights up the claimed artworks too, not only the pixels placed with the account.
+func TestContributionsShowClaimedArtworks(t *testing.T) {
+	e := claimEnv(t)
+	brin, admin := e.login(t, "Brindille"), e.login(t, "Tiago")
+	lit := func() bool {
+		_, b := e.get(t, "/api/users/brindille/contributions.png", nil)
+		img, err := png.Decode(bytes.NewReader(b))
+		if err != nil {
+			t.Fatal(err)
+		}
+		r, _, _, _ := img.At(1, 1).RGBA()
+		return r>>8 > 200 // the live canvas is white: dimmed unless it is hers
+	}
+	if lit() {
+		t.Fatal("lit before the claim")
+	}
+	_, m := e.post(t, "/api/claims", brin, map[string]any{"masque": zone, "titre": "Bord de mer"})
+	e.post(t, "/api/admin/claims/"+itoa(int(m["id"].(float64)))+"/decision", admin, map[string]any{"action": "valider"})
+	if !lit() {
+		t.Fatal("the claimed artwork is not on her map")
+	}
+}
+
+// The museum shows an artwork cut along its shape: its exact box, transparent outside
+// the zone, and the construction frames at the same box.
+func TestArtworkCutOut(t *testing.T) {
+	e := claimEnv(t)
+	brin, admin := e.login(t, "Brindille"), e.login(t, "Tiago")
+	diag := map[string]any{"type": "bitmap", "x": 0, "y": 0, "w": 4, "h": 4, "bits": "hCE="} // (0,0) (1,1) (2,2) (3,3)
+	_, m := e.post(t, "/api/claims", brin, map[string]any{"masque": diag, "titre": "Diagonale"})
+	_, d := e.post(t, "/api/admin/claims/"+itoa(int(m["id"].(float64)))+"/decision", admin, map[string]any{"action": "valider"})
+	oid := itoa(int(d["claim"].(map[string]any)["oeuvre_id"].(float64)))
+	decode := func(path string) image.Image {
+		status, b := e.get(t, path, nil)
+		if status != 200 {
+			t.Fatalf("%s: %d %s", path, status, b)
+		}
+		img, err := png.Decode(bytes.NewReader(b))
+		if err != nil {
+			t.Fatal(err)
+		}
+		return img
+	}
+	alpha := func(img image.Image, x, y int) uint32 { _, _, _, a := img.At(x, y).RGBA(); return a >> 8 }
+
+	img := decode("/api/oeuvres/" + oid + "/image.png?z=2")
+	if b := img.Bounds(); b.Dx() != 8 || b.Dy() != 8 {
+		t.Fatalf("image %v, want the 4×4 box at ×2", b)
+	}
+	if alpha(img, 0, 0) != 255 || alpha(img, 3, 3) != 255 || alpha(img, 2, 0) != 0 || alpha(img, 7, 0) != 0 {
+		t.Fatal("not cut along the zone")
+	}
+
+	sp := decode("/api/oeuvres/" + oid + "/construction.png?n=4&z=2")
+	if b := sp.Bounds(); b.Dy() != 8 || b.Dx()%8 != 0 || b.Dx() < 16 {
+		t.Fatalf("sprite %v, want frames of the 4×4 box at ×2", b)
+	}
+	for f := 0; f < sp.Bounds().Dx()/8; f++ {
+		if alpha(sp, f*8, 0) != 255 || alpha(sp, f*8+2, 0) != 0 {
+			t.Fatalf("frame %d not cut along the zone", f)
+		}
+	}
 }

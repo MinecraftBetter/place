@@ -118,8 +118,9 @@ export class Inspector {
         const cached = this.#details.get(x + "," + y);
         const details = cached && cached.owner === ownerId && Date.now() - cached.at < DETAIL_TTL ? cached.data : null;
         const owner = ownerId ? (app.users.peek(ownerId) ?? details?.owner ?? null) : null;
+        this.#syncZone(details);
 
-        const html = this.#html({x, y, hex, ownerId, owner, details, mode: cur.mode});
+        const html = this.#html({x, y, hex, ownerId, owner, details, mode: cur.mode, loading: fetchDetails && !details});
         const target = cur.mode === "sheet" ? this.#sheet : this.#card;
         target.innerHTML = html;
         fillIcons(target);
@@ -135,19 +136,27 @@ export class Inspector {
                 const data = await resp.json();
                 this.#details.set(x + "," + y, {at: Date.now(), owner: data.owner?.id ?? 0, data});
                 if (data.owner) app.users.put(data.owner);
-                if (this.#stillOn(x, y)) {
-                    this.#app.inspectZone = data.oeuvre ? {x: data.oeuvre.x, y: data.oeuvre.y, w: data.oeuvre.w, h: data.oeuvre.h, titre: data.oeuvre.titre} : null;
-                    this.#render(false);
-                }
+                if (this.#stillOn(x, y)) this.#render(false);
             } catch { /* offline: keep the local info */ }
         }
+    }
+
+    // The frame around the artwork of the pixel: only once pinned (or in the mobile sheet),
+    // never left over from another pixel.
+    #syncZone(details) {
+        const o = this.#current && this.#current.mode !== "hover" ? details?.oeuvre : null;
+        const z = o ? {x: o.x, y: o.y, w: o.w, h: o.h, titre: o.titre} : null;
+        const before = this.#app.inspectZone;
+        if (before?.x === z?.x && before?.y === z?.y && before?.w === z?.w && before?.h === z?.h && before?.titre === z?.titre) return;
+        this.#app.inspectZone = z;
+        this.#app.render();
     }
 
     #stillOn(x, y) {
         return this.#current && this.#current.x === x && this.#current.y === y;
     }
 
-    #html({x, y, hex, ownerId, owner, details, mode}) {
+    #html({x, y, hex, ownerId, owner, details, mode, loading}) {
         const name = colorName(hex);
         const big = mode !== "hover";
         const colorTitle = name
@@ -200,6 +209,8 @@ export class Inspector {
                 ${big ? `<div class="rule"></div><div class="insp-art-authors">${authors}</div>` : `<span class="fs-cap t2">par ${art.auteurs.map(a => escapeHTML(a.user?.pseudo ?? "")).join(" et ")}</span>`}
             </div>
             ${big && art.revendiquee_le ? `<p class="fs-cap t3 pretty">Revendiquée le ${dateLong(art.revendiquee_le)}${art.confirmations ? `, confirmée par ${art.confirmations} joueur${art.confirmations > 1 ? "s" : ""}` : ""}, validée par l'équipe.</p>` : ""}`;
+        } else if (loading) {
+            out += `<p class="fs-small t3">Recherche de son œuvre…</p>`;
         } else if (parseHex(hex) === "#FFFFFF") {
             out += `<div style="display: flex; flex-direction: column; gap: 6px"><span class="pill st-neutre" style="align-self: flex-start">Pixel libre</span><p class="fs-small t2 pretty">Personne n'a posé de pixel ici depuis l'ouverture des comptes.</p></div>`;
         } else {

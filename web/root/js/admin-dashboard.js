@@ -24,7 +24,7 @@ async function render() {
             <div class="seg" role="group" aria-label="Période">${PERIODS.map(([id, l]) => `<button type="button" class="${id === period ? "on" : ""}" data-period="${id}">${l}</button>`).join("")}</div>
             <a class="btn btn-sm" href="/admin/zone">Attribuer une zone</a></header>
         <section class="adm-kpis">
-            <div class="card kpi"><span class="fs-over">Connectés</span><span class="kpi-v">${k.connectes}<span class="t3"> / ${k.slots}</span></span><span class="fs-cap t3">connexions WebSocket</span></div>
+            <div class="card kpi"><span class="fs-over">Connectés</span><span class="kpi-v">${k.connectes}</span><span class="fs-cap t3">${k.connexions ?? k.connectes} onglet${(k.connexions ?? k.connectes) > 1 ? "s" : ""} ouvert${(k.connexions ?? k.connectes) > 1 ? "s" : ""} sur ${k.slots} possibles</span></div>
             <div class="card kpi"><span class="fs-over">Pixels · ${escapeHTML(k.periode)}</span><span class="kpi-v">${formatNumber(k.pixels)}</span>${delta(k.pixels, k.pixels_prev)}</div>
             <div class="card kpi"><span class="fs-over">Pixels · dernière heure</span><span class="kpi-v">${formatNumber(k.pixels_1h)}</span><span class="fs-cap t3">posés par les joueurs</span></div>
             <div class="card kpi"><span class="fs-over">Joueurs actifs</span><span class="kpi-v">${formatNumber(k.actifs)}</span>${delta(k.actifs, k.actifs_prev)}</div>

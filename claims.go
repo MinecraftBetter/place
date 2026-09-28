@@ -76,9 +76,8 @@ func init() {
 }
 
 const (
-	maxPendingClaims = 5
-	maxCoauthors     = 5
-	conflictOverlap  = 0.30 // a claim overlapping another one by 30 % of the smaller is "à départager"
+	maxCoauthors    = 5
+	conflictOverlap = 0.30 // a claim overlapping another one by 30 % of the smaller is "à départager"
 )
 
 var goldBadges = []string{"pionnier", "veteran", "batisseur", "indemodable"}
@@ -535,11 +534,6 @@ func (s *Store) CreateClaim(u *User, n NewClaim, pos []int32, cw, ch int, analys
 	}
 	if len(n.Coauthors) > maxCoauthors {
 		return 0, &FieldError{"co_auteurs", fmt.Sprintf("%d co-auteurs au maximum.", maxCoauthors)}
-	}
-	var pending int
-	s.db.QueryRow(`SELECT COUNT(*) FROM claims WHERE demandeur_id = ? AND statut = 'attente'`, u.ID).Scan(&pending)
-	if pending >= maxPendingClaims {
-		return 0, &FieldError{"", fmt.Sprintf("Tu as déjà %d demandes en attente : patiente un peu.", maxPendingClaims)}
 	}
 	rep := "egale"
 	if n.Repartition == "poids" {

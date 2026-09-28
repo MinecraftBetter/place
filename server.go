@@ -49,10 +49,10 @@ func (sv *Server) HandleGetImage(w http.ResponseWriter, r *http.Request) {
 
 func (sv *Server) HandleGetStat(w http.ResponseWriter, r *http.Request) {
 	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Stat").Trace("Stats requested")
-	count, total := sv.hub.Online()
+	_, total := sv.hub.Online()
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(map[string]interface{}{
-		"connections": count,
+		"connections": sv.hub.Connections(),
 		"slots":       total,
 	})
 	if err != nil {

@@ -2,7 +2,7 @@
 
 import {$, $$, avatarHTML, escapeHTML, fillIcons, icon, toast} from "./ui.js";
 import {mountShell, emptyState, loginHref} from "./shell.js";
-import {cropOf, frameClass, authorsOf, dateFR, SALLE_LABELS} from "./common.js";
+import {artOf, artFit, hugFrame, hugRatio, frameClass, authorsOf, dateFR, SALLE_LABELS} from "./common.js";
 import {formatNumber} from "./view.js";
 
 let me = null, data = null, salle = "coups-de-coeur";
@@ -17,7 +17,7 @@ function inRoom(o) {
 function work(o) {
     const e = o.extra?.exposition;
     return `<a class="mu-work" href="/oeuvre/${o.id}">
-        <div class="${frameClass(e)}"><div class="passe"><div class="mu-img"><img class="px" src="${cropOf(o, 260, e?.marge)}" alt="" loading="lazy"></div></div></div>
+        <div class="${frameClass(e)}"><div class="passe"><div class="mu-img velours"><img class="px art" src="${artOf(o, 260)}" style="${artFit(e?.marge ?? 75)}" alt="" loading="lazy"></div></div></div>
         <div class="mu-cartel"><span class="fs-small b ellip">${escapeHTML(o.titre)}</span><span class="fs-cap t3 ellip">${escapeHTML(authorsOf(o))}</span>
         <span class="fs-cap t3 mu-likes"><img class="px" src="/img/badges/coeur.png" alt="" width="14" height="14">${o.extra?.likes ?? 0}</span></div>
     </a>`;
@@ -30,7 +30,7 @@ function render() {
     if (salle === "coups-de-coeur") works = works.sort((x, y) => (y.extra.likes ?? 0) - (x.extra.likes ?? 0));
     const ae = a?.extra?.exposition;
     const affiche = a ? `<section class="mu-affiche">
-        <a class="${frameClass(ae) === "cadre-sans" ? "cadre-or" : "cadre-or"} mu-affiche-frame" href="/oeuvre/${a.id}"><div class="mu-affiche-img"><img class="px" src="${cropOf(a, 720, ae?.marge ?? 80)}" alt="${escapeHTML(a.titre)}"></div></a>
+        <a class="cadre-or mu-affiche-frame" href="/oeuvre/${a.id}" style="${hugFrame(a, 460)}"><div class="mu-affiche-img velours" style="aspect-ratio: ${hugRatio(a)}"><img class="px art" src="${artOf(a, 720)}" style="${artFit(ae?.marge ?? 88)}" alt="${escapeHTML(a.titre)}"></div></a>
         <div class="mu-affiche-text">
             <span class="fs-over tgold">À l'affiche cette semaine</span>
             <h2 class="fs-display mu-affiche-title">${escapeHTML(a.titre)}</h2>

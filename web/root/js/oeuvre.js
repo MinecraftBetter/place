@@ -3,7 +3,7 @@
 import {openReport, reportButtonHTML} from "./report.js";
 import {$, $$, avatarHTML, copyText, escapeHTML, fillIcons, icon, toast} from "./ui.js";
 import {mountShell, emptyState, loginHref} from "./shell.js";
-import {cropOf, frameClass, dateFR, artView, SALLE_LABELS} from "./common.js";
+import {artOf, artFit, hugFrame, hugRatio, frameClass, dateFR, artView, SALLE_LABELS} from "./common.js";
 import {formatNumber} from "./view.js";
 
 const BADGES = {pionnier: ["Pionnier", "st-attente"], veteran: ["Vétéran 2022", ""], batisseur: ["Bâtisseur", "st-neutre"], indemodable: ["Indémodable", "st-valide"]};
@@ -43,7 +43,7 @@ async function main() {
     page.innerHTML = `<div class="oe-wrap">
         <nav class="oe-crumbs fs-small" aria-label="Fil d'Ariane"><a href="/musee">Musée</a>${e ? ` <span class="t3">/</span> <a href="/musee">${escapeHTML(SALLE_LABELS[e.salle] ?? "")}</a>` : ""} <span class="t3">/</span> <span class="t2">${escapeHTML(o.titre)}</span></nav>
         <section class="oe-top">
-            <div class="${e ? frameClass(e) : "cadre-or"} oe-frame"><div class="passe"><div class="oe-img"><img class="px" src="${cropOf(o, 720, e?.marge ?? 80)}" alt="${escapeHTML(o.titre)}"></div></div></div>
+            <div class="${e ? frameClass(e) : "cadre-or"} oe-frame" style="${hugFrame(o, 520, 32)}"><div class="passe"><div class="oe-img" style="aspect-ratio: ${hugRatio(o)}"><img class="px art" src="${artOf(o, 720)}" style="${artFit(e?.marge ?? 88)}" alt="${escapeHTML(o.titre)}"></div></div></div>
             <div class="oe-info">
                 <div class="oe-badges">${d.badges.map(x => BADGES[x] ? `<span class="pill ${BADGES[x][1]}"><img src="/img/badges/${x}.png" alt="" class="px" width="14" height="14">${BADGES[x][0]}</span>` : "").join("")}
                     ${o.extra?.retouchee ? `<span class="pill st-info">Retouchée · ${Math.round(o.extra.intact_pct)} % intacte</span>` : ""}</div>
@@ -65,25 +65,24 @@ async function main() {
                 </div>
                 ${d.auteur ? `<div class="oe-actions">
                     <a class="btn btn-sm btn-gold btn-px" href="/musee/exposer?oeuvre=${o.id}">${e ? "Modifier l'exposition" : "Exposer au musée"}</a>
-                    ${o.extra?.retouchee ? `<a class="btn btn-sm" href="${view}&modele=oeuvre:${o.id}">${icon("blueprint", 16)}Restaurer avec le modèle</a>` : ""}
-                </div>` : `<a class="btn btn-sm btn-ghost oe-blueprint" href="${view}&modele=oeuvre:${o.id}">${icon("blueprint", 16)}Utiliser comme modèle</a>`}
+                </div>` : ""}
                 <div class="oe-contribs"><span class="fs-over">Contributeurs</span>${contrib}</div>
             </div>
         </section>
         <section class="oe-bottom">
             ${d.sauvegardes && a ? `<div class="oe-col">
                 <div class="sec-head"><h2 class="fs-h2">Avant / après</h2><span class="fs-cap t3 js-ba-dates">glisse pour comparer</span></div>
-                <div class="card-2 oe-ba" style="aspect-ratio: ${b.w} / ${b.h}">
+                <div class="card-2 oe-ba" style="aspect-ratio: ${b.w} / ${b.h}; width: min(100%, ${Math.round(480 * b.w / b.h)}px)">
                     <img class="px oe-ba-after" src="/api/crop.png?x=${b.x}&y=${b.y}&w=${b.w}&h=${b.h}&z=${z}" alt="Aujourd'hui">
                     <div class="oe-ba-before js-ba-before"><img class="px js-before" alt="Avant" style="width: ${100 * 1}%"></div>
                     <div class="oe-ba-line js-ba-line"></div>
                     <span class="pill oe-ba-pill oe-ba-pill-r">aujourd'hui</span><span class="pill oe-ba-pill oe-ba-pill-l js-before-date"></span>
                 </div>
-                <input type="range" min="0" max="100" value="50" class="oe-range js-ba" aria-label="Comparer avant et après">
+                <input type="range" min="0" max="100" value="50" class="oe-range js-ba" style="width: min(100%, ${Math.round(480 * b.w / b.h)}px); display: block; margin-inline: auto" aria-label="Comparer avant et après">
             </div>
             <div class="oe-col" id="construction">
                 <div class="sec-head"><h2 class="fs-h2">Rejouer la construction</h2><span class="fs-cap t3">captures réelles du canvas</span></div>
-                <div class="card oe-replay"><div class="oe-sprite js-sprite" style="aspect-ratio: ${b.w} / ${b.h}"></div>
+                <div class="card oe-replay"><div class="oe-sprite-box velours"><div class="oe-sprite js-sprite" style="aspect-ratio: ${o.w} / ${o.h}; width: min(100%, ${Math.round(380 * o.w / o.h)}px)"></div></div>
                     <button class="btn btn-icon btn-round glass oe-replay-btn js-replay" type="button" aria-label="Pause">${icon("pause", 18)}</button>
                     <span class="pill oe-replay-date js-replay-date"></span></div>
                 <div class="fs-cap t3 mono oe-replay-dates js-replay-dates"></div>
@@ -117,7 +116,7 @@ async function main() {
     // Construction replay: a sprite animated frame by frame
     const sprite = $(".js-sprite");
     if (sprite) {
-        const resp = await fetch(`/api/oeuvres/${o.id}/construction.png?n=16&z=${Math.max(1, Math.min(8, Math.floor(320 / Math.max(b.w, b.h))))}`);
+        const resp = await fetch(`/api/oeuvres/${o.id}/construction.png?n=16&z=${Math.max(2, Math.min(8, Math.floor(320 / Math.max(o.w, o.h))))}`);
         if (resp.ok) {
             const times = JSON.parse(resp.headers.get("X-Frame-Times") || "[]");
             const url = URL.createObjectURL(await resp.blob());

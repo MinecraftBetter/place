@@ -31,7 +31,6 @@ const PATHS = {
     play: '<path d="M7 4l13 8-13 8z"></path>',
     pause: '<path d="M7 4v16M17 4v16"></path>',
     drop: '<path d="M4 13l7-7 7 7-7 7zM18 13c0 2 2 3 2 5a2 2 0 0 1-4 0c0-2 2-3 2-5z"></path>',
-    blueprint: '<rect x="3" y="3" width="18" height="18"></rect><path d="M3 9h6V3M9 21v-6h6v6M15 9h6"></path>',
     museum: '<path d="M3 9l9-6 9 6M5 10v9M9.5 10v9M14.5 10v9M19 10v9M3 21h18"></path>',
     activity: '<path d="M3 12h4l3-7 4 14 3-7h4"></path>',
     trophy: '<path d="M8 4h8v6a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 14v4M8 21h8"></path>',

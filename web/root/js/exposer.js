@@ -2,7 +2,7 @@
 
 import {$, $$, escapeHTML, fillIcons, icon, toast} from "./ui.js";
 import {mountShell, emptyState, loginHref, fetchMe} from "./shell.js";
-import {cropOf, frameClass, SALLE_LABELS} from "./common.js";
+import {artOf, artFit, frameClass, SALLE_LABELS} from "./common.js";
 
 const SALLES = ["paysages", "personnages", "clins-d-oeil", "drapeaux-logos", "motifs", "monuments"];
 const FRAMES = [["bois", "Bois"], ["or", "Or"], ["sans", "Sans cadre"]];
@@ -34,10 +34,10 @@ async function main() {
             <header class="ex-head"><a class="btn btn-icon btn-ghost" href="/musee" aria-label="Retour au musée">${icon("back")}</a><h1 class="fs-h2">${st.exists ? "Modifier l'exposition" : "Exposer une œuvre"}</h1></header>
             <section class="ex-sec"><span class="fs-over">1 · L'œuvre</span>
                 <div class="ex-works">${mine.map(o => `<button type="button" class="card-2 ex-work${o.id === sel.id ? " on" : ""}" data-oeuvre="${o.id}">
-                    <span class="ex-work-img"><img class="px" src="${cropOf(o, 120)}" alt=""></span><span class="fs-small b ellip">${escapeHTML(o.titre)}</span>
+                    <span class="ex-work-img"><img class="px art" src="${artOf(o, 120)}" style="${artFit(90)}" alt=""></span><span class="fs-small b ellip">${escapeHTML(o.titre)}</span>
                     ${o.extra?.exposition ? `<span class="fs-cap t3">déjà exposée</span>` : ""}</button>`).join("")}</div></section>
             <section class="ex-sec"><div class="sec-head"><span class="fs-over">2 · Le cadrage</span><span class="mono fs-cap t3">${st.marge} %</span></div>
-                <div class="${frameClass({cadre: st.cadre})} ex-frame"><div class="passe"><div class="ex-img"><img class="px" src="${cropOf(sel, 480, st.marge)}" alt=""></div></div></div>
+                <div class="${frameClass({cadre: st.cadre})} ex-frame"><div class="passe"><div class="ex-img"><img class="px art" src="${artOf(sel, 480)}" style="${artFit(st.marge)}" alt=""></div></div></div>
                 <label class="label" for="marge">Marge autour de l'œuvre</label>
                 <input id="marge" type="range" min="50" max="100" step="5" value="${st.marge}" class="js-marge">
                 <div class="seg" role="group" aria-label="Cadre">${FRAMES.map(([id, l]) => `<button type="button" class="${id === st.cadre ? "on" : ""}" data-cadre="${id}">${l}</button>`).join("")}</div>
@@ -86,7 +86,7 @@ async function main() {
     page.addEventListener("input", e => {
         if (e.target.classList.contains("js-marge")) {
             st.marge = Number(e.target.value);
-            page.querySelector(".ex-img img").src = cropOf(sel, 480, st.marge);
+            page.querySelector(".ex-img img").style.cssText = artFit(st.marge);
             page.querySelector(".sec-head .mono").textContent = st.marge + " %";
         }
         if (e.target.classList.contains("js-mot")) {

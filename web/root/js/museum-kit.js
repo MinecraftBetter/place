@@ -2,7 +2,7 @@
 // what the guide says. Used by the visit (/u/:pseudo/musee), the editor and the directory.
 
 import {escapeHTML} from "./ui.js";
-import {cropOf, authorsOf, dateFR} from "./common.js";
+import {artOf, authorsOf, dateFR} from "./common.js";
 import {formatNumber} from "./view.js";
 
 export const THEMES = {
@@ -95,12 +95,13 @@ export function workFrameHTML(work, m, {scale = 1, cls = ""} = {}) {
     if (!o) return "";
     const [, frame, passe] = frameOf(work, m);
     const H = workHeight(work, scale);
-    const pad = Math.round(Math.max(o.w, o.h) * (1 / .88 - 1) / 2); // as cropOf(o, …, 88)
-    const ratio = (o.w + 2 * pad) / (o.h + 2 * pad);
-    const W = Math.max(60, Math.round(H * ratio));
-    const box = `left: ${pad / (o.w + 2 * pad) * 100}%; top: ${pad / (o.h + 2 * pad) * 100}%; width: ${o.w / (o.w + 2 * pad) * 100}%; height: ${o.h / (o.h + 2 * pad) * 100}%`;
-    const img = `<div class="mp-img clip" style="width: ${W}px; height: ${H}px" data-anim="${work.animation}" data-oeuvre="${o.id}" data-ratio="${o.w / o.h}" data-box="${box}">
-        <img class="px" src="${cropOf(o, Math.max(W, H) * 2, 88)}" alt="${escapeHTML(o.titre)}" loading="lazy" style="width: 100%; height: 100%; object-fit: contain">
+    const W = Math.max(60, Math.round(H * o.w / o.h));
+    // the artwork cut along its shape, 88 % of the frame, its proportions kept: the
+    // construction replay is laid exactly over it
+    const s = Math.min(W * .88 / o.w, H * .88 / o.h), aw = o.w * s, ah = o.h * s;
+    const box = `left: ${(W - aw) / 2 / W * 100}%; top: ${(H - ah) / 2 / H * 100}%; width: ${aw / W * 100}%; height: ${ah / H * 100}%`;
+    const img = `<div class="mp-img clip" style="width: ${W}px; height: ${H}px" data-anim="${work.animation}" data-oeuvre="${o.id}" data-ratio="${o.w / o.h}">
+        <div class="mp-art" style="${box}"><img class="px art" src="${artOf(o, Math.max(W, H) * 2)}" alt="${escapeHTML(o.titre)}" loading="lazy"></div>
         ${work.animation === "scintille" ? particlesHTML("etoiles", 7, W, H, o.id) : ""}</div>`;
     return `<div class="mp-frame ${frame} ${cls}">${passe ? `<div class="${passe}">${img}</div>` : img}</div>`;
 }
@@ -138,10 +139,9 @@ export function animateWorks(root) {
             if (n < 2) return;
             const box = document.createElement("div");
             box.className = "mp-build";
-            box.style.cssText = el.dataset.box;
             box.style.backgroundImage = `url("${url}")`;
             box.style.backgroundSize = `${n * 100}% 100%`;
-            el.append(box);
+            el.querySelector(".mp-art").append(box);
             let i = 0;
             timers.push(setInterval(() => { i = (i + 1) % (n + 3); box.style.backgroundPosition = `${Math.min(i, n - 1) / (n - 1) * 100}% 0`; }, 550));
         });

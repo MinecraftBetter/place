@@ -567,7 +567,7 @@ func (api *API) museeList(viewer *User, tri, q string) []map[string]any {
 			card["musique"] = "Musique perso"
 		}
 		if apercu != nil {
-			card["apercu"] = map[string]int{"x": apercu.X, "y": apercu.Y, "w": apercu.W, "h": apercu.H}
+			card["apercu"] = map[string]int64{"id": apercu.ID, "x": int64(apercu.X), "y": int64(apercu.Y), "w": int64(apercu.W), "h": int64(apercu.H)}
 		}
 		out = append(out, card)
 	}
