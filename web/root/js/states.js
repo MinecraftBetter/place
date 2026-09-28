@@ -46,7 +46,7 @@ export function showMaintenance(mode, {onBack} = {}) {
             <p class="fs-body t2 pretty state-text">${mode.until ? `Le canvas revient vers <b class="tx">${escapeHTML(mode.until)}</b>. ` : ""}${mode.msg ? escapeHTML(mode.msg) + " " : ""}Rien n'est perdu : tout a été sauvegardé juste avant.</p>
             <div class="state-retry"><div class="pbar"><div class="pfill js-retry-fill" style="width: 0%"></div></div><span class="mono fs-cap t3 js-retry">nouvel essai automatique dans ${RETRY} s</span></div>
             <div class="state-actions"><a class="btn" href="/timelapse">Revoir la timelapse</a><a class="btn btn-ghost" href="/musee">Visiter le musée</a></div>
-            <p class="fs-cap t3 state-credit">Fait avec <span class="heart">&#10084;&#65038;</span> par l'équipe Just Better</p>
+            <p class="fs-cap t3 state-credit">Fait avec <span class="heart">&#10084;&#65038;</span> par Evan et Tiago</p>
         </div>`;
     el.hidden = false;
     document.body.classList.add("in-maintenance");
