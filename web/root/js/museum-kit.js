@@ -42,8 +42,27 @@ export function wallOf(m) {
     return m.mur ? `linear-gradient(180deg, ${m.mur}, ${m.mur}d0)` : theme(m).wall;
 }
 
+export const FOND_TYPES = {theme: "Thème", paysage: "Paysage", capture: "Le canvas", oeuvre: "Une œuvre", image: "Mon image"};
+export const PAYSAGES = {desert: "Désert au couchant", nuit: "Nuit étoilée"};
+
+// single quotes: the result goes inside a style="…" attribute
+const cssURL = u => `url('${String(u).replace(/["'\\()<>]/g, "")}')`;
+
+// the wall as a style attribute: the theme, or the background picked by the owner
+// (a landscape, a capture of the canvas, an artwork, an image), blurred and darkened
+export function wallStyle(m) {
+    const f = m.fond;
+    if (!f?.url) return `background: ${wallOf(m)}`;
+    const a = (f.sombre ?? 0) / 100, blur = f.flou ?? 0;
+    const size = f.mode === "mosaique" ? "0 0 / auto repeat" : "center / cover no-repeat";
+    const pixel = f.type !== "image" ? "image-rendering: pixelated;" : "";
+    const edge = blur ? `left: -${blur * 2}px; right: -${blur * 2}px; top: -${blur * 2}px; filter: blur(${blur}px);` : "";
+    return `background: linear-gradient(rgba(0,0,0,${a}), rgba(0,0,0,${a})), ${cssURL(f.url)} ${size}; ${pixel}${edge}`;
+}
+
 // ink colours readable on a custom wall colour
 export function inkOf(m) {
+    if (m.fond?.url) return {ink: "#f3efe6", sub: "#d8d0c2", light: false};
     if (!m.mur) return theme(m);
     const n = parseInt(m.mur.slice(1), 16), l = (0.299 * (n >> 16) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) / 255;
     return l > .6 ? {ink: "#1c1a16", sub: "#544c40", light: true} : {ink: "#f3efe6", sub: "#d8d0c2", light: false};

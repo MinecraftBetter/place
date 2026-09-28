@@ -2,6 +2,7 @@
 // and ?modele=oeuvre:ID to use an artwork as a blueprint.
 
 import {$, $$, avatarHTML, escapeHTML, fillIcons, hideSheet, icon, showSheet, storedGet, storedSet, toast} from "./ui.js";
+import {alertText, notifyDevice, deviceSupported, deviceOn, toggleDevice} from "./notify.js";
 import {activityParts} from "./common.js";
 import {relativeTime, formatNumber} from "./view.js";
 
@@ -63,6 +64,8 @@ export function setupCommunity(app) {
             const a = ev.detail;
             unread++;
             renderCount();
+            const txt = alertText(a.kind, a);
+            notifyDevice(txt.title, txt.body, txt.href, a.id); // the tab is in the background
             if (a.kind === "retouche") {
                 toast(`${avatarHTML(a.by, "av av-24")}<span class="toast-text"><span class="fs-small b">${escapeHTML(a.by?.pseudo ?? "")} retouche « ${escapeHTML(a.titre)} »</span><span class="fs-cap t3">${formatNumber(a.count)} pixels</span></span>
                     <button class="btn btn-sm" type="button" data-open-alert="${a.id}">Voir</button>`, {timeout: 8000});
@@ -141,6 +144,15 @@ export function setupCommunity(app) {
             }
         };
         showSheet(sheet, {onClose: () => { if (ghost && app.blueprint.mode === "image") { app.blueprint.clear(); app.render(); } }});
+    }
+
+    // notifications of the device, from the account menu
+    const nb = $(".js-notif");
+    if (nb && deviceSupported()) {
+        const label = () => { nb.setAttribute("aria-pressed", String(deviceOn())); $(".js-notif-label", nb).textContent = deviceOn() ? "Notifications de l'appareil : oui" : "Notifications de l'appareil"; };
+        nb.hidden = false;
+        label();
+        nb.addEventListener("click", async () => { await toggleDevice(); label(); });
     }
 
     // Called once the canvas is ready.

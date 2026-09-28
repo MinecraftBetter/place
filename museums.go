@@ -74,6 +74,7 @@ type Musee struct {
 	Accueil     string        `json:"accueil"`
 	Visibilite  string        `json:"visibilite"`
 	LivreOr     bool          `json:"livre_or"`
+	Fond        *MuseeFond    `json:"fond,omitempty"` // the wall: nil = the theme (museum_fond.go)
 	Salles      []*MuseeSalle `json:"salles"`
 }
 
@@ -169,6 +170,7 @@ func (api *API) sanitizeMusee(u *User, m *Musee) *Musee {
 	m.PhraseGuide = clip(m.PhraseGuide, 120)
 	m.Accueil = clip(m.Accueil, 160)
 	m.Visibilite = pick("visibilite", m.Visibilite)
+	m.Fond = api.sanitizeFond(u, m.Fond)
 	if len(m.Salles) == 0 {
 		m.Salles = d.Salles
 	}
@@ -496,14 +498,11 @@ func (api *API) mountMuseums() {
 	api.mux.HandleFunc("/api/musees/", api.handleMuseeVisit)
 	api.mux.HandleFunc("/api/me/musee", api.handleMyMusee)
 	api.mux.HandleFunc("/api/me/musee/sons", api.handleMySons)
+	api.mux.HandleFunc("/api/me/musee/fond", api.handleMyFond)
 }
 
-func museeCard(m *Musee) (fond, accent string) {
-	wall := themeWalls[m.Theme]
-	if m.Mur != "" {
-		wall = "linear-gradient(180deg, " + m.Mur + ", " + m.Mur + "d0)"
-	}
-	return wall, themeAccents[m.Theme]
+func (api *API) museeCard(m *Musee) (fond, accent string) {
+	return api.fondCSS(m), themeAccents[m.Theme]
 }
 
 func museeCount(m *Musee) (n int) {
@@ -548,7 +547,7 @@ func (api *API) museeList(viewer *User, tri, q string) []map[string]any {
 		if tri == "coeur" && !liked[r.uid] {
 			continue
 		}
-		fond, accent := museeCard(r.m)
+		fond, accent := api.museeCard(r.m)
 		var apercu *Oeuvre
 		for _, s := range r.m.Salles {
 			for _, w := range s.Oeuvres {
@@ -616,6 +615,7 @@ func (api *API) handleMusees(w http.ResponseWriter, r *http.Request) {
 
 // fill loads the artworks and sounds of a museum; hidden sounds only for their owner.
 func (api *API) fillMusee(m *Musee, owner uint32, viewer *User, forOwner bool) {
+	api.resolveFond(m.Fond)
 	sons := api.store.sonsOf(owner)
 	visible := func(s *Son) *Son {
 		if s == nil || s.Statut == "refuse" || s.Statut == "attente" && !forOwner {
@@ -711,7 +711,7 @@ func (api *API) handleMuseeVisit(w http.ResponseWriter, r *http.Request) {
 			var one int
 			liked = api.store.db.QueryRow(`SELECT 1 FROM musee_likes WHERE musee_id = ? AND user_id = ?`, owner.ID, viewer.ID).Scan(&one) == nil
 		}
-		fond, accent := museeCard(mr.m)
+		fond, accent := api.museeCard(mr.m)
 		writeJSON(w, map[string]any{
 			"musee": mr.m, "user": owner.Public(), "publie": mr.publie, "visites": mr.visites, "likes": likes, "liked": liked,
 			"livre": book, "mots": total, "musique": api.musicOf(mr.m, owner.ID, isOwner), "fond": fond, "accent": accent,

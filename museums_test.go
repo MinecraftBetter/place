@@ -3,6 +3,7 @@ package place
 import (
 	"bytes"
 	"encoding/json"
+	"image/png"
 	"mime/multipart"
 	"net/http"
 	"strings"
@@ -229,4 +230,100 @@ func (e *testEnv) getStatus(t *testing.T, path string, ck *http.Cookie) int {
 	}
 	res.Body.Close()
 	return res.StatusCode
+}
+
+func uploadFond(t *testing.T, e *testEnv, ck *http.Cookie, img []byte) (int, map[string]any) {
+	t.Helper()
+	var body bytes.Buffer
+	mw := multipart.NewWriter(&body)
+	fw, _ := mw.CreateFormFile("fichier", "fond.png")
+	fw.Write(img)
+	mw.Close()
+	req, _ := http.NewRequest("POST", e.srv.URL+"/api/me/musee/fond", &body)
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	req.AddCookie(ck)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer res.Body.Close()
+	m := map[string]any{}
+	json.NewDecoder(res.Body).Decode(&m)
+	return res.StatusCode, m
+}
+
+func TestMuseumBackground(t *testing.T) {
+	e := claimEnv(t)
+	e.api.SetMediaDir(t.TempDir())
+	admin, brin, lucie := e.login(t, "Tiago"), e.login(t, "Brindille"), e.login(t, "Lucie")
+	oid := museumArtwork(t, e, brin, admin)
+	m := myMusee(t, e, brin)["musee"].(map[string]any)
+	fondOf := func(ck *http.Cookie) map[string]any {
+		f, _ := e.getJSON(t, "/api/musees/brindille", ck)["musee"].(map[string]any)["fond"].(map[string]any)
+		return f
+	}
+
+	// a capture of the history, picked by its index: its time is kept, the picture served
+	m["fond"] = map[string]any{"type": "capture", "frame": 1, "flou": 40, "sombre": 30, "mode": "remplir"}
+	putMusee(t, e, brin, m, true)
+	f := fondOf(lucie)
+	if f["url"] != "/api/snapshots/1.png" || f["flou"] != 12.0 || f["t"] == 0.0 || !strings.Contains(f["label"].(string), "septembre 2022") {
+		t.Fatalf("capture background %v", f)
+	}
+	if card := e.getJSON(t, "/api/musees", brin)["musees"].([]any)[0].(map[string]any)["fond"].(string); !strings.Contains(card, `url("/api/snapshots/1.png")`) {
+		t.Fatalf("directory card %s", card)
+	}
+	// a pixel landscape, an artwork
+	m["fond"] = map[string]any{"type": "paysage", "value": "nuit", "mode": "mosaique"}
+	putMusee(t, e, brin, m, true)
+	if f := fondOf(lucie); f["url"] != "/img/nuit.png" || f["mode"] != "mosaique" {
+		t.Fatalf("landscape %v", f)
+	}
+	m["fond"] = map[string]any{"type": "oeuvre", "value": itoa(int(oid))}
+	putMusee(t, e, brin, m, true)
+	if f := fondOf(lucie); !strings.HasPrefix(f["url"].(string), "/api/crop.png?") || f["label"] != "Bord de mer" {
+		t.Fatalf("artwork %v", f)
+	}
+
+	// an image of the player: re-encoded, checked by the team
+	e.put(t, "/api/admin/settings", admin, `{"avatar_check":true}`)
+	var buf bytes.Buffer
+	png.Encode(&buf, blankImg(64, 40))
+	status, r := uploadFond(t, e, brin, buf.Bytes())
+	if status != 200 || !strings.HasPrefix(r["url"].(string), "/media/fonds/") {
+		t.Fatalf("upload %d %v", status, r)
+	}
+	if status, _ := uploadFond(t, e, brin, []byte("pas une image")); status != 400 {
+		t.Fatal("not an image accepted")
+	}
+	m["fond"] = map[string]any{"type": "image", "value": r["url"], "sombre": 20}
+	putMusee(t, e, brin, m, true)
+	if f := fondOf(lucie); f["url"] != r["url"] {
+		t.Fatalf("own image %v", f)
+	}
+	// someone else's image is not allowed
+	lm := myMusee(t, e, lucie)["musee"].(map[string]any)
+	lm["fond"] = map[string]any{"type": "image", "value": r["url"]}
+	putMusee(t, e, lucie, lm, true)
+	if _, has := e.getJSON(t, "/api/musees/lucie", lucie)["musee"].(map[string]any)["fond"]; has {
+		t.Fatal("borrowed someone else's background")
+	}
+
+	// the team hides it, then undoes
+	var rep map[string]any
+	for _, x := range e.getJSON(t, "/api/admin/reports?type=fond", admin)["reports"].([]any) {
+		rep = x.(map[string]any)
+	}
+	if rep == nil {
+		t.Fatal("background not queued for the team")
+	}
+	e.post(t, "/api/admin/reports/"+itoa(int(rep["id"].(float64)))+"/masquer", admin, nil)
+	if f := fondOf(lucie); f != nil {
+		t.Fatalf("hidden background still shown %v", f)
+	}
+	j := e.getJSON(t, "/api/admin/journal?filtre=moderation", admin)["actions"].([]any)
+	e.post(t, "/api/admin/journal/"+itoa(int(j[0].(map[string]any)["id"].(float64)))+"/undo", admin, nil)
+	if f := fondOf(lucie); f == nil || f["url"] != r["url"] {
+		t.Fatalf("undo did not bring the background back: %v", f)
+	}
 }

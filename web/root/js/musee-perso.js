@@ -8,7 +8,7 @@ import {relativeTime, formatNumber} from "./view.js";
 import {artView} from "./common.js";
 import {Chiptune} from "./chiptune.js";
 import {openReport} from "./report.js";
-import {theme, wallOf, inkOf, particlesHTML, workFrameHTML, spotStyle, cartelHTML, animateWorks, guideLine, allWorks, MUSICS} from "./museum-kit.js";
+import {theme, wallStyle, inkOf, particlesHTML, workFrameHTML, spotStyle, cartelHTML, animateWorks, guideLine, allWorks, MUSICS} from "./museum-kit.js";
 
 const page = $("#page");
 const slug = decodeURIComponent(location.pathname.split("/")[2] ?? "");
@@ -50,14 +50,15 @@ function render() {
     page.style.setProperty("--mp-eq", lightAccent ? t.accent : "#f3efe6");
     page.classList.toggle("mp-light", !!ink.light);
     page.classList.toggle("mp-guided", m.parcours === "guide");
+    page.classList.toggle("mp-fond", !!m.fond?.url);
     const u = data.user;
     const music = data.musique;
     const musicName = music.type === "fichier" ? music.nom : MUSICS[music.type]?.[0] ?? "";
     const hasMusic = music.type !== "silence" && musicName;
     const salles = m.salles.map((s, i) => `<button type="button" data-salle="${i}">${escapeHTML(s.titre)}</button>`).join("");
     page.innerHTML = `
-        <div class="mp-wall" style="background: ${wallOf(m)}"></div>
-        <div class="mp-floor" style="background: ${t.floor}">${t.waves && !m.mur ? `<div class="vagues mp-waves"></div>` : ""}</div>
+        <div class="mp-wall" style="${wallStyle(m)}"></div>
+        <div class="mp-floor" style="background: ${t.floor}">${t.waves && !m.mur && !m.fond?.url ? `<div class="vagues mp-waves"></div>` : ""}</div>
         <div class="mp-parts" aria-hidden="true">${particlesHTML(m.particules, 22, innerWidth, innerHeight * .7)}</div>
         <div class="mp-cam js-cam">
             <header class="mp-head">
@@ -266,7 +267,8 @@ function wire() {
         const r = e.target.closest("[data-report-entry]");
         if (r) { openReport({me, cible: `livre_or:${r.dataset.reportEntry}`, title: "Signaler ce message", choices: [["livre_or", "Ce message du livre d'or"]]}); return; }
     });
-    $(".js-report")?.addEventListener("click", () => openReport({me, cible: `musee:${data.user.id}`, title: `Signaler « ${m.nom} »`, choices: [["musee", "Le nom ou les textes du musée"]]}));
+    $(".js-report")?.addEventListener("click", () => openReport({me, cible: `musee:${data.user.id}`, title: `Signaler « ${m.nom} »`,
+        choices: [["musee", "Le nom ou les textes du musée"], ...(m.fond?.type === "image" ? [["fond", "Le fond du musée"]] : [])]}));
     $(".js-like").addEventListener("click", async e => {
         if (!me) { location.href = loginHref(); return; }
         const r = await fetch(`/api/musees/${encodeURIComponent(slug)}/like`, {method: "POST"});

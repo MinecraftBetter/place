@@ -8,13 +8,14 @@ import {relativeTime} from "./view.js";
 import {cropOf, authorsOf} from "./common.js";
 import {Chiptune} from "./chiptune.js";
 import {THEMES, WALL_COLORS, LIGHTS, PARTICLES, FRAMES, MUSICS, ENTREES, PARCOURS, GUIDES, VISIBILITES, ANIMS, SONS, TAILLES, WORK_FRAMES, SPOTS,
-    wallOf, theme, inkOf, particlesHTML, workFrameHTML, spotStyle, cartelHTML, animateWorks} from "./museum-kit.js";
+    wallStyle, theme, inkOf, particlesHTML, workFrameHTML, spotStyle, cartelHTML, animateWorks, FOND_TYPES, PAYSAGES} from "./museum-kit.js";
 
 const page = $("#page");
 const audio = new Chiptune();
 const TABS = [["ambiance", "Ambiance"], ["son", "Son"], ["parcours", "Parcours"], ["accueil", "Accueil"]];
 let me = null, data = null, m = null, publie = false, tab = "ambiance", salle = 0, sel = 0, saveTimer = 0, savedAt = 0, saving = false;
 let stopAnims = () => {}, preview = null, recorder = null;
+let snap = null, fondTimer = 0; // /api/snapshots: every capture of the canvas, for the wall
 
 const oeuvres = new Map(); // id → artwork (mine + favourites + already hung)
 const works = () => m.salles[salle]?.oeuvres ?? [];
@@ -36,6 +37,7 @@ async function main() {
     for (const s of m.salles) for (const w of s.oeuvres) if (w.oeuvre) oeuvres.set(w.oeuvre.id, w.oeuvre);
     const want = Number(location.pathname.split("/")[4]);
     if (want) m.salles.forEach((s, si) => s.oeuvres.forEach((w, wi) => { if (w.oeuvre_id === want) { salle = si; sel = wi; } }));
+    if (m.fond?.type === "capture") await ensureSnap();
     render();
     if (want) $(".js-work-panel")?.scrollIntoView({block: "start"});
 }
@@ -96,7 +98,8 @@ function renderTab() {
         html = `<div class="field"><span class="label">Thème</span><div class="me-themes">${Object.entries(THEMES).map(([id, t]) =>
                 `<button type="button" class="me-theme${id === m.theme && !m.mur ? " on" : id === m.theme ? " on-soft" : ""}" data-set="theme" data-value="${id}" aria-pressed="${id === m.theme}">
                     <span class="me-theme-sw" style="--wall: ${t.wall}; --floor: ${t.floor}"></span><span class="fs-cap b">${t.label}</span></button>`).join("")}</div></div>
-            <div class="field"><span class="label">Couleur des murs</span><div class="me-swatches">
+            ${fondHTML()}
+            <div class="field"${m.fond ? " hidden" : ""}><span class="label">Couleur des murs</span><div class="me-swatches">
                 <button type="button" class="chip${!m.mur ? " chip-on" : ""}" data-set="mur" data-value="">Couleur du thème</button>
                 ${WALL_COLORS.map(([hex, name]) => `<button type="button" class="swatch swatch-s${m.mur === hex ? " swatch-sel" : ""}" style="background: ${hex}" data-set="mur" data-value="${hex}" aria-label="${name}" title="${name}"></button>`).join("")}</div></div>
             <div class="field"><span class="label">Éclairage</span><div class="seg">${Object.entries(LIGHTS).map(([id, [l]]) => opt("eclairage", id, l, m.eclairage)).join("")}</div></div>
@@ -138,6 +141,98 @@ function musicRow(id, label, sub, son) {
         ${son ? `<button type="button" class="btn btn-icon btn-sm btn-ghost" data-del-son="${son.id}" aria-label="Supprimer ${escapeHTML(label)}">${icon("trash", 16)}</button>` : ""}</div>`;
 }
 
+// ------------------------------------------------------------------
+// The wall's background: theme, landscape, any capture of the canvas, artwork, image
+
+async function ensureSnap() {
+    if (!snap) snap = await fetch("/api/snapshots", {cache: "no-store"}).then(r => r.json()).catch(() => ({days: [], frames: 0}));
+    return snap;
+}
+
+// the day of a capture, and its place in that day
+function frameInfo(k) {
+    const days = snap?.days ?? [];
+    let lo = 0, hi = days.length - 1;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (days[mid].frame >= k) hi = mid; else lo = mid + 1; }
+    const d = days[lo];
+    if (!d) return "";
+    const [y, mo, dd] = d.date.split("-").map(Number);
+    const months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+    const n = k - (d.frame - d.minutes);
+    return `${dd} ${months[mo - 1]} ${y} · capture ${n} sur ${d.minutes} ce jour-là`;
+}
+
+function fondURL(f) {
+    if (!f) return "";
+    if (f.type === "paysage") return `/img/${f.value}.png`;
+    if (f.type === "capture") return `/api/snapshots/${f.frame}.png`;
+    if (f.type === "oeuvre") { const o = oeuvres.get(Number(f.value)); return o ? cropOf(o, 480, 90) : ""; }
+    if (f.type === "image") return f.value ?? "";
+    return "";
+}
+
+function fondHTML() {
+    const f = m.fond, type = f?.type ?? "theme";
+    let sub = "";
+    if (type === "paysage") {
+        sub = `<div class="me-paysages">${Object.entries(PAYSAGES).map(([id, l]) => `<button type="button" class="me-paysage${f.value === id ? " on" : ""}" data-fond-paysage="${id}"><img src="/img/${id}.png" alt=""><span>${l}</span></button>`).join("")}</div>`;
+    } else if (type === "capture") {
+        const total = snap?.frames ?? 0;
+        sub = `<div class="me-fond-prev"><img class="js-fond-img" src="${fondURL(f)}" alt="La capture choisie"><span class="pill mono js-fond-label">${escapeHTML(frameInfo(f.frame))}</span></div>
+            <div class="me-fond-row"><button type="button" class="btn btn-icon btn-sm btn-ghost" data-fond-step="-1" aria-label="Capture précédente">${icon("prev", 16)}</button>
+                <input type="range" class="js-fond-frame" min="0" max="${Math.max(0, total - 1)}" value="${f.frame}" aria-label="Capture du canvas">
+                <button type="button" class="btn btn-icon btn-sm btn-ghost" data-fond-step="1" aria-label="Capture suivante">${icon("next", 16)}</button></div>
+            <div class="me-chips"><button type="button" class="chip" data-fond-jump="first">Le tout premier</button><button type="button" class="chip" data-fond-jump="last">Aujourd'hui</button><button type="button" class="chip" data-fond-jump="random">Au hasard</button></div>
+            <span class="hint">Les ${total.toLocaleString("fr-FR")} captures du canvas, une par minute d'activité depuis septembre 2022.</span>`;
+    } else if (type === "oeuvre") {
+        const list = [...oeuvres.values()];
+        sub = list.length ? `<div class="me-fond-works">${list.map(o => `<button type="button" class="me-fond-work${String(o.id) === f.value ? " on" : ""}" data-fond-oeuvre="${o.id}" aria-label="${escapeHTML(o.titre)}" title="${escapeHTML(o.titre)}"><img class="px" src="${cropOf(o, 96, 90)}" alt="" loading="lazy"></button>`).join("")}</div>`
+            : `<span class="fs-small t2">Pas encore d'œuvre : revendiques-en une ou donne des coups de cœur.</span>`;
+    } else if (type === "image") {
+        sub = `${f.value ? `<div class="me-fond-prev"><img src="${escapeHTML(f.value)}" alt="Ton image" style="object-fit: cover; image-rendering: auto"></div>` : ""}
+            <label class="btn btn-sm me-import">${icon("upload", 16)}${f.value ? "Changer d'image" : "Importer une image"} (PNG, JPEG ou GIF, 8 Mo)<input type="file" accept="image/png,image/jpeg,image/gif" class="sr-only js-fond-file"></label>
+            <span class="hint">L'équipe peut la vérifier avant qu'elle soit visible.</span>`;
+    }
+    const effects = type === "theme" ? "" : `
+        <div class="me-fond-row"><span class="fs-cap t3" style="width: 72px">Flou</span><input type="range" min="0" max="12" value="${f.flou ?? 0}" data-fond-num="flou" aria-label="Flou"><span class="mono fs-cap js-fond-flou">${f.flou ?? 0} px</span></div>
+        <div class="me-fond-row"><span class="fs-cap t3" style="width: 72px">Assombrir</span><input type="range" min="0" max="85" step="5" value="${f.sombre ?? 0}" data-fond-num="sombre" aria-label="Assombrir"><span class="mono fs-cap js-fond-sombre">${f.sombre ?? 0} %</span></div>
+        <div class="seg"><button type="button" class="${f.mode !== "mosaique" ? "on" : ""}" data-fond-mode="remplir">Remplir le mur</button><button type="button" class="${f.mode === "mosaique" ? "on" : ""}" data-fond-mode="mosaique">Mosaïque</button></div>`;
+    return `<div class="field me-fond"><span class="label">Fond du mur</span>
+        <div class="seg me-seg-wrap" role="group" aria-label="Fond du mur">${Object.entries(FOND_TYPES).map(([id, l]) => `<button type="button" class="${id === type ? "on" : ""}" data-fond-type="${id}">${l}</button>`).join("")}</div>
+        ${sub}${effects}</div>`;
+}
+
+function fondChanged({tab: tb = false} = {}) {
+    if (m.fond) m.fond.url = fondURL(m.fond);
+    if (tb) renderTab();
+    clearTimeout(fondTimer);
+    fondTimer = setTimeout(() => changed(), 180);
+}
+
+async function setFondType(type) {
+    const keep = m.fond ? {flou: m.fond.flou ?? 0, sombre: m.fond.sombre ?? 30, mode: m.fond.mode ?? "remplir"} : {flou: 0, sombre: 30, mode: "remplir"};
+    if (type === "theme") m.fond = null;
+    else if (type === "paysage") m.fond = {type, value: "desert", ...keep, sombre: m.fond ? keep.sombre : 10};
+    else if (type === "capture") { await ensureSnap(); m.fond = {type, frame: Math.max(0, (snap.frames ?? 1) - 1), ...keep}; }
+    else if (type === "oeuvre") { const o = [...oeuvres.values()][0]; m.fond = o ? {type, value: String(o.id), ...keep} : {type, ...keep}; }
+    else if (type === "image") m.fond = {type, ...keep, value: m.fond?.type === "image" ? m.fond.value : ""};
+    fondChanged({tab: true});
+}
+
+async function uploadFond(input) {
+    const file = input.files[0];
+    input.value = "";
+    if (!file) return;
+    const fd = new FormData();
+    fd.append("fichier", file);
+    const r = await fetch("/api/me/musee/fond", {method: "POST", body: fd});
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { toast(`<span class="fs-small b">${escapeHTML(j.error ?? "Import impossible")}</span>`); return; }
+    m.fond = {type: "image", value: j.url, flou: m.fond?.flou ?? 0, sombre: m.fond?.sombre ?? 20, mode: m.fond?.mode ?? "remplir"};
+    fondChanged({tab: true});
+    toast(`<span class="fs-small b">Image importée</span>`);
+}
+
 function renderPreview() {
     stopAnims();
     const el = $(".js-preview"), t = theme(m), ink = inkOf(m);
@@ -145,7 +240,7 @@ function renderPreview() {
     const ws = works();
     el.style.setProperty("--mp-ink", ink.ink);
     el.style.setProperty("--mp-sub", ink.sub);
-    el.innerHTML = `<div class="me-pv-wall" style="background: ${wallOf(m)}"></div><div class="me-pv-floor" style="background: ${t.floor}"></div>
+    el.innerHTML = `<div class="me-pv-wall" style="${wallStyle(m)}"></div><div class="me-pv-floor" style="background: ${t.floor}"></div>
         <div class="mp-parts">${particlesHTML(m.particules, 16, 640, 280)}</div>
         <span class="pill me-pv-tag">aperçu en direct</span>
         <div class="me-pv-works">${ws.length ? ws.map((w, i) => w.oeuvre ? `<button type="button" class="me-pv-work${i === sel ? " on" : ""}" data-sel="${i}" aria-label="${escapeHTML(w.oeuvre.titre)}">
@@ -363,6 +458,22 @@ function wire() {
         const t = e.target;
         const tb = t.closest("[data-tab]");
         if (tb) { tab = tb.dataset.tab; for (const b of $$("[data-tab]")) { b.classList.toggle("on", b === tb); b.setAttribute("aria-selected", String(b === tb)); } renderTab(); return; }
+        const ft = t.closest("[data-fond-type]");
+        if (ft) { setFondType(ft.dataset.fondType); return; }
+        const fp = t.closest("[data-fond-paysage]");
+        if (fp && m.fond) { m.fond.value = fp.dataset.fondPaysage; fondChanged({tab: true}); return; }
+        const fo = t.closest("[data-fond-oeuvre]");
+        if (fo && m.fond) { m.fond.value = fo.dataset.fondOeuvre; fondChanged({tab: true}); return; }
+        const fm = t.closest("[data-fond-mode]");
+        if (fm && m.fond) { m.fond.mode = fm.dataset.fondMode; fondChanged({tab: true}); return; }
+        const fs = t.closest("[data-fond-step], [data-fond-jump]");
+        if (fs && m.fond?.type === "capture") {
+            const total = snap?.frames ?? 1;
+            const j = fs.dataset.fondJump;
+            m.fond.frame = j === "first" ? 0 : j === "last" ? total - 1 : j === "random" ? Math.floor(Math.random() * total) : Math.max(0, Math.min(total - 1, m.fond.frame + Number(fs.dataset.fondStep)));
+            fondChanged({tab: true});
+            return;
+        }
         const set = t.closest("[data-set]");
         if (set) {
             const k = set.dataset.set;
@@ -421,6 +532,22 @@ function wire() {
     });
     page.addEventListener("input", e => {
         const t = e.target;
+        if (t.classList.contains("js-fond-frame") && m.fond) {
+            m.fond.frame = Number(t.value);
+            const img = $(".js-fond-img");
+            if (img) img.src = fondURL(m.fond);
+            const lab = $(".js-fond-label");
+            if (lab) lab.textContent = frameInfo(m.fond.frame);
+            fondChanged();
+            return;
+        }
+        if (t.dataset.fondNum && m.fond) {
+            m.fond[t.dataset.fondNum] = Number(t.value);
+            const out = $(".js-fond-" + t.dataset.fondNum);
+            if (out) out.textContent = t.value + (t.dataset.fondNum === "flou" ? " px" : " %");
+            fondChanged();
+            return;
+        }
         if (t.dataset.text) {
             m[t.dataset.text] = t.value;
             if (t.dataset.text === "nom") $(".js-title").textContent = t.value || "Mon musée";
@@ -442,6 +569,7 @@ function wire() {
         }
     });
     page.addEventListener("change", e => {
+        if (e.target.classList.contains("js-fond-file")) { uploadFond(e.target); return; }
         if (e.target.classList.contains("js-import")) importFile(e.target);
         if (e.target.classList.contains("js-voice-pick") && selected()) { selected().voix_id = Number(e.target.value) || 0; changed({work: true, preview: false}); }
     });

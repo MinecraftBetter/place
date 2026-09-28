@@ -3,12 +3,12 @@
 import {api, escapeHTML, icon, avatarHTML, relativeTime} from "./admin.js";
 import {$, $$, fillIcons, toast} from "./ui.js";
 
-const TABS = [["", "Tout"], ["avatar,banniere", "Avatars"], ["bio,pseudo", "Bios & pseudos"], ["oeuvre,musee", "Noms"], ["son,livre_or", "Sons & livres d'or"]];
-const KIND = {avatar: "avatar", banniere: "bannière", bio: "bio", pseudo: "pseudo", oeuvre: "titre d'œuvre", musee: "musée", son: "son", livre_or: "livre d'or"};
+const TABS = [["", "Tout"], ["avatar,banniere,fond", "Images"], ["bio,pseudo", "Bios & pseudos"], ["oeuvre,musee", "Noms"], ["son,livre_or", "Sons & livres d'or"]];
+const KIND = {avatar: "avatar", banniere: "bannière", fond: "fond de musée", bio: "bio", pseudo: "pseudo", oeuvre: "titre d'œuvre", musee: "musée", son: "son", livre_or: "livre d'or"};
 let root, tab = "", statut = "attente", data = null, revealed = new Set();
 
 function item(r) {
-    const isImg = r.type === "avatar" || r.type === "banniere";
+    const isImg = r.type === "avatar" || r.type === "banniere" || r.type === "fond";
     const content = isImg
         ? `<div class="mod-img${revealed.has(r.id) ? " shown" : ""}" data-reveal="${r.id}">${r.contenu ? `<img class="px" src="${escapeHTML(r.contenu)}" alt="">` : `<span class="fs-cap t3">image retirée</span>`}<span class="fs-cap t3 pretty">${revealed.has(r.id) ? "" : "Image floutée par défaut. Clique pour la voir en entier."}</span></div>`
         : r.type === "son" ? `<div class="card-2 mod-sound">${r.contenu ? `<audio controls preload="none" src="${escapeHTML(r.contenu)}"></audio>` : ""}</div>`

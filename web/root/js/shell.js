@@ -3,6 +3,7 @@
 
 import {$, $$, avatarHTML, escapeHTML, fillIcons, icon, toggleTheme, currentTheme} from "./ui.js";
 import {mountPageStates} from "./states.js";
+import {startAlertPolling, deviceSupported, deviceOn, toggleDevice} from "./notify.js";
 
 export const NAV = [
     {id: "canvas", href: "/ace", label: "Canvas", icon: "canvas"},
@@ -54,6 +55,7 @@ export async function mountShell({active = "", overlay = false} = {}) {
             <a class="btn btn-sm btn-ghost btn-block menu-item" href="/moi/musee">${icon("museum", 18)}Mon musée</a>
             ${u.role === "admin" ? `<a class="btn btn-sm btn-ghost btn-block menu-item" href="/admin">${icon("shield", 18)}Administration</a>` : ""}
             <button class="btn btn-sm btn-ghost btn-block menu-item js-shell-theme" type="button">${icon(currentTheme() === "clair" ? "moon" : "sun", 18)}<span>${currentTheme() === "clair" ? "Mode sombre" : "Mode clair"}</span></button>
+            ${deviceSupported() ? `<button class="btn btn-sm btn-ghost btn-block menu-item js-notif" type="button" aria-pressed="${deviceOn()}">${icon("bell", 18)}<span class="js-notif-label">${deviceOn() ? "Notifications de l'appareil : oui" : "Notifications de l'appareil"}</span></button>` : ""}
             <form method="post" action="/auth/logout"><input type="hidden" name="next" value="${escapeHTML(location.pathname)}">
                 <button class="btn btn-sm btn-ghost btn-block menu-item" type="submit">${icon("logout", 18)}Se déconnecter</button></form>`;
         document.body.appendChild(menu);
@@ -65,6 +67,19 @@ export async function mountShell({active = "", overlay = false} = {}) {
             if (!ev.target.closest(".shell-menu, .js-shell-me")) menu.hidden = true;
         });
         document.addEventListener("keydown", ev => { if (ev.key === "Escape") menu.hidden = true; });
+        $(".js-notif", menu)?.addEventListener("click", async ev => {
+            const on = await toggleDevice();
+            ev.currentTarget.setAttribute("aria-pressed", String(on));
+            $(".js-notif-label", menu).textContent = on ? "Notifications de l'appareil : oui" : "Notifications de l'appareil";
+        });
+        // new alerts pop up on the screen, and the count on the avatar follows
+        startAlertPolling(me, n => {
+            const b = $(".js-shell-me", header);
+            let c = b.querySelector(".count");
+            if (!c) { c = document.createElement("span"); c.className = "count"; b.appendChild(c); }
+            c.textContent = n;
+            c.hidden = !n;
+        });
     }
 
     const tabs = document.createElement("nav");

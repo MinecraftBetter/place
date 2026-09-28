@@ -306,7 +306,7 @@ func (api *API) handleReportDecision(w http.ResponseWriter, r *http.Request, adm
 		return
 	}
 	now := api.store.now().UnixMilli()
-	label := map[string]string{"avatar": "avatar", "bio": "bio", "pseudo": "pseudo", "banniere": "bannière", "oeuvre": "titre d'œuvre", "musee": "musée", "son": "son", "livre_or": "message du livre d'or"}[rep.Type]
+	label := map[string]string{"avatar": "avatar", "bio": "bio", "pseudo": "pseudo", "banniere": "bannière", "oeuvre": "titre d'œuvre", "musee": "musée", "son": "son", "livre_or": "message du livre d'or", "fond": "fond de musée"}[rep.Type]
 	who := ""
 	if rep.User != nil {
 		who = rep.User.Pseudo

@@ -21,7 +21,7 @@ function card(m) {
         art = `<div class="mus-art mp-frame ${frame}">${passe ? `<div class="${passe}">${img}</div>` : img}</div>`;
     }
     return `<a class="card mus-card" href="/u/${escapeHTML(m.user.slug)}/musee">
-        <div class="mus-scene" style="--wall: ${m.fond}; --floor: ${t.floor}">${particlesHTML(m.particules, 8, 260, 110, m.user.id)}${art}
+        <div class="mus-scene" style="--wall: ${escapeHTML(m.fond)}; --floor: ${t.floor}">${particlesHTML(m.particules, 8, 260, 110, m.user.id)}${art}
             ${m.nouveau ? `<span class="pill st-info mus-new">Nouveau</span>` : ""}
             ${m.musique ? `<span class="glass mus-music fs-cap"><span class="eq" style="color: ${escapeHTML(m.accent)}"><span></span><span></span><span></span><span></span></span>${escapeHTML(m.musique)}</span>` : ""}</div>
         <div class="mus-info">${avatarHTML(m.user, "av av-40")}<div class="grow" style="min-width: 0"><span class="fs-body b ellip">${escapeHTML(m.nom)}</span>

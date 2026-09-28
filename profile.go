@@ -557,8 +557,13 @@ func (api *API) handleMeBanner(w http.ResponseWriter, r *http.Request) {
 
 // saveMedia stores an uploaded PNG under media/<kind>/<uid>-<hash>.png and returns its URL.
 func (api *API) saveMedia(kind string, uid uint32, data []byte) (string, error) {
+	return api.saveMediaAs(kind, uid, data, "png")
+}
+
+// saveMediaAs stores an upload under media/<kind>/<uid>-<hash>.<ext>.
+func (api *API) saveMediaAs(kind string, uid uint32, data []byte, ext string) (string, error) {
 	sum := sha1.Sum(data)
-	name := fmt.Sprintf("%d-%s.png", uid, hex.EncodeToString(sum[:6]))
+	name := fmt.Sprintf("%d-%s.%s", uid, hex.EncodeToString(sum[:6]), ext)
 	dir := filepath.Join(api.mediaDir, kind)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return "", err
@@ -624,7 +629,8 @@ func MediaHandler(dir string) http.Handler {
 			return
 		}
 		if (strings.HasPrefix(clean, "/avatars/") || strings.HasPrefix(clean, "/banners/")) && !avatarNameRE.MatchString(filepath.Base(clean)) ||
-			strings.HasPrefix(clean, "/sons/") && !sonNameRE.MatchString(filepath.Base(clean)) {
+			strings.HasPrefix(clean, "/sons/") && !sonNameRE.MatchString(filepath.Base(clean)) ||
+			strings.HasPrefix(clean, "/fonds/") && !fondNameRE.MatchString(filepath.Base(clean)) {
 			http.NotFound(w, r)
 			return
 		}
