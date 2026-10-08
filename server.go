@@ -37,17 +37,27 @@ type PixelColor struct {
 type Server struct {
 	sync.RWMutex
 	msgs    chan PixelColor
-	close   chan int
+	close   chan closeRequest
 	clients []chan PixelColor
+	imgMu   sync.Mutex // guards img and imgBuf
 	img     draw.Image
 	imgBuf  []byte
+}
+
+// clientBufferSize is how many pending pixel updates a client can lag behind before it is disconnected.
+const clientBufferSize = 4096
+
+// closeRequest identifies the channel to release, so that a slot reused by a new client is never closed by mistake.
+type closeRequest struct {
+	i  int
+	ch chan PixelColor
 }
 
 func NewServer(img draw.Image, count int) *Server {
 	sv := &Server{
 		RWMutex: sync.RWMutex{},
 		msgs:    make(chan PixelColor),
-		close:   make(chan int),
+		close:   make(chan closeRequest),
 		clients: make([]chan PixelColor, count),
 		img:     img,
 	}
@@ -70,7 +80,7 @@ func (sv *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 func (sv *Server) HandleGetImage(w http.ResponseWriter, r *http.Request) {
 	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Image").Trace("Image requested")
-	b := sv.GetImageBytes() //not thread safe but it won't do anything bad
+	b := sv.GetImageBytes()
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Length", strconv.Itoa(len(b)))
 	w.Header().Set("Cache-Control", "no-cache, no-store")
@@ -85,12 +95,14 @@ func (sv *Server) HandleGetStat(w http.ResponseWriter, r *http.Request) {
 	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Stat").Trace("Stats requested")
 	count := 0
 	total := 0
+	sv.RLock()
 	for _, ch := range sv.clients {
 		if ch != nil {
 			count++
 		}
 		total++
 	}
+	sv.RUnlock()
 
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(map[string]interface{}{
@@ -119,10 +131,11 @@ func (sv *Server) HandleSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Get").Info("Connected")
-	ch := make(chan PixelColor)
+	ch := make(chan PixelColor, clientBufferSize)
 	sv.clients[i] = ch
-	go sv.readLoop(conn, r, i)
-	go sv.writeLoop(conn, r, i)
+	wmu := &sync.Mutex{} // websocket connections support only one concurrent writer
+	go sv.readLoop(conn, r, i, ch, wmu)
+	go sv.writeLoop(conn, r, ch, wmu)
 }
 
 func (sv *Server) getConnIndex() int {
@@ -134,7 +147,7 @@ func (sv *Server) getConnIndex() int {
 	return -1
 }
 
-func (sv *Server) readLoop(conn *websocket.Conn, r *http.Request, i int) {
+func (sv *Server) readLoop(conn *websocket.Conn, r *http.Request, i int, ch chan PixelColor, wmu *sync.Mutex) {
 	for {
 		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Trace("Waiting for message from ", i)
 		var p PixelColor
@@ -142,7 +155,9 @@ func (sv *Server) readLoop(conn *websocket.Conn, r *http.Request, i int) {
 		if err == nil {
 			if bytes.Equal(msg, []byte("ping")) {
 				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Debug("Received ping message")
+				wmu.Lock()
 				err = conn.WriteMessage(websocket.TextMessage, []byte("pong"))
+				wmu.Unlock()
 			} else {
 				err = json.Unmarshal(msg, &p)
 			}
@@ -173,7 +188,7 @@ func (sv *Server) readLoop(conn *websocket.Conn, r *http.Request, i int) {
 			break
 		}
 	}
-	sv.close <- i
+	sv.close <- closeRequest{i, ch}
 	log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Read").Info("Disconnected")
 }
 
@@ -181,21 +196,22 @@ func toHex(c color.NRGBA) string {
 	return fmt.Sprintf("#%02x%02x%02x%02x", c.R, c.G, c.B, c.A)
 }
 
-func (sv *Server) writeLoop(conn *websocket.Conn, r *http.Request, i int) {
+func (sv *Server) writeLoop(conn *websocket.Conn, r *http.Request, ch chan PixelColor, wmu *sync.Mutex) {
 	for {
-		if sv.clients[i] == nil {
+		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Trace("Waiting for message to send")
+		p, ok := <-ch
+		if !ok {
 			log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Warning("Write connection aborted")
 			break
 		}
-		log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Trace("Waiting for message to send to ", i)
-		if p, ok := <-sv.clients[i]; ok {
-			err := conn.WriteJSON(p)
-			if err == nil {
-				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Debug("Propagated pixel change at " + strconv.Itoa(p.X) + ", " + strconv.Itoa(p.Y))
-			} else {
-				log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Error("Write error ", err)
-				break
-			}
+		wmu.Lock()
+		err := conn.WriteJSON(p)
+		wmu.Unlock()
+		if err == nil {
+			log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Debug("Propagated pixel change at " + strconv.Itoa(p.X) + ", " + strconv.Itoa(p.Y))
+		} else {
+			log.WithField("ip", r.RemoteAddr).WithField("endpoint", "Socket").WithField("action", "Write").Error("Write error ", err)
+			break
 		}
 	}
 
@@ -218,22 +234,37 @@ func (sv *Server) handleMessage(response PixelColor) error {
 func (sv *Server) broadcastLoop() {
 	for {
 		select {
-		case i := <-sv.close:
-			if sv.clients[i] != nil {
-				close(sv.clients[i])
-				sv.clients[i] = nil
+		case req := <-sv.close:
+			sv.Lock()
+			if sv.clients[req.i] == req.ch {
+				close(req.ch)
+				sv.clients[req.i] = nil
 			}
+			sv.Unlock()
 		case p := <-sv.msgs:
-			for _, ch := range sv.clients {
-				if ch != nil {
-					ch <- p
+			sv.Lock()
+			for i, ch := range sv.clients {
+				if ch == nil {
+					continue
+				}
+				select {
+				case ch <- p:
+				default:
+					// The client is too slow (or dead): disconnect it instead of blocking everyone else.
+					// Closing the channel makes its write loop close the connection, which ends its read loop.
+					log.WithField("endpoint", "Socket").WithField("action", "Broadcast").Warning("Client too slow, disconnecting slot ", i)
+					close(ch)
+					sv.clients[i] = nil
 				}
 			}
+			sv.Unlock()
 		}
 	}
 }
 
 func (sv *Server) GetImageBytes() []byte {
+	sv.imgMu.Lock()
+	defer sv.imgMu.Unlock()
 	if sv.imgBuf == nil {
 		buf := bytes.NewBuffer(nil)
 		if err := png.Encode(buf, sv.img); err != nil {
@@ -251,7 +282,9 @@ func (sv *Server) setPixel(x, y int, c color.Color) bool {
 	if 0 > x || x >= width || 0 > y || y >= height {
 		return false
 	}
+	sv.imgMu.Lock()
 	sv.img.Set(x, y, c)
 	sv.imgBuf = nil
+	sv.imgMu.Unlock()
 	return true
 }
