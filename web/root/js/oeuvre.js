@@ -2,7 +2,7 @@
 
 import {openReport, reportButtonHTML} from "./report.js";
 import {$, $$, avatarHTML, copyText, escapeHTML, fillIcons, icon, toast} from "./ui.js";
-import {mountShell, emptyState, loginHref} from "./shell.js";
+import {mountShell, emptyState, loginHref, fetchMe} from "./shell.js";
 import {artOf, artFit, hugFrame, hugRatio, frameClass, dateFR, artView, SALLE_LABELS} from "./common.js";
 import {formatNumber} from "./view.js";
 
@@ -11,7 +11,9 @@ const id = location.pathname.split("/")[2];
 let me = null;
 
 // Same box as the server's cropBox (the zone and a small margin).
-function box(o, W = 1024, H = 768) {
+let canvasW = 1024, canvasH = 1024;
+
+function box(o, W = canvasW, H = canvasH) {
     const m = Math.max(2, Math.min(8, Math.floor(Math.max(o.w - 1, o.h - 1) / 6)));
     const x0 = Math.max(0, o.x - m), y0 = Math.max(0, o.y - m);
     const x1 = Math.min(W, o.x + o.w + m), y1 = Math.min(H, o.y + o.h + m);
@@ -22,6 +24,9 @@ const dmy = ms => new Date(ms).toLocaleDateString("fr-FR", {day: "2-digit", mont
 
 async function main() {
     me = (await mountShell({active: "musee"})).user;
+    const size = await fetchMe();
+    canvasW = size.width || canvasW;
+    canvasH = size.height || canvasH;
     const page = $("#page");
     const r = await fetch("/api/oeuvres/" + id, {cache: "no-store"});
     if (!r.ok) {

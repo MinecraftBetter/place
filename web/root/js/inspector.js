@@ -13,6 +13,7 @@ function artRow(art, big) {
         <span class="fs-cap t3">${big ? "Fait partie de l'œuvre" : "Œuvre"}</span><span class="fs-small b grow ellip">${escapeHTML(art.titre)}</span>${icon("chevron", 16)}</a>`;
 }
 const DETAIL_TTL = 10000;
+const DETAIL_TIMEOUT = 8000; // give up on /api/pixel after this long (the server can be busy right after a start)
 
 export class Inspector {
     #app;
@@ -108,7 +109,7 @@ export class Inspector {
         this.#app.render();
     }
 
-    async #render(fetchDetails) {
+    async #render(fetchDetails, failed = false) {
         const cur = this.#current;
         if (!cur) return;
         const {x, y} = cur;
@@ -120,7 +121,7 @@ export class Inspector {
         const owner = ownerId ? (app.users.peek(ownerId) ?? details?.owner ?? null) : null;
         this.#syncZone(details);
 
-        const html = this.#html({x, y, hex, ownerId, owner, details, mode: cur.mode, loading: fetchDetails && !details});
+        const html = this.#html({x, y, hex, ownerId, owner, details, mode: cur.mode, loading: fetchDetails && !details, failed});
         const target = cur.mode === "sheet" ? this.#sheet : this.#card;
         target.innerHTML = html;
         fillIcons(target);
@@ -130,14 +131,21 @@ export class Inspector {
             app.users.get(ownerId).then(() => this.#stillOn(x, y) && this.#render(false));
         }
         if (fetchDetails && !details) {
+            const ctl = new AbortController();
+            const timer = setTimeout(() => ctl.abort(), DETAIL_TIMEOUT);
             try {
-                const resp = await fetch(`/api/pixel?x=${x}&y=${y}`, {cache: "no-store"});
-                if (!resp.ok) return;
+                const resp = await fetch(`/api/pixel?x=${x}&y=${y}`, {cache: "no-store", signal: ctl.signal});
+                if (!resp.ok) throw new Error("HTTP " + resp.status);
                 const data = await resp.json();
                 this.#details.set(x + "," + y, {at: Date.now(), owner: data.owner?.id ?? 0, data});
                 if (data.owner) app.users.put(data.owner);
                 if (this.#stillOn(x, y)) this.#render(false);
-            } catch { /* offline: keep the local info */ }
+            } catch {
+                // Server error, timeout or offline: keep the local info instead of "Recherche…" forever.
+                if (this.#stillOn(x, y)) this.#render(false, true);
+            } finally {
+                clearTimeout(timer);
+            }
         }
     }
 
@@ -156,7 +164,7 @@ export class Inspector {
         return this.#current && this.#current.x === x && this.#current.y === y;
     }
 
-    #html({x, y, hex, ownerId, owner, details, mode, loading}) {
+    #html({x, y, hex, ownerId, owner, details, mode, loading, failed}) {
         const name = colorName(hex);
         const big = mode !== "hover";
         const colorTitle = name
@@ -211,6 +219,8 @@ export class Inspector {
             ${big && art.revendiquee_le ? `<p class="fs-cap t3 pretty">Revendiquée le ${dateLong(art.revendiquee_le)}${art.confirmations ? `, confirmée par ${art.confirmations} joueur${art.confirmations > 1 ? "s" : ""}` : ""}, validée par l'équipe.</p>` : ""}`;
         } else if (loading) {
             out += `<p class="fs-small t3">Recherche de son œuvre…</p>`;
+        } else if (failed) {
+            out += `<p class="fs-small t3 pretty">Détails indisponibles pour le moment. Survole le pixel à nouveau pour réessayer.</p>`;
         } else if (parseHex(hex) === "#FFFFFF") {
             out += `<div style="display: flex; flex-direction: column; gap: 6px"><span class="pill st-neutre" style="align-self: flex-start">Pixel libre</span><p class="fs-small t2 pretty">Personne n'a posé de pixel ici depuis l'ouverture des comptes.</p></div>`;
         } else {

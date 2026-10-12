@@ -1,7 +1,7 @@
 // /activite — live activity, the claims column and your alerts (m-activite, d-activite).
 
 import {$, $$, avatarHTML, escapeHTML, fillIcons, icon, toast} from "./ui.js";
-import {mountShell, emptyState, loginHref} from "./shell.js";
+import {mountShell, emptyState, loginHref, fetchMe} from "./shell.js";
 import {relativeTime, formatNumber} from "./view.js";
 import {activityParts, ACTIVITY_FILTERS, claimThumb, authorsLine, statusPill} from "./common.js";
 import {Connection} from "./net.js";
@@ -9,6 +9,7 @@ import {Connection} from "./net.js";
 let me = null;
 let items = [];
 let hot = [];
+let canvasW = 1024, canvasH = 1024;
 let filter = "";
 let view = new URLSearchParams(location.search).get("vue") === "alertes" ? "alertes" : "direct";
 let alerts = [];
@@ -98,8 +99,9 @@ function renderList() {
 function renderHot() {
     const box = $(".js-hot");
     if (!box) return;
-    box.innerHTML = `<img class="px" src="/api/crop.png?x=0&y=0&w=1024&h=768&z=1" alt="Le canvas">` +
-        hot.slice(0, 8).map(h => `<a class="hot-pin" href="/ace?x=${h.x}&y=${h.y}&z=8" style="left: ${h.x / 1024 * 100}%; top: ${h.y / 768 * 100}%" aria-label="${escapeHTML(h.who?.pseudo ?? "")} dessine ici"><span class="anim-ring-loop"></span><span></span></a>`).join("") +
+    box.style.aspectRatio = `${canvasW} / ${canvasH}`;
+    box.innerHTML = `<img class="px" src="/api/crop.png?x=0&y=0&w=${canvasW}&h=${canvasH}&z=1" alt="Le canvas">` +
+        hot.slice(0, 8).map(h => `<a class="hot-pin" href="/ace?x=${h.x}&y=${h.y}&z=8" style="left: ${h.x / canvasW * 100}%; top: ${h.y / canvasH * 100}%" aria-label="${escapeHTML(h.who?.pseudo ?? "")} dessine ici"><span class="anim-ring-loop"></span><span></span></a>`).join("") +
         (hot.length ? "" : `<span class="fs-cap t3 hot-empty">Personne ne dessine en ce moment.</span>`);
 }
 
@@ -168,6 +170,9 @@ async function loadAlerts() {
 
 async function main() {
     me = (await mountShell({active: "activite"})).user;
+    const size = await fetchMe();
+    canvasW = size.width || canvasW;
+    canvasH = size.height || canvasH;
     const j = await fetch("/api/activity", {cache: "no-store"}).then(r => r.json()).catch(() => ({items: [], hot: []}));
     items = j.items;
     hot = j.hot;

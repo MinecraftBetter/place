@@ -16,6 +16,6 @@ for month in bak/*/; do
 done
 echo "========== Video =========="
 echo "====== 1st pass ======"
-cat bak/*/*.png | ffmpeg -framerate 30 -f image2pipe -i - -vf "pad=width=1024:height=768:color=black,format=yuv420p" -y bak/timelapse.mkv
+cat bak/*/*.png | ffmpeg -framerate 30 -f image2pipe -i - -vf "pad=width=1024:height=1024:color=black,format=yuv420p" -y bak/timelapse.mkv
 echo "====== 2nd pass ======"
 ffmpeg -i bak/timelapse.mkv -pix_fmt yuv420p -y web/root/timelapse.mp4

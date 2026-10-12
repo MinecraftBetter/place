@@ -9,6 +9,7 @@ import (
 	"github.com/sebest/xff"
 	log "github.com/sirupsen/logrus"
 	"image"
+	"image/color"
 	"image/draw"
 	"image/png"
 	"net/http"
@@ -232,9 +233,17 @@ func loadImage(loadPath string) *image.NRGBA {
 		panic(err)
 	}
 
-	// We copy the PNG image into a Bitmap image, which allows us to remove the palette that causes colour problems
-	b := pngImg.Bounds()
-	m := image.NewNRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
-	draw.Draw(m, m.Bounds(), pngImg, b.Min, draw.Src)
+	return squareCanvas(pngImg)
+}
+
+// squareCanvas copies a PNG image into a Bitmap image, which allows us to remove the palette that causes colour
+// problems. The canvas is always square: if the image is smaller on one axis, it is extended with white pixels
+// (to the right for the width, to the bottom for the height); existing pixels keep their coordinates.
+func squareCanvas(src image.Image) *image.NRGBA {
+	b := src.Bounds()
+	side := max(b.Dx(), b.Dy())
+	m := image.NewNRGBA(image.Rect(0, 0, side, side))
+	draw.Draw(m, m.Bounds(), image.NewUniform(color.White), image.Point{}, draw.Src)
+	draw.Draw(m, image.Rect(0, 0, b.Dx(), b.Dy()), src, b.Min, draw.Src)
 	return m
 }
