@@ -53,6 +53,19 @@ function alertHTML(a) {
             href = "/revendications";
             img = avatarHTML(p.by, "av av-40");
             break;
+        case "demande_ajout":
+            title = `${escapeHTML(p.by?.pseudo ?? "Quelqu'un")} demande à rejoindre « ${escapeHTML(p.titre)} »`;
+            sub = `${p.message ? `« ${escapeHTML(p.message)} » · ` : "à accepter ou refuser · "}${relativeTime(a.ts)}`;
+            href = (p.href || "/revendications") + "#rejoindre";
+            img = avatarHTML(p.by, "av av-40");
+            break;
+        case "ajout_accepte":
+        case "ajout_refuse":
+            title = a.kind === "ajout_accepte" ? `Tu fais partie de « ${escapeHTML(p.titre)} » !` : `Ta demande pour « ${escapeHTML(p.titre)} » est refusée`;
+            sub = `${a.kind === "ajout_accepte" ? "acceptée" : "refusée"} par ${escapeHTML(p.by?.pseudo ?? "")} · ${relativeTime(a.ts)}`;
+            href = p.href || "/revendications";
+            img = avatarHTML(p.by, "av av-40");
+            break;
         case "musee":
             title = escapeHTML(p.texte || "Nouveau musée");
             sub = relativeTime(a.ts);
@@ -136,7 +149,7 @@ function render() {
                 <span class="fs-cap b act-online"><span class="live"></span><span class="js-online">${online || "–"}</span> en ligne</span>
             </div>
             <div class="only-m">${tabs}</div>
-            ${view === "direct" ? chips + `<div class="card act-feed js-feed"></div><p class="fs-cap t3 pretty">Un clic recentre le canvas à l'endroit concerné. Les petits pixels isolés sont regroupés pour ne pas noyer le fil.</p>`
+            ${view === "direct" ? chips + `<div class="card act-feed js-feed"></div><p class="fs-cap t3 pretty">Un clic recentre le canvas à l'endroit concerné. Une seule ligne par joueur tant qu'il dessine, pour ne pas noyer le fil.</p>`
                 : `<div class="act-alerts">${alertsBox}</div>`}
         </section>
         <section class="act-claims-col only-d">
@@ -174,7 +187,7 @@ async function main() {
     canvasW = size.width || canvasW;
     canvasH = size.height || canvasH;
     const j = await fetch("/api/activity", {cache: "no-store"}).then(r => r.json()).catch(() => ({items: [], hot: []}));
-    items = j.items;
+    items = j.items.sort((a, b) => b.ts - a.ts);
     hot = j.hot;
     await loadAlerts();
     render();
@@ -204,9 +217,7 @@ async function main() {
     const conn = new Connection(proto + location.host + "/ws");
     conn.addEventListener("activity", ev => {
         const a = ev.detail;
-        const i = items.findIndex(x => x.id === a.id);
-        if (i >= 0) items[i] = a; else items.unshift(a);
-        items = items.slice(0, 120);
+        items = [a, ...items.filter(x => x.id !== a.id)].slice(0, 120); // a line that grows goes back to the top
         if (a.kind === "pixels") {
             hot = [{x: a.x, y: a.y, n: a.n, who: a.who}, ...hot.filter(h => h.who?.id !== a.who?.id)].slice(0, 8);
             renderHot();

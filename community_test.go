@@ -15,10 +15,13 @@ func TestActivityGroupsPixels(t *testing.T) {
 		sendPixel(t, conn, i, 0)
 		next(t, conn, isPixel)
 	}
+	// far away a few seconds later: still the same line (one line per player, not per area)
+	u, _ := e.store.UserByID(1)
+	e.api.community.onPixel(u, PixelEvent{X: 500, Y: 700, TS: e.clock.Now().Add(5 * time.Second).UnixMilli()})
 	e.api.community.mu.Lock()
 	g := e.api.community.groups[1]
 	e.api.community.mu.Unlock()
-	if g == nil || g.act.N != 3 {
+	if g == nil || g.act.N != 4 || g.act.X != 500 {
 		t.Fatalf("group %+v", g)
 	}
 	items := e.getJSON(t, "/api/activity", nil)["items"].([]any)

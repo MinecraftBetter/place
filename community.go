@@ -1,6 +1,6 @@
 package place
 
-// Phase 4 — community: live activity (pixels grouped by player and area), alerts when an
+// Phase 4 — community: live activity (pixels grouped by player), alerts when an
 // artwork is retouched, likes (coups de cœur), exhibitions in the museum, leaderboards.
 
 import (
@@ -19,8 +19,7 @@ import (
 )
 
 const (
-	groupCell        = 32               // pixels in the same 32 px cell…
-	groupWindow      = 60 * time.Second // …within a minute are one activity line
+	groupWindow      = 60 * time.Second // a player's pixels with less than a minute between them are one activity line
 	retouchThreshold = 5                // pixels changed in someone else's artwork before an alert
 	retouchWindow    = 30 * time.Minute
 )
@@ -76,9 +75,8 @@ type Community struct {
 }
 
 type pixelGroup struct {
-	act    *Activity
-	cx, cy int
-	last   time.Time
+	act  *Activity
+	last time.Time
 }
 
 type retouchCount struct {
@@ -230,10 +228,9 @@ func (c *Community) alert(uid uint32, kind string, payload map[string]any) int64
 // onPixel groups pixels into activity lines and watches artworks being retouched.
 func (c *Community) onPixel(u *User, e PixelEvent) {
 	now := time.UnixMilli(e.TS)
-	cx, cy := e.X/groupCell, e.Y/groupCell
 	c.mu.Lock()
 	g := c.groups[u.ID]
-	if g != nil && g.cx == cx && g.cy == cy && now.Sub(g.last) < groupWindow {
+	if g != nil && now.Sub(g.last) < groupWindow {
 		g.act.N++
 		g.act.X, g.act.Y, g.act.TS = e.X, e.Y, e.TS
 		g.last = now
@@ -244,7 +241,7 @@ func (c *Community) onPixel(u *User, e PixelEvent) {
 		a := &Activity{Kind: "pixels", uid: u.ID, Who: u.Public(), X: e.X, Y: e.Y, N: 1, TS: e.TS}
 		if err := c.api.store.AddActivity(a); err == nil {
 			c.mu.Lock()
-			c.groups[u.ID] = &pixelGroup{act: a, cx: cx, cy: cy, last: now}
+			c.groups[u.ID] = &pixelGroup{act: a, last: now}
 			c.lastPush[a.ID] = now
 			c.mu.Unlock()
 			c.push(a)

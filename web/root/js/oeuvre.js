@@ -5,6 +5,7 @@ import {$, $$, avatarHTML, copyText, escapeHTML, fillIcons, icon, toast} from ".
 import {mountShell, emptyState, loginHref, fetchMe} from "./shell.js";
 import {artOf, artFit, hugFrame, hugRatio, frameClass, dateFR, artView, SALLE_LABELS} from "./common.js";
 import {formatNumber} from "./view.js";
+import {loadJoin, joinHTML, wireJoin} from "./rejoindre.js";
 
 const BADGES = {pionnier: ["Pionnier", "st-attente"], veteran: ["Vétéran 2022", ""], batisseur: ["Bâtisseur", "st-neutre"], indemodable: ["Indémodable", "st-valide"]};
 const id = location.pathname.split("/")[2];
@@ -35,6 +36,7 @@ async function main() {
     }
     const d = await r.json();
     const o = d.oeuvre, e = o.extra?.exposition, a = d.analyse;
+    let join = await loadJoin(me);
     document.title = `${o.titre} · BetterPlace`;
     const b = box(o);
     const z = Math.max(1, Math.min(16, Math.floor(480 / Math.max(b.w, b.h))));
@@ -72,6 +74,7 @@ async function main() {
                     <a class="btn btn-sm btn-gold btn-px" href="/musee/exposer?oeuvre=${o.id}">${e ? "Modifier l'exposition" : "Exposer au musée"}</a>
                 </div>` : ""}
                 <div class="oe-contribs"><span class="fs-over">Contributeurs</span>${contrib}</div>
+                <div class="oe-join js-join">${joinHTML("oeuvre:" + o.id, join, !!me && !d.auteur)}</div>
             </div>
         </section>
         <section class="oe-bottom">
@@ -98,6 +101,13 @@ async function main() {
     </div>`;
     page.removeAttribute("aria-busy");
     fillIcons(page);
+    const joinBox = $(".js-join");
+    wireJoin(joinBox, async () => {
+        join = await loadJoin(me);
+        joinBox.innerHTML = joinHTML("oeuvre:" + o.id, join, !!me && !d.auteur);
+        fillIcons(joinBox);
+    });
+    if (location.hash === "#rejoindre") $(".join-todo")?.scrollIntoView({block: "center"});
 
     // Before / after
     const before = $(".js-before");

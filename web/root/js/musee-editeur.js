@@ -110,7 +110,8 @@ function renderTab() {
         html = `<div class="field"><span class="label">Musique d'ambiance</span><div class="me-musics">
                 ${Object.entries(MUSICS).map(([id, [l, sub]]) => musicRow(id, l, sub)).join("")}
                 ${mine.map(s => musicRow("son:" + s.id, s.nom, s.statut === "attente" ? "en attente de l'équipe" : "ton son", s)).join("")}</div>
-                <label class="btn btn-sm btn-ghost me-import">${icon("upload", 16)}Importer un son (vérifié par l'équipe)<input type="file" accept="audio/*" class="sr-only js-import" data-type="musique"></label></div>
+                <label class="btn btn-sm btn-ghost me-import">${icon("upload", 16)}Importer ta musique<input type="file" accept="audio/*" class="sr-only js-import" data-type="musique"></label>
+                <span class="hint">mp3, ogg, m4a ou wav, 15 Mo au maximum. Elle tourne en boucle pendant la visite. L'équipe l'écoute avant que les visiteurs l'entendent.</span></div>
             <div class="field"><div class="sec-head"><label class="label" for="vol">Volume de la musique</label><span class="mono b js-vol">${m.volume} %</span></div>
                 <input id="vol" type="range" min="0" max="100" step="5" value="${m.volume}" data-num="volume"></div>
             <div class="card-2 edit-toggles">${toggleRow("voix_auto", "Voix des artistes en lecture auto")}${toggleRow("sons_passage", "Sons au passage des œuvres")}${toggleRow("pas", "Bruit de pas sur le parquet")}</div>`;

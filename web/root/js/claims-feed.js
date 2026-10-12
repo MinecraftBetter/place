@@ -4,11 +4,13 @@ import {$, $$, avatarHTML, escapeHTML, fillIcons, icon, toast} from "./ui.js";
 import {mountShell, emptyState, loginHref} from "./shell.js";
 import {relativeTime} from "./view.js";
 import {claimThumb, authorsLine, statusPill} from "./common.js";
+import {loadJoin, joinHTML, wireJoin, noJoin} from "./rejoindre.js";
 
 const TABS = [["attente", "En cours"], ["validee", "Validées"], ["refusee", "Refusées"]];
 let me = null;
 let tab = new URLSearchParams(location.search).get("statut") || "attente";
 let data = {claims: [], counts: {}};
+let join = noJoin;
 
 function card(c) {
     const mine = me && c.demandeur?.id === me.id;
@@ -32,6 +34,7 @@ function card(c) {
         ${coMe && !coMe.confirme && c.statut === "attente" ? `<div class="card-2 claim-card-co"><span class="fs-small">${escapeHTML(c.demandeur?.pseudo)} t'a ajouté·e comme co-auteur.</span>
             <button class="btn btn-sm btn-primary" type="button" data-act="accept">Confirmer</button><button class="btn btn-sm btn-ghost" type="button" data-act="decline">Ce n'est pas moi</button></div>` : ""}
         ${mine && pendingCo.length && c.statut === "attente" ? `<span class="fs-cap t3">En attente de la confirmation de ${pendingCo.join(", ")}.</span>` : ""}
+        ${c.statut === "attente" ? joinHTML("claim:" + c.id, join, !!me && !involved) : ""}
         <div class="claim-card-actions">
             ${c.statut === "attente" && !involved && me ? `
                 <button class="btn btn-sm${c.mon_vote === "confirme" ? " btn-primary" : ""}" type="button" data-act="confirme" aria-pressed="${c.mon_vote === "confirme"}">${icon("check", 16)}Je l'ai vu·e la faire · ${c.confirmations}</button>
@@ -72,7 +75,7 @@ function render() {
 }
 
 async function load() {
-    data = await fetch("/api/claims?statut=" + tab, {cache: "no-store"}).then(r => r.json()).catch(() => ({claims: [], counts: {}}));
+    [data, join] = await Promise.all([fetch("/api/claims?statut=" + tab, {cache: "no-store"}).then(r => r.json()).catch(() => ({claims: [], counts: {}})), loadJoin(me)]);
     render();
 }
 
@@ -90,6 +93,8 @@ async function main() {
     me = (await mountShell({active: "activite"})).user;
     const sent = new URLSearchParams(location.search).get("envoyee");
     await load();
+    wireJoin($("#page"), load);
+    if (location.hash === "#rejoindre") $(".join-todo")?.scrollIntoView({block: "center"});
     if (sent) {
         const c = data.claims.find(x => String(x.id) === sent);
         const co = c?.co_auteurs.map(a => a.user?.pseudo).filter(Boolean) ?? [];

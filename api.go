@@ -56,6 +56,7 @@ func NewAPI(c *Canvas, st *Store, a *Auth, h *Hub) *API {
 	api.mountModeration()
 	api.mountStats()
 	api.mountMuseums()
+	api.mountRejoindre()
 	settings := st.LoadSettings()
 	if st.Setting("reglages", "") == "" {
 		// Nothing saved yet: the command-line options are the starting values.

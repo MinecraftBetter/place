@@ -34,7 +34,7 @@ export function setupCommunity(app) {
         e.preventDefault();
         app.goTo({x: Number(a.dataset.x), y: Number(a.dataset.y)});
     });
-    fetch("/api/activity").then(r => r.json()).then(j => { items = j.items; renderList(); }).catch(() => {});
+    fetch("/api/activity").then(r => r.json()).then(j => { items = j.items.sort((a, b) => b.ts - a.ts); renderList(); }).catch(() => {});
     setInterval(renderList, 20000);
 
     // ----- alerts
@@ -54,9 +54,7 @@ export function setupCommunity(app) {
     const wire = conn => {
         conn.addEventListener("activity", ev => {
             const a = ev.detail;
-            const k = items.findIndex(x => x.id === a.id);
-            if (k >= 0) items[k] = a; else items.unshift(a);
-            items = items.slice(0, 40);
+            items = [a, ...items.filter(x => x.id !== a.id)].slice(0, 40); // a line that grows goes back to the top
             renderList();
         });
         conn.addEventListener("alert", ev => {

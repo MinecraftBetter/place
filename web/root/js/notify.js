@@ -16,6 +16,9 @@ export function alertText(kind, p = {}) {
         case "claim_validee": return {title: `« ${p.titre ?? ""} » est validée !`, body: "Ton œuvre a son cartel.", href: p.oeuvre ? `/oeuvre/${p.oeuvre}` : "/revendications", img: `<img class="px" src="/img/badges/pionnier.png" alt="" width="24" height="24">`};
         case "claim_refusee": return {title: `« ${p.titre ?? ""} » n'a pas été validée`, body: p.motif ?? "", href: "/revendications?statut=refusee"};
         case "coauteur": return {title: `${by} t'a ajouté·e comme co-auteur`, body: `« ${p.titre ?? ""} » · à confirmer`, href: "/revendications", img: avatarHTML(p.by, "av av-24")};
+        case "demande_ajout": return {title: `${by} demande à rejoindre « ${p.titre ?? ""} »`, body: p.message ? `« ${p.message} »` : "à accepter ou refuser", href: (p.href ?? "/revendications") + "#rejoindre", img: avatarHTML(p.by, "av av-24")};
+        case "ajout_accepte": return {title: `Tu fais partie de « ${p.titre ?? ""} » !`, body: `${by} a accepté ta demande.`, href: p.href ?? "/revendications", img: avatarHTML(p.by, "av av-24")};
+        case "ajout_refuse": return {title: `Ta demande pour « ${p.titre ?? ""} » est refusée`, body: `par ${by}`, href: p.href ?? "/revendications"};
         case "livre_or": return {title: `${by} a signé ton livre d'or`, body: `« ${p.texte ?? ""} »`, href: p.href ?? "/moi/musee", img: avatarHTML(p.by, "av av-24")};
         case "badge_oeuvre": return {title: `Nouveau badge : ${p.nom ?? ""}`, body: `grâce à « ${p.titre ?? ""} »`, href: p.oeuvre ? `/oeuvre/${p.oeuvre}` : "/moi/profil", img: p.sprite ? `<img class="px" src="${escapeHTML(p.sprite)}" alt="" width="24" height="24">` : ""};
         case "moderation": return {title: "L'équipe a masqué un contenu", body: p.texte ?? "", href: "/moi/profil"};

@@ -253,6 +253,19 @@ var schema = []string{
 	// version 8 — profile showcase (vitrine.go)
 	`ALTER TABLE users ADD COLUMN vitrine TEXT NOT NULL DEFAULT '';
 	ALTER TABLE users ADD COLUMN dessin_url TEXT NOT NULL DEFAULT '';`,
+
+	// version 9 — « Demander à rejoindre » a build (rejoindre.go)
+	`CREATE TABLE demandes_ajout (
+		id         INTEGER PRIMARY KEY,
+		cible      TEXT NOT NULL,
+		user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		message    TEXT NOT NULL DEFAULT '',
+		statut     TEXT NOT NULL DEFAULT 'attente',
+		decide_par INTEGER,
+		decide_le  INTEGER,
+		cree_le    INTEGER NOT NULL
+	);
+	CREATE INDEX demandes_ajout_statut ON demandes_ajout (statut, cible);`,
 }
 
 // OpenStore opens (and creates or migrates) the database. Use ":memory:" in tests.

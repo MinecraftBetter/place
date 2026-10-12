@@ -939,7 +939,7 @@ func (api *API) handleMySons(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	typ := r.FormValue("type")
-	limit := int64(4 << 20)
+	limit := int64(15 << 20) // a whole song in mp3
 	switch typ {
 	case "voix":
 		limit = 1 << 20
