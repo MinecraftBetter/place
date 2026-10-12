@@ -2,6 +2,7 @@
 // plays, then the place opens. The server opens the site by itself at the same instant.
 
 import {fillIcons} from "./ui.js";
+import {startFx} from "./countdown-fx.js";
 
 const $ = s => document.querySelector(s);
 fillIcons();
@@ -15,7 +16,8 @@ const LINES = [
     "Prépare tes couleurs !",
 ];
 
-let offset = 0, launch = {}, soundOn = false, audioCtx = null, lastS = -1, ended = false;
+let offset = 0, launch = {}, soundOn = false, audioCtx = null, lastS = -1, ended = false, fx = null;
+const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const pad = n => String(n).padStart(2, "0");
 const now = () => Date.now() + offset;
@@ -68,13 +70,15 @@ function tick() {
     // the trailer loads during the last minute, so it starts right away
     const v = $(".js-video");
     if (s < 60 && launch.trailer && launch.video && !v.src) { v.src = launch.video; if (launch.poster) v.poster = launch.poster; v.load(); }
-    // the last ten seconds, full screen
+    // the last fifteen seconds, full screen, in pixels
     const fin = $(".js-final"), n = $(".js-final span");
-    if (s < 10) {
+    if (s < 15) {
         fin.hidden = false;
         n.textContent = String(s + 1);
-        n.classList.remove("tick"); void n.offsetWidth; n.classList.add("tick");
-        beep(s < 3 ? 880 : 660);
+        if (!calm && !fx) { fin.classList.add("fx"); fx = startFx($(".js-fx")); }
+        if (fx) fx.number(s + 1);
+        else { n.classList.remove("tick"); void n.offsetWidth; n.classList.add("tick"); }
+        beep(s < 3 ? 880 : s < 10 ? 660 : 520);
     }
 }
 
@@ -92,7 +96,13 @@ function beep(freq) {
 
 function zero() {
     ended = true;
-    $(".js-final").hidden = true;
+    // the flash covers the trailer coming in, then fades away
+    if (fx) {
+        fx.boom();
+        beep(1320);
+        $(".js-final").classList.add("out");
+        setTimeout(() => { fx.stop(); $(".js-final").hidden = true; }, 1600);
+    } else $(".js-final").hidden = true;
     document.title = "C'est ouvert ! · BetterPlace";
     if (!launch.trailer || !launch.video) { opened(); return; }
     const box = $(".js-trailer"), v = $(".js-video");

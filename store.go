@@ -249,6 +249,10 @@ var schema = []string{
 		statut  TEXT NOT NULL DEFAULT 'ok',
 		ts      INTEGER NOT NULL
 	);`,
+
+	// version 8 — profile showcase (vitrine.go)
+	`ALTER TABLE users ADD COLUMN vitrine TEXT NOT NULL DEFAULT '';
+	ALTER TABLE users ADD COLUMN dessin_url TEXT NOT NULL DEFAULT '';`,
 }
 
 // OpenStore opens (and creates or migrates) the database. Use ":memory:" in tests.

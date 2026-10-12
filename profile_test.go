@@ -368,3 +368,12 @@ func TestDrawnBanner(t *testing.T) {
 		t.Fatalf("profile banner %v %v", p["banner"], p["banner_url"])
 	}
 }
+
+// Every accent given at sign-up can be saved back from the profile editor.
+func TestSignupAccentsAreEditable(t *testing.T) {
+	for _, a := range accentPalette {
+		if !inList(a, AccentColors) {
+			t.Errorf("%s is given at sign-up but refused by UpdateProfile", a)
+		}
+	}
+}

@@ -1,6 +1,6 @@
 # État du développement — refonte EvenBetter
 
-*Mis à jour le 28 septembre 2026. Branche `phase1-socle` (partie de `redesign`), poussée sur GitHub, sans PR. En ligne sur place.justbetter.fr derrière le compte à rebours (voir `deploy/justbetter/README.md`).*
+*Mis à jour le 12 octobre 2026. Branche `phase1-socle` (partie de `redesign`), poussée sur GitHub, sans PR. En ligne sur place.justbetter.fr derrière le compte à rebours (voir `deploy/justbetter/README.md`).*
 
 Les six étapes du HANDOFF (§9) sont codées, plus les trois demandes ajoutées en cours de route :
 
@@ -34,6 +34,25 @@ Les six étapes du HANDOFF (§9) sont codées, plus les trois demandes ajoutées
   - Deux étapes : `stage.sh` depuis le PC, puis `sudo bash ~/place-deploy/switch.sh` sur le serveur.
   - La v1 est sauvegardée, le canvas conservé, et le retour arrière se fait avec `rollback.sh`.
   - L'image Docker a été construite et essayée en local avec podman.
+
+## Jour J, 12/10/2026
+
+- **Ouverture décalée à 19 h** (heure de Paris), à régler dans `/admin/reglages` → Lancement. `LAUNCH_AT` ne sert qu'au premier démarrage.
+- **Patch « carré » du 8/10** : il avait été appliqué à la main en prod et n'était pas dans le repo. Il est maintenant récupéré (`d3e9fb5`) :
+  - canvas en 1024×1024, agrandi par le bas ;
+  - délai maximal de 8 s sur `/api/pixel` dans l'inspecteur.
+  - Corrigés en plus pour le carré : l'aperçu de l'accueil (le haut du canvas, sans déformation) et les repères de la carte admin.
+- **Compte à rebours** : les 15 dernières secondes passent en plein écran, en pixels (`js/countdown-fx.js`).
+  - Chaque chiffre se forme avec des pixels venus de partout, puis explose quand le suivant arrive.
+  - La palette tombe en pluie de plus en plus fort, l'écran tremble sur les 3 dernières secondes, et zéro finit par un flash blanc avant la bande-annonce.
+  - Un bip retentit à chaque seconde si le son est activé.
+  - Avec « réduire les animations », c'est le simple décompte d'avant.
+- **Accueil** : après l'ouverture, la bande-annonce reste sur la page d'accueil, sous le canvas.
+- **Vitrine du profil** (`vitrine.go`) : chaque joueur choisit ce qu'il expose en grand sur son profil.
+  - Soit une de ses œuvres revendiquées, découpée.
+  - Soit un dessin pixel de 32×32 fait dans `/moi/profil`. Il passe par la modération comme les bannières, type « dessin de vitrine », et peut être signalé depuis le profil.
+  - Le fond personnalisé des musées existait déjà : thème, paysage, capture, œuvre ou image importée.
+- **Correctif** : 3 des 10 couleurs d'accent données à l'inscription étaient refusées par l'éditeur de profil. Ces joueurs ne pouvaient donc jamais enregistrer leur profil.
 
 ## Retours du 28/09/2026 (tiago et Mika)
 

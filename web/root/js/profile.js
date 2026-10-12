@@ -70,6 +70,15 @@ async function main() {
     const claim = x.claim_en_cours ? `<div class="card-2 prof-claim"><img src="/img/badges/pionnier.png" alt="" class="px badge-lock" width="32" height="32">
         <span class="fs-small t2">Revendication « ${escapeHTML(x.claim_en_cours.titre)} » en cours : une œuvre <b class="tgold">pionnière</b> à la clé.</span></div>` : "";
 
+    const v = x.vitrine;
+    const vitrine = v?.type ? `<section class="prof-sec prof-vitrine-sec">
+        <div class="sec-head"><h2 class="fs-h2">${p.moi ? "Ma vitrine" : "Sa vitrine"}</h2>${p.moi ? `<a class="fs-small" href="/moi/profil#vitrine">Changer</a>` : ""}</div>
+        <${v.href ? `a href="${escapeHTML(v.href)}"` : "div"} class="card prof-vitrine" style="--acc: ${escapeHTML(accent)}; --acc-soft: ${hexAlpha(accent, .22)}">
+            <img class="px" src="${escapeHTML(v.url)}" alt="${escapeHTML(v.titre || `Le dessin de ${p.pseudo}`)}" style="aspect-ratio: ${v.w || 1} / ${v.h || 1}">
+            <span class="pill prof-vitrine-cap">${v.type === "oeuvre" ? escapeHTML(v.titre) : `Dessiné par ${escapeHTML(p.pseudo)}`}</span>
+        </${v.href ? "a" : "div"}></section>`
+        : p.moi ? `<section class="prof-sec prof-vitrine-sec"><a class="card prof-vitrine-cta" href="/moi/profil#vitrine">${icon("edit", 22)}<div class="grow"><span class="fs-small b">Remplis ta vitrine</span><br><span class="fs-cap t3">Un dessin à toi ou une de tes œuvres, en grand sur ton profil.</span></div>${icon("chevron", 18)}</a></section>` : "";
+
     const map = p.carte_publique || p.moi ? `<section class="prof-map-sec">
         <div class="sec-head"><h2 class="fs-h2">Ses pixels sur le canvas</h2><span class="fs-cap t3">${mapCaption(p, x)}</span></div>
         <div class="prof-map"><img class="px" src="/api/users/${encodeURIComponent(p.slug)}/contributions.png" alt="Carte des contributions de ${escapeHTML(p.pseudo)}" loading="lazy">
@@ -99,6 +108,7 @@ async function main() {
             ${x.musee ? `<a class="card prof-museum only-m" href="/u/${escapeHTML(p.slug)}/musee">${icon("museum", 22)}<div class="grow"><span class="fs-small b">Visiter le musée de ${escapeHTML(p.pseudo)}</span><br><span class="fs-cap t3">${escapeHTML(x.musee.sub || "")}</span></div>${icon("chevron", 18)}</a>` : ""}
             <div class="prof-kpis">${kpis}</div>
         </section>
+        ${vitrine}
         ${firstPixel ? `<section class="prof-sec">${firstPixel}</section>` : ""}
         <section class="prof-grid">
             <div class="prof-col-map">${map}</div>
@@ -118,7 +128,7 @@ async function main() {
     fillIcons(page);
 
     $(".js-report", page)?.addEventListener("click", () => openReport({me: me0.user, cible: `user:${p.id}`, title: `Signaler le profil de ${p.pseudo}`,
-        choices: [["avatar", "Son avatar"], ["banniere", "Sa bannière"], ["bio", "Sa bio"], ["pseudo", "Son pseudo"]]}));
+        choices: [["avatar", "Son avatar"], ["banniere", "Sa bannière"], ...(p.extra?.vitrine?.type === "dessin" ? [["dessin", "Son dessin"]] : []), ["bio", "Sa bio"], ["pseudo", "Son pseudo"]]}));
     $(".js-share", page).addEventListener("click", async () => {
         const url = location.origin + "/u/" + p.slug;
         if (navigator.share && matchMedia("(pointer: coarse)").matches) {

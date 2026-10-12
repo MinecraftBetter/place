@@ -289,10 +289,14 @@ html.bp.page body { min-height: 100vh; min-height: 100dvh; }
 .home-controls > span { display: flex; align-items: center; gap: 6px; }
 .home-visual { position: relative; height: 262px; }
 .home-frame { position: absolute; left: 0; top: 12px; width: 300px; height: 225px; overflow: hidden; background: #fff; transform: rotate(-2deg); display: block; }
-.home-frame img { width: 100%; height: 100%; }
+.home-frame img { width: 100%; height: 100%; object-fit: cover; object-position: top; } /* the square canvas, its top 4:3 */
 .home-live-m { position: absolute; left: 12px; top: 22px; border-radius: 999px; padding: 6px 12px; display: flex; align-items: center; gap: 8px; transform: rotate(-2deg); }
 .home-mascot { position: absolute; right: 4px; bottom: -10px; width: 84px; height: 145px; }
 .home-more { padding: 28px 16px 0; }
+.home-trailer { padding: 28px 16px 0; }
+.home-trailer-card { padding: 16px; display: flex; flex-direction: column; gap: 12px; max-width: 960px; margin: 0 auto; }
+.home-trailer-card .fs-over { display: inline-flex; align-items: center; gap: 6px; }
+.home-trailer video { width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; background: #000; display: block; }
 .home-controls-m { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 .home-controls-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .home-controls-grid .card-2 { padding: 12px; display: flex; flex-direction: column; gap: 6px; }
@@ -312,6 +316,7 @@ html.bp.page body { min-height: 100vh; min-height: 100dvh; }
     .home-frame { left: auto; right: 40px; top: 0; width: min(720px, calc(100% - 40px)); height: auto; aspect-ratio: 4 / 3; transform: rotate(-1.5deg); }
     .home-mascot { right: 0; bottom: -20px; width: 108px; height: 186px; }
     .home-footer { flex-direction: row; justify-content: flex-end; padding: 24px 48px; }
+    .home-trailer { padding: 48px 48px 0; }
   }
 }
 .home-page body { background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(255, 236, 190, .08), transparent 70%); }

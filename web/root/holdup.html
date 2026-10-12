@@ -63,6 +63,13 @@
     </div>
 </main>
 
+<section class="home-trailer js-trailer" hidden>
+    <div class="card home-trailer-card">
+        <span class="fs-over"><span data-icon="play" data-size="14"></span> La bande-annonce</span>
+        <video class="js-trailer-video" controls playsinline preload="metadata"></video>
+    </div>
+</section>
+
 <section class="home-more only-m">
     <div class="card home-controls-m">
         <span class="fs-over">Contrôles</span>
@@ -105,6 +112,15 @@
         const n = s.connections;
         $(".js-online-text").textContent = n ? `${formatNumber(n)} ${n > 1 ? "connectés" : "connecté"} en ce moment` : "Le canvas est ouvert";
         $(".js-online-short").textContent = n ? `${formatNumber(n)} ${n > 1 ? "connectés" : "connecté"}` : "en direct";
+    }).catch(() => {});
+
+    // the release trailer stays on the home page
+    fetch("/api/status").then(r => r.json()).then(st => {
+        if (!st.launch?.video) return;
+        const v = $(".js-trailer-video");
+        if (st.launch.poster) v.poster = st.launch.poster;
+        v.src = st.launch.video;
+        $(".js-trailer").hidden = false;
     }).catch(() => {});
 
     fetch("/api/me").then(r => r.json()).then(me => {

@@ -1,4 +1,4 @@
-// A small pixel editor (drawn banners): pencil, bucket, pipette, undo, palette colours.
+// A small pixel editor (drawn banners, showcase drawings): pencil, bucket, pipette, undo, palette colours.
 
 import {PALETTE, parseHex, hexToRgb, rgbToHex} from "./palette.js";
 import {escapeHTML, icon} from "./ui.js";
@@ -9,11 +9,11 @@ export class PixelEditor {
     #w; #h; #px; #cvs; #ctx; #root; #color = "#FF63AA"; #tool = "pencil"; #undo = []; #drawing = false; #last = null;
     onChange = () => {};
 
-    constructor(root, {w = 48, h = 16} = {}) {
+    constructor(root, {w = 48, h = 16, label = "Bannière à dessiner", fill = "#5EB3FF"} = {}) {
         this.#root = root;
         this.#w = w;
         this.#h = h;
-        this.#px = new Array(w * h).fill("#5EB3FF");
+        this.#px = new Array(w * h).fill(fill);
         root.innerHTML = `
             <div class="pe-toolbar">
                 <div class="seg pe-tools" role="group" aria-label="Outil">
@@ -23,7 +23,7 @@ export class PixelEditor {
                 <button type="button" class="btn btn-sm btn-ghost js-pe-undo" aria-label="Annuler le dernier trait">${icon("undo", 16)}Annuler</button>
                 <button type="button" class="btn btn-sm btn-ghost js-pe-fill">Tout remplir</button>
             </div>
-            <div class="pe-canvas-wrap"><canvas class="pe-canvas" width="${w}" height="${h}" aria-label="Bannière à dessiner, ${w} × ${h} pixels"></canvas></div>
+            <div class="pe-canvas-wrap"${w <= h ? ' style="max-width: 420px; width: 100%; margin: 0 auto"' : ""}><canvas class="pe-canvas" width="${w}" height="${h}" style="aspect-ratio: ${w} / ${h}" aria-label="${escapeHTML(label)}, ${w} × ${h} pixels"></canvas></div>
             <div class="pe-palette">${PALETTE.map(([hex, name]) =>
                 `<button type="button" class="swatch pe-swatch" data-color="${hex.toUpperCase()}" style="background: ${hex}" title="${escapeHTML(name)}" aria-label="${escapeHTML(name)}"></button>`).join("")}</div>
             <span class="hint">${w} × ${h} pixels, aux couleurs du canvas. Clique ou glisse pour dessiner.</span>`;

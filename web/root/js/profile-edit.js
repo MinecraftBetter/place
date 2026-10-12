@@ -8,7 +8,7 @@ import {formatNumber} from "./view.js";
 import {avatarBlob, randomSeed} from "./avatar-gen.js";
 import {PixelEditor} from "./pixel-editor.js";
 
-const ACCENTS = [["#FF63AA", "rose"], ["#5EB3FF", "bleu evian"], ["#3EE06C", "vert"], ["#FFD623", "jaune"], ["#FFA800", "orange foncé"], ["#6A5CFF", "violet clair"], ["#00CCC0", "bleu sale de bain"], ["#FF2651", "rouge clair"]];
+const ACCENTS = [["#FF63AA", "rose"], ["#5EB3FF", "bleu evian"], ["#3EE06C", "vert"], ["#FFD623", "jaune"], ["#FFA800", "orange foncé"], ["#6A5CFF", "violet clair"], ["#00CCC0", "bleu sale de bain"], ["#FF2651", "rouge clair"], ["#7EED38", "vert clair"], ["#B44AC0", "violet clair rose"], ["#00A344", "vert foncé"]];
 const BANNERS = [["desert", "Désert"], ["nuit", "Nuit"], ["uni", "Uni"], ["custom", "Dessin"]];
 
 const slugify = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/œ/g, "o").replace(/æ/g, "a")
@@ -31,7 +31,10 @@ async function main() {
         pins: p.badges_epingles.slice(), map: p.carte_publique, alerts: p.alertes_retouche ?? true,
         avatar: p.avatar, avatarBlob: null, avatarURL: null,
         bannerURL: p.banner_url || "", bannerDraft: null, bannerDirty: false,
+        vit: (p.extra?.vitrine?.choix || "").split(":")[0], vitOeuvre: (p.extra?.vitrine?.choix || "").split(":")[1] || "",
+        dessinURL: p.extra?.vitrine?.dessin_url || "", dessinDraft: null, dessinDirty: false,
     };
+    const works = p.extra?.oeuvres ?? [];
 
     page.innerHTML = `
     <header class="edit-head">
@@ -72,6 +75,15 @@ async function main() {
             <div class="field edit-wide js-banner-editor-field" hidden>
                 <span class="label">Dessine ta bannière</span>
                 <div class="card pe js-banner-editor"></div>
+            </div>
+            <div class="field edit-wide" id="vitrine">
+                <div class="sec-head"><span class="label">Ma vitrine</span><span class="fs-cap t3">en grand sur ton profil</span></div>
+                <div class="seg js-vit" role="group" aria-label="Ma vitrine">
+                    <button type="button" data-vit="">Rien</button><button type="button" data-vit="dessin">Un dessin à moi</button><button type="button" data-vit="oeuvre">Une de mes œuvres</button></div>
+                <div class="card pe js-dessin-editor" hidden></div>
+                <div class="edit-vit-works js-vit-works" hidden>${works.length
+                    ? works.map(o => `<button type="button" class="edit-vit-work" data-vit-oeuvre="${o.id}" title="${escapeHTML(o.titre)}"><img class="px" src="${escapeHTML(o.thumb)}" alt=""><span class="fs-cap">${escapeHTML(o.titre)}</span></button>`).join("")
+                    : `<span class="fs-small t3">Tu n'as pas encore d'œuvre. <a href="/revendiquer">Revendique une œuvre</a> que tu as dessinée, elle pourra aller dans ta vitrine.</span>`}</div>
             </div>
             <div class="field">
                 <span class="label">Couleur d'accent</span>
@@ -118,6 +130,11 @@ async function main() {
             $(sel).classList.toggle("toggle-on", on);
             $(sel).setAttribute("aria-pressed", String(on));
         }
+        $$("[data-vit]").forEach(b => b.classList.toggle("on", b.dataset.vit === st.vit));
+        $(".js-dessin-editor").hidden = st.vit !== "dessin";
+        $(".js-vit-works").hidden = st.vit !== "oeuvre";
+        $$("[data-vit-oeuvre]").forEach(b => { const on = b.dataset.vitOeuvre === st.vitOeuvre; b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); b.style.setProperty("--acc", st.accent); });
+        const vitImg = st.vit === "dessin" ? st.dessinDraft || st.dessinURL : st.vit === "oeuvre" && st.vitOeuvre ? `/api/oeuvres/${st.vitOeuvre}/image.png` : "";
         const favName = st.fav ? colorName(st.fav) : null;
         const pinned = earned.filter(b => st.pins.includes(b.id));
         $(".js-preview").innerHTML = `
@@ -132,6 +149,7 @@ async function main() {
                     <span class="grow"></span>
                     ${pinned.map(b => `<img src="${escapeHTML(b.sprite)}" alt="${escapeHTML(b.name)}" title="${escapeHTML(b.name)}" class="px" width="22" height="22">`).join("")}
                 </div>
+                ${vitImg ? `<div class="edit-prev-vitrine" style="--acc-soft: ${hexAlpha(st.accent, .22)}"><img class="px" src="${escapeHTML(vitImg)}" alt="Ta vitrine"></div>` : ""}
                 <div class="edit-prev-stats">
                     <div class="card-2"><span class="mono b">${formatNumber(p.pixels_poses)}</span><br><span class="fs-cap t3">pixels posés</span></div>
                     <div class="card-2"><span class="mono b">${formatNumber(p.pixels_visibles)}</span><br><span class="fs-cap t3">encore visibles</span></div>
@@ -147,13 +165,26 @@ async function main() {
         st.bannerDirty = true;
         render();
     };
+    const dessin = new PixelEditor($(".js-dessin-editor"), {w: 32, h: 32, label: "Ton dessin", fill: "#FFFFFF"});
+    if (st.dessinURL) await dessin.load(st.dessinURL);
+    dessin.onChange = () => {
+        st.dessinDraft = dessin.toDataURL();
+        st.dessinDirty = true;
+        render();
+    };
     render();
+    if (location.hash === "#vitrine") $("#vitrine").scrollIntoView({block: "center"});
 
     $(".js-pseudo").addEventListener("input", e => { st.pseudo = e.target.value; render(); });
     $(".js-bio").addEventListener("input", e => { st.bio = e.target.value.slice(0, 160); render(); });
     page.addEventListener("click", e => {
-        const t = e.target.closest("[data-banner], [data-accent], [data-fav], [data-pin]");
+        const t = e.target.closest("[data-banner], [data-accent], [data-fav], [data-pin], [data-vit], [data-vit-oeuvre]");
         if (!t) return;
+        if (t.dataset.vit !== undefined) {
+            st.vit = t.dataset.vit;
+            if (st.vit === "oeuvre" && !st.vitOeuvre && works.length) st.vitOeuvre = String(works[0].id);
+        }
+        if (t.dataset.vitOeuvre) st.vitOeuvre = t.dataset.vitOeuvre;
         if (t.dataset.banner) st.banner = t.dataset.banner;
         if (t.dataset.accent) st.accent = t.dataset.accent;
         if (t.dataset.fav) st.fav = st.fav === t.dataset.fav ? "" : t.dataset.fav;
@@ -197,6 +228,13 @@ async function main() {
                 const j = await r.json();
                 if (!r.ok) throw new Error(j.error || "Bannière refusée.");
             }
+            if (st.vit === "dessin" && (st.dessinDirty || !st.dessinURL)) {
+                const fd = new FormData();
+                fd.append("dessin", await dessin.toBlob(), "dessin.png");
+                const r = await fetch("/api/me/dessin", {method: "POST", body: fd});
+                const j = await r.json();
+                if (!r.ok) throw new Error(j.error || "Dessin refusé.");
+            }
             if (st.avatarBlob) {
                 const fd = new FormData();
                 fd.append("avatar", st.avatarBlob, "avatar.png");
@@ -207,7 +245,8 @@ async function main() {
             const r = await fetch("/api/me/profile", {
                 method: "PATCH", headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({pseudo: st.pseudo, bio: st.bio, banner: st.banner, accent: st.accent, couleur_pref: st.fav,
-                    badges_epingles: st.pins, carte_publique: st.map, alertes_retouche: st.alerts}),
+                    badges_epingles: st.pins, carte_publique: st.map, alertes_retouche: st.alerts,
+                    vitrine: st.vit === "oeuvre" ? (st.vitOeuvre ? "oeuvre:" + st.vitOeuvre : "") : st.vit}),
             });
             const j = await r.json();
             if (!r.ok) throw new Error(j.error || "Enregistrement impossible.");

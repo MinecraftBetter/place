@@ -43,7 +43,7 @@ async function render() {
         </section>
         <section class="adm-dash-row">
             <div class="card adm-card grow"><div class="adm-card-head"><h2 class="fs-h3">Heatmap d'activité</h2><span class="pill st-valide">sauvegardes + journal des pixels</span></div>
-                <div class="adm-heat"><img class="px" src="/api/admin/heatmap.png" alt="Carte des changements du canvas">${s.zones.map((z, i) => `<a class="adm-heat-pin" href="/admin/zone?x=${z.x}&y=${z.y}&w=32&h=32" style="left: ${(z.x + 16) / 1024 * 100}%; top: ${(z.y + 16) / 768 * 100}%" aria-label="Zone ${i + 1}">${i + 1}</a>`).join("")}</div>
+                <div class="adm-heat"><img class="px" src="/api/admin/heatmap.png" alt="Carte des changements du canvas">${s.zones.map((z, i) => `<a class="adm-heat-pin" href="/admin/zone?x=${z.x}&y=${z.y}&w=32&h=32" style="left: ${(z.x + 16) / 1024 * 100}%; top: ${(z.y + 16) / 1024 * 100}%" aria-label="Zone ${i + 1}">${i + 1}</a>`).join("")}</div>
                 <div class="adm-heat-legend fs-cap t3"><span>calme</span><span class="adm-heat-ramp"></span><span>très retouché</span></div></div>
             <div class="adm-side-col">
                 <div class="card adm-card"><h2 class="fs-h3">Zones les plus retouchées</h2><p class="fs-cap t3">Cases de 32 × 32 px, nombre de changements (sauvegardes et pixels posés).</p>

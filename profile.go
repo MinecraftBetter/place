@@ -28,7 +28,7 @@ import (
 
 // Choices offered by the profile editor (d-profil-edition).
 var (
-	AccentColors = []string{"#FF63AA", "#5EB3FF", "#3EE06C", "#FFD623", "#FFA800", "#6A5CFF", "#00CCC0", "#FF2651"}
+	AccentColors = []string{"#FF63AA", "#5EB3FF", "#3EE06C", "#FFD623", "#FFA800", "#6A5CFF", "#00CCC0", "#FF2651", "#7EED38", "#B44AC0", "#00A344"} // every accentPalette colour too
 	Banners      = []string{"desert", "nuit", "uni", "custom"}
 )
 
@@ -53,6 +53,7 @@ type ProfileUpdate struct {
 	PinnedBadges  *[]string `json:"badges_epingles"`
 	MapPublic     *bool     `json:"carte_publique"`
 	RetouchAlerts *bool     `json:"alertes_retouche"`
+	Vitrine       *string   `json:"vitrine"`
 }
 
 // FieldError is a validation error shown next to a field.
@@ -143,6 +144,12 @@ func (s *Store) UpdateProfile(u *User, p ProfileUpdate) (*User, error) {
 			seen[b] = true
 		}
 		add("badges_epingles", strings.Join(pins, ","))
+	}
+	if p.Vitrine != nil {
+		if err := s.checkVitrine(u, *p.Vitrine); err != nil {
+			return nil, err
+		}
+		add("vitrine", *p.Vitrine)
 	}
 	if p.MapPublic != nil {
 		add("carte_publique", *p.MapPublic)
