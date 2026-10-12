@@ -78,6 +78,16 @@ body.dragging #viewport-canvas { cursor: grabbing; }
 .d-current .swatch { width: 28px; height: 28px; border-radius: 7px; cursor: default; }
 .d-current .swatch:hover { transform: none; }
 .d-palette .input { height: 32px; font-size: 12px; padding: 0 8px; }
+.d-color { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+/* the browser's colour picker, framed by a rainbow so it reads as « any colour » */
+.color-pick { appearance: none; -webkit-appearance: none; width: 28px; height: 28px; flex-shrink: 0; padding: 3px; border: 0; border-radius: 8px; cursor: pointer;
+  background: conic-gradient(#ff2651, #ffd623, #7eed38, #00ccc0, #245aea, #b44ac0, #ff2651); }
+.color-pick::-webkit-color-swatch-wrapper { padding: 0; }
+.color-pick::-webkit-color-swatch { border: 2px solid var(--surface); border-radius: 5px; }
+.color-pick::-moz-color-swatch { border: 2px solid var(--surface); border-radius: 5px; }
+.color-pick-lg { width: 44px; height: 44px; border-radius: 10px; }
+.color-pick-lg::-webkit-color-swatch { border-radius: 7px; }
+.color-pick-lg::-moz-color-swatch { border-radius: 7px; }
 .d-cooldown { display: flex; flex-direction: column; gap: 4px; }
 .d-cooldown.flash .js-cooldown-label { color: var(--gold-text); }
 

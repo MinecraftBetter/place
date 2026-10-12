@@ -72,6 +72,7 @@
 		<div class="d-swatches js-swatches"></div>
 		<div class="rule"></div>
 		<div class="d-current"><span class="swatch js-cur-swatch"></span><span class="fs-cap b ellip js-cur-name"></span></div>
+		<label class="d-color"><input type="color" class="color-pick js-color"><span class="fs-cap b">Autre couleur</span></label>
 		<input class="input input-mono js-hex" aria-label="Couleur hexadécimale" spellcheck="false" autocomplete="off" maxlength="7">
 		<div class="d-cooldown"><div class="cooldown"><div class="js-cooldown-fill"></div></div><span class="fs-cap t3 js-cooldown-label">Prêt à poser</span></div>
 	</aside>
@@ -172,13 +173,14 @@
 		<div class="grab"></div>
 		<div class="sheet-head">
 			<span class="swatch swatch-lg js-cur-swatch"></span>
-			<div class="sheet-title"><span class="fs-h3 js-cur-name"></span><span class="fs-cap t3">30 couleurs · ou un hex libre</span></div>
+			<div class="sheet-title"><span class="fs-h3 js-cur-name"></span><span class="fs-cap t3">30 couleurs · ou n'importe laquelle avec le nuancier</span></div>
 			<button class="btn btn-icon btn-ghost js-close-sheet" type="button" aria-label="Fermer"><span data-icon="close"></span></button>
 		</div>
 		<div class="m-swatches js-swatches"></div>
 		<div class="m-hex">
 			<label class="label" for="hex-m">Hex</label>
 			<input id="hex-m" class="input input-mono js-hex" spellcheck="false" autocomplete="off" maxlength="7">
+			<input type="color" class="color-pick color-pick-lg js-color" aria-label="Nuancier : choisir n'importe quelle couleur">
 			<button class="btn btn-icon js-pick-aim" type="button" aria-label="Pipette : prendre la couleur visée"><span data-icon="pipette"></span></button>
 		</div>
 	</div>

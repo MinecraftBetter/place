@@ -217,6 +217,7 @@ app.setColor = (hex) => {
     for (const el of $$(".js-cur-name")) el.textContent = name;
     for (const el of $$(".js-cur-hex")) el.textContent = app.color;
     for (const el of $$(".js-hex")) if (document.activeElement !== el) el.value = app.color;
+    for (const el of $$(".js-color")) el.value = app.color.toLowerCase();
     for (const el of $$(".js-swatches .swatch, .js-recent .swatch")) {
         el.classList.toggle("swatch-sel", parseHex(el.dataset.color) === app.color);
     }
@@ -256,6 +257,8 @@ for (const input of $$(".js-hex")) {
         }
     });
 }
+
+for (const input of $$(".js-color")) input.addEventListener("input", () => app.setColor(input.value));
 
 app.pickColor = (x, y) => {
     app.setColor(rgbToHex(app.gl.getColor({x, y})));
